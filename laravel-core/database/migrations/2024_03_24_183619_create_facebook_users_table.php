@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('access_tokens', function (Blueprint $table) {
-            $table->id();
-            $table->text("content");
-            $table->string("type");
-            $table->timestamp("expired_at")->nullable();
+        Schema::create('facebook_users', function (Blueprint $table) {
+            $table->string('facebook_user_id')->primary();
+            $table->string('name')->nullable();
+            $table->string('email')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('access_tokens');
+        Schema::dropIfExists('facebook_users');
     }
 };

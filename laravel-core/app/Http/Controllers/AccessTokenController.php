@@ -35,7 +35,7 @@ class AccessTokenController extends Controller
             "type" => "user"
         ));
 
-        return redirect('/home');
+        return redirect('/');
     }
 
     /**

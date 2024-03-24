@@ -1,11 +1,17 @@
 @php
 $user = Auth::user();
+$fb_user = config('settings.access_token')->Get_User();
+$fb_page = config('settings.access_token')->Page();
+$fb_page->Get_Conversations();
 @endphp
 <nav class="navbar navbar-expand navbar-light navbar-bg">
   <a class="sidebar-toggle js-sidebar-toggle">
     <i class="hamburger align-self-center"></i>
   </a>
   <div class="navbar-collapse collapse">
+    <div class="navbar-nav">
+      Connected as: &nbsp;<b>{{$fb_page->Get_User()['name']}}</b>
+    </div>
     <ul class="navbar-nav navbar-align">
       <li class="nav-item dropdown">
         <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">

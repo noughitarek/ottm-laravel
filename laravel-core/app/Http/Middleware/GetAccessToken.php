@@ -21,10 +21,15 @@ class GetAccessToken
     {
         if(Schema::hasTable('access_tokens'))
         {
-            $access_token = AccessToken::where("expired_at", null)->first();
+            $access_token = AccessToken::where("type", "user")->where("expired_at", null)->first();
             if (!$access_token) {
                 return AccessToken::redirectToFacebook();
             }else{
+                if(!$access_token->Check()){
+                    $access_token->expired_at = Date::now();
+                    $access_token->save();
+                    return AccessToken::redirectToFacebook();
+                }
                 config(['settings.access_token' => $access_token]);
             }
         }
