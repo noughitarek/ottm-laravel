@@ -1,0 +1,9 @@
+.single-line{
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 25ch;
+    text-overflow: ellipsis;
+}
+#webmaster_logo{
+    width: 100%;
+}
