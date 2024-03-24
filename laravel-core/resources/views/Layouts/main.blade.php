@@ -1,17 +1,17 @@
-@extends('Layouts.base')
+@extends('layouts.base')
 @section('head')
 <title>{{config('settings.title')}}</title>
 <link href="{{asset('assets/css/app.css')}}" rel="stylesheet">
 @endsection
 @section('body')
 <div class="wrapper">
-    @include('Components.Sidebar')
+    @include('components.Sidebar')
     <div class="main">
-        @include('Components.Navbar')
+        @include('components.Navbar')
         <main class="content">
             @yield('content')
         </main>
-        @include('Components.Footer')
+        @include('components.Footer')
     </div>
 </div>
 <script src="{{asset('assets/js/app.js')}}"></script>

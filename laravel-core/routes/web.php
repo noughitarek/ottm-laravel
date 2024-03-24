@@ -26,7 +26,7 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     });
     Route::middleware('permission:consult_dashboard')->controller(AccessTokenController::class)->group(function(){
         Route::get('oauth/facebook', 'redirectToFacebook');
-        Route::get('oauth/facebook/callback', 'handleFacebookCallback');
+        Route::get('oauth/facebook/callback', 'handleFacebookCallback')->withoutMiddleware('access_token');
         Route::get('oauth/facebook/logout', 'logout');
     });
     

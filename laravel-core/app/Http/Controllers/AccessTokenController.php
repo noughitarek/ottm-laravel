@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccessToken;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -29,21 +30,10 @@ class AccessTokenController extends Controller
         } catch (\Exception $e) {
             return redirect('/login')->with('error', 'Facebook authentication failed.');
         }
-        print_r($user);
-        exit;
-        $existingUser = User::where('facebook_id', $user->id)->first();
-
-        if ($existingUser) {
-            Auth::login($existingUser);
-        } else {
-            $newUser = new User();
-            $newUser->name = $user->name;
-            $newUser->email = $user->email;
-            $newUser->facebook_id = $user->id;
-            $newUser->save();
-
-            Auth::login($newUser);
-        }
+        AccessToken::create(array(
+            "content" => $user->token,
+            "type" => "user"
+        ));
 
         return redirect('/home');
     }

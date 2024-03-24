@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("content");
             $table->string("type");
-            $table->timestamp("expired_at");
+            $table->timestamp("expired_at")->default(null);
             $table->timestamps();
         });
     }

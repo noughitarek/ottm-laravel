@@ -19,10 +19,9 @@ class GetAccessToken
      */
     public function handle(Request $request, Closure $next): Response
     {
-        
         if(Schema::hasTable('access_tokens'))
         {
-            $access_token = AccessToken::where("expired_at", "<", Date::now())->first();
+            $access_token = AccessToken::where("expired_at", null)->first();
             if (!$access_token) {
                 return AccessToken::redirectToFacebook();
             }else{
