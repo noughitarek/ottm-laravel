@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             "email" => "noughitarek@gmail.com", 
             "password" => Hash::make('password')
         ]);
-        // User::factory(10)->create();
+        $this->call(WilayaSeeder::class);
+        $this->call(CommuneSeeder::class);
     }
 }

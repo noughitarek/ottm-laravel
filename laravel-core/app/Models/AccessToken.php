@@ -42,6 +42,7 @@ class AccessToken extends Model
                 $fb_user = FacebookUser::create([
                     'facebook_user_id' => $response->json()["data"][0]["id"],
                     'name' => $response->json()["data"][0]["name"],
+                    'can_reply' => true
                 ]);
             }
             return AccessToken::create([
@@ -57,7 +58,7 @@ class AccessToken extends Model
         $response = Http::get('https://graph.facebook.com/me/conversations', [
             'access_token' => $this->content,
             'limit' => 100,
-            'fields' => 'fields=can_reply,senders,messages.limit(1000){id,message,created_time,from,to}',
+            'fields' => 'can_reply,senders,messages.limit(1000){id,message,created_time,from,to}',
         ]);
         foreach($response->json()['data'] as $conversation){
             $fb_user = FacebookUser::where("facebook_user_id", $conversation["senders"]["data"][0]["id"])->first();
@@ -67,16 +68,20 @@ class AccessToken extends Model
                     'facebook_user_id' => $conversation["senders"]["data"][0]["id"],
                     'name' => $conversation["senders"]["data"][0]["name"],
                     'email' => $conversation["senders"]["data"][0]["email"],
+                    'can_reply' => $conversation["can_reply"]==1?true:false
                 ]);
             }
             foreach($conversation['messages']['data'] as $message){
-                Message::create([
-                    'message_id' => $message['id'],
-                    'content' => $message['message'],
-                    'created_at' => $message['created_time'],
-                    'sented_by' => $message['from']['id'],
-                    'sented_to' => $message['to']['data'][0]['id'],
-                ]);
+                $fb_message = Message::where('message_id', $message['id'])->first();
+                if(!$fb_message){
+                    Message::create([
+                        'message_id' => $message['id'],
+                        'content' => $message['message'],
+                        'created_at' => $message['created_time'],
+                        'sented_by' => $message['from']['id'],
+                        'sented_to' => $message['to']['data'][0]['id'],
+                    ]);
+                }
             }
         }
     }
@@ -85,7 +90,7 @@ class AccessToken extends Model
     {
         $response = Http::get('https://graph.facebook.com/me', [
             'access_token' => $this->content,
-            'fields' => 'id,name'
+            'fields' => 'id,name,picture'
         ]);
         return $response->json();
     }

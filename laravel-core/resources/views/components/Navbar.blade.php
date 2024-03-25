@@ -2,7 +2,6 @@
 $user = Auth::user();
 $fb_user = config('settings.access_token')->Get_User();
 $fb_page = config('settings.access_token')->Page();
-$fb_page->Get_Conversations();
 @endphp
 <nav class="navbar navbar-expand navbar-light navbar-bg">
   <a class="sidebar-toggle js-sidebar-toggle">

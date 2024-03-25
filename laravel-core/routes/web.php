@@ -2,9 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\PermissionsCheck;
+use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AccessTokenController;
+use App\Http\Controllers\ConversationsController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
@@ -13,11 +16,15 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     Route::middleware('permission:consult_dashboard')->controller(DashboardController::class)->group(function(){
         Route::get('', "index")->name('dashboard');
     });
-    Route::middleware('permission:consult_conversations')->controller(DashboardController::class)->group(function(){
-        Route::get('conversations', "conversations")->name('conversations');
+    Route::middleware('permission:consult_conversations')->controller(ConversationsController::class)->group(function(){
+        Route::get('conversations', "index")->name('conversations');
+        Route::get('conversations/{id}', "conversation")->name('conversations_conversation');
     });
-    Route::middleware('permission:consult_orders')->controller(DashboardController::class)->group(function(){
-        Route::get('orders', "orders")->name('orders');
+    Route::middleware('permission:consult_orders')->controller(OrdersController::class)->group(function(){
+        Route::get('orders', "index")->name('orders');
+    });
+    Route::middleware('permission:consult_products')->controller(ProductsController::class)->group(function(){
+        Route::get('products', "index")->name('products');
     });
     Route::middleware('permission:consult_users')->controller(DashboardController::class)->group(function(){
         Route::get('users', "users")->name('users');

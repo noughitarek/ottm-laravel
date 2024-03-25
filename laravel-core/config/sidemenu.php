@@ -1,7 +1,7 @@
 <?php
 
 return array(
-    array("type" => "text", "content"=> "Pages", "permissions" => ["consult_dashboard", "consult_conversations", "consult_orders"]),
+    array("type" => "text", "content"=> "Pages", "permissions" => ["consult_dashboard", "consult_conversations"]),
     array(
         "type" => "link",
         "content" => "Dashboard",
@@ -18,6 +18,7 @@ return array(
         "route" => "conversations",
         "icon" => array("type" => "feather", "content" => "message-square"),
     ),
+    array("type" => "text", "content"=> "Orders", "permissions" => ["consult_dashboard", "consult_conversations", "consult_orders"]),
     array(
         "type" => "link",
         "content" => "Orders",
@@ -25,6 +26,14 @@ return array(
         "section" => "orders",
         "route" => "orders",
         "icon" => array("type" => "feather", "content" => "shopping-cart"),
+    ),
+    array(
+        "type" => "link",
+        "content" => "Products",
+        "permissions" => "consult_products",
+        "section" => "products",
+        "route" => "products",
+        "icon" => array("type" => "feather", "content" => "box"),
     ),
     array("type" => "text", "content"=> "Administration", "permissions" => ["consult_dashboard"]),
     array(

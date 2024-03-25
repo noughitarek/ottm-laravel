@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('facebook_users', function (Blueprint $table) {
-            $table->string('facebook_user_id')->primary();
-            $table->string('name')->nullable();
-            $table->string('email')->nullable();
-            $table->boolean('can_reply');
+        Schema::create('communes', function (Blueprint $table) {
+            $table->id();
+            $table->string("name");
+            $table->string("name_ar");
+            $table->unsignedBigInteger('wilaya')->nullable();
+            $table->foreign('wilaya')->references('id')->on('wilayas');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('facebook_users');
+        Schema::dropIfExists('communes');
     }
 };
