@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\FacebookConversation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class FacebookUser extends Model
 {
     use HasFactory;
-    protected $fillable = ['facebook_user_id', 'name', 'email', 'can_reply'];
-
-    public function Conversation()
+    
+    public function Conversations()
     {
-        $messages = Message::where('sented_to', $this->facebook_user_id)->orWhere('sented_by', $this->facebook_user_id)->orderBy('created_at', "desc")->get();
-        return $messages;
+        return $this->hasMany(FacebookConversation::class, 'user');
     }
 }

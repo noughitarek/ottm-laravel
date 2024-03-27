@@ -15,13 +15,13 @@ class WilayaSeeder extends Seeder
      */
     public function run(): void
     {
-        $csvFile = file_get_contents('database/seeds/wilayas.csv');
-        $csvFileAr = file_get_contents('database/seeds/algeria_cities.csv');
+        $csvFile = file_get_contents('laravel-core/database/seeds/wilayas.csv');
+        $csvFileAr = file_get_contents('laravel-core/database/seeds/algeria_cities.csv');
         $rows = array_map('str_getcsv', explode("\n", $csvFile));
         $rowsAr = array_map('str_getcsv', explode("\n", $csvFileAr));
         for ($i = 1; $i < count($rows); $i++) {
             $row = $rows[$i];
-            $nameAr = "n/a";
+            $nameAr =null;
             for ($j = 1; $j < count($rowsAr); $j++) {
                 if($row[1] == $rowsAr[$j][7])
                 {

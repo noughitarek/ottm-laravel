@@ -1,46 +1,72 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\PermissionsCheck;
-use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\DeskController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\WilayaController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AccessTokenController;
 use App\Http\Controllers\ConversationsController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-
 Route::middleware(['auth', 'access_token'])->group(function () {
-    Route::middleware('permission:consult_dashboard')->controller(DashboardController::class)->group(function(){
+    Route::middleware('permission:dashboard_consult')->controller(DashboardController::class)->group(function(){
         Route::get('', "index")->name('dashboard');
     });
-    Route::middleware('permission:consult_conversations')->controller(ConversationsController::class)->group(function(){
-        Route::get('conversations', "index")->name('conversations');
-        Route::get('conversations/{id}', "conversation")->name('conversations_conversation');
+    Route::middleware('permission:desks_consult')->prefix("desks")->controller(DeskController::class)->group(function(){
+        Route::get('', "index")->name('desks');
+        Route::post('', "store")->middleware('permission:desks_create')->name('desks_create');
+        Route::put('{desk}/edit', "update")->middleware('permission:desks_edit')->name('desks_edit');
+        Route::delete('{desk}/delete', "destroy")->middleware('permission:desks_delete')->name('desks_delete');
     });
-    Route::middleware('permission:consult_orders')->controller(OrdersController::class)->group(function(){
-        Route::get('orders', "index")->name('orders');
+    Route::middleware('permission:wilayas_consult')->prefix("wilayas")->controller(WilayaController::class)->group(function(){
+        Route::get('', "index")->name('wilayas');
+        Route::put('edit', "update")->middleware('permission:wilayas_edit')->name('wilayas_edit');
     });
-    Route::middleware('permission:consult_products')->controller(ProductsController::class)->group(function(){
-        Route::get('products', "index")->name('products');
+    Route::middleware('permission:products_consult')->prefix("products")->controller(ProductController::class)->group(function(){
+        Route::get('', "index")->name('products');
+        Route::post('', "store")->middleware('permission:products_create')->name('products_create');
+        Route::put('{product}/edit', "update")->middleware('permission:products_edit')->name('products_edit');
+        Route::delete('{product}/delete', "destroy")->middleware('permission:products_delete')->name('products_delete');
     });
-    Route::middleware('permission:consult_users')->controller(DashboardController::class)->group(function(){
-        Route::get('users', "users")->name('users');
+    Route::middleware('permission:conversations_consult')->prefix("conversations")->controller(ConversationsController::class)->group(function(){
+        Route::get('', "index")->name('conversations');
+        Route::get('{conversation}', "conversation")->name('conversations_conversation');
     });
-    Route::middleware('permission:consult_settings')->controller(DashboardController::class)->group(function(){
-        Route::get('settings', "settings")->name('settings');
+    Route::middleware('permission:orders_restricted_consult')->prefix("orders")->controller(OrderController::class)->group(function(){
+        Route::get('create', "create")->name('orders_create')->middleware('permission:orders_create');
+        Route::post('create', "store")->middleware('permission:orders_create');
+        Route::get('create/p/{product}', "create_from_product")->name('orders_create_product')->middleware('permission:orders_create');
+        Route::get('create/c/{conversation}', "create_from_conversation")->name('orders_create_conversation')->middleware('permission:orders_create');
+
+        Route::get('{wilaya}/getDelivery', "getDelivery");
+        Route::get('{wilaya}/getCommunes', "getCommunes");
+        Route::get('pending', "pending")->name('orders_pending');
+        Route::get('towilaya', "towilaya")->name('orders_towilaya');
+        Route::get('delivery', "delivery")->name('orders_delivery');
+        Route::get('delivered', "delivered")->name('orders_delivered');
+        Route::get('back', "back")->name('orders_back');
+        Route::get('archived', "archived")->name('orders_archived');
+        
     });
-    Route::middleware('permission:consult_dashboard')->controller(AccessTokenController::class)->group(function(){
-        Route::get('oauth/facebook', 'redirectToFacebook');
-        Route::get('oauth/facebook/callback', 'handleFacebookCallback')->withoutMiddleware('access_token');
-        Route::get('oauth/facebook/logout', 'logout');
+    Route::middleware('permission:users_consult')->prefix("users")->controller(UserController::class)->group(function(){
+        Route::get('', "index")->name('users');
+        Route::post('', "store")->middleware('permission:users_create')->name('users_create');
+        Route::put('{user}/edit', "update")->middleware('permission:users_edit')->name('users_edit');
+        Route::delete('{user}/delete', "destroy")->middleware('permission:users_delete')->name('users_delete');
     });
-    
+    Route::middleware('permission:settings_consult')->prefix("settings")->controller(SettingsController::class)->group(function(){
+        Route::get('', "index")->name('settings');
+        Route::post('edit', "edit")->name('settings_edit');
+    });
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
 
@@ -50,3 +76,11 @@ Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::put('password', [PasswordController::class, 'update'])->name('password.update');
+});
+

@@ -1,15 +1,10 @@
-@php
-$user = Auth::user();
-$fb_user = config('settings.access_token')->Get_User();
-$fb_page = config('settings.access_token')->Page();
-@endphp
 <nav class="navbar navbar-expand navbar-light navbar-bg">
   <a class="sidebar-toggle js-sidebar-toggle">
     <i class="hamburger align-self-center"></i>
   </a>
   <div class="navbar-collapse collapse">
     <div class="navbar-nav">
-      Connected as: &nbsp;<b>{{$fb_page->Get_User()['name']}}</b>
+      Connected as: &nbsp;<b></b>
     </div>
     <ul class="navbar-nav navbar-align">
       <li class="nav-item dropdown">
@@ -149,7 +144,7 @@ $fb_page = config('settings.access_token')->Page();
           <span class="text-dark">{{$user->name}}</span>
         </a>
         <div class="dropdown-menu dropdown-menu-end">
-          <a class="dropdown-item" href="pages-profile.html">
+          <a class="dropdown-item" href="{{route('profile.edit')}}">
             <i class="align-middle me-1" data-feather="user"></i> Profile </a>
           <a class="dropdown-item" href="#">
             <i class="align-middle me-1" data-feather="pie-chart"></i> Analytics </a>

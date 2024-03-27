@@ -1,17 +1,18 @@
 @extends('layouts.base')
 @section('head')
-<title>{{config('settings.title')}}</title>
+<title>@yield('subtitle') - {{config('settings.title')}}</title>
 <link href="{{asset('assets/css/app.css')}}" rel="stylesheet">
+<link href="{{asset('assets/css/custom.css')}}" rel="stylesheet">
 @endsection
 @section('body')
 <div class="wrapper">
-    @include('components.Sidebar')
+    @include('components.sidebar')
     <div class="main">
-        @include('components.Navbar')
+        @include('components.navbar')
         <main class="content">
             @yield('content')
         </main>
-        @include('components.Footer')
+        @include('components.footer')
     </div>
 </div>
 <script src="{{asset('assets/js/app.js')}}"></script>

@@ -14,15 +14,23 @@ class PermissionsCheck
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $permission): Response
+    public function handle(Request $request, Closure $next, $permissions): Response
     {
-        if(Auth::user()->Has_Permission($permission))
+        $user = Auth::user();
+        if($user->permissions == null)
         {
-            return $next($request);
+            return response()->view('pages.invalidated');
         }
         else
         {
-            abort(403);
+            if($user->Has_Permission($permissions))
+            {
+                return $next($request);
+            }
+            else
+            {
+                return abort(401);
+            }
         }
     }
 }

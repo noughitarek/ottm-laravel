@@ -6,17 +6,31 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens;
-    use HasFactory;
-    use Notifiable;
+    use HasFactory, Notifiable;
 
     public function Has_Permission($permissions)
     {
-        return true;
+        if($this->permissions != null)
+        {
+            if(is_array($permissions))
+            {
+                foreach($permissions as $permission)
+                {
+                    if($this->Has_Permission($permission))
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                return in_array($permissions ,explode(',', $this->permissions));
+            }
+        }
+        return false;
     }
 
     /**
@@ -28,6 +42,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'permissions',
+        'deleted_at'
     ];
 
     /**
@@ -38,17 +55,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'two_factor_recovery_codes',
-        'two_factor_secret',
-    ];
-
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array<int, string>
-     */
-    protected $appends = [
-        'profile_photo_url',
     ];
 
     /**

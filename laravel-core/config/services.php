@@ -30,10 +30,12 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+
     'facebook' => [
-        'client_id' => "387341510595101",
-        'client_secret' => "623245dfba2682a79cac55e428edaca8",
-        'redirect' => "https://ottm.gizmodz.shop/oauth/facebook/callback",
+        'client_id' => "",
+        'client_secret' => "",
+        'redirect' => "",
     ],
+    
 
 ];
