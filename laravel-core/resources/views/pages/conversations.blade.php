@@ -33,7 +33,8 @@ $user = Auth::user();
                     <i class="align-middle me-2 fas fa-fw fa-at"></i> {{$facebook_user->email}}<br>
                 </td>
                 <td>
-                    {{$facebook_user->Conversations()->first()->Messages()->count()}}
+                    <i class="align-middle me-2 fas fa-fw fa-user-cog"></i> {{$facebook_user->Conversations()->first()->page()->name}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-envelope-open"></i> {{$facebook_user->Conversations()->first()->Messages()->count()}}
                 </td>
                 <td>
                     <span class="text-primary">0</span> |

@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FacebookPageController;
 use App\Http\Controllers\ConversationsController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -64,6 +65,11 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::post('edit', "edit")->name('settings_edit');
     });
 
+    Route::middleware('permission:facebook_reconnect')->controller(FacebookPageController::class)->group(function(){
+        Route::get('oauth/facebook', 'redirectToFacebook')->name('facebook_reconnect');
+        Route::get('oauth/facebook/callback', 'handleFacebookCallback')->withoutMiddleware('access_token');
+        Route::get('oauth/facebook/logout', 'logout');
+    });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -76,6 +82,8 @@ Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 });
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

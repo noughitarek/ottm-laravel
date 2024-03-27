@@ -4,7 +4,16 @@
   </a>
   <div class="navbar-collapse collapse">
     <div class="navbar-nav">
-      Connected as: &nbsp;<b></b>
+			@if($user->Has_Permission('facebook_consult'))
+      <div class="input-group">
+        <span class="input-group-text">Active pages</span>
+				<select class="form-select">
+          @foreach(config('settings.active_pages') as $page)
+            <option>{{$page->name}}</option>
+          @endforeach
+				</select>
+			</div>		
+      @endif
     </div>
     <ul class="navbar-nav navbar-align">
       <li class="nav-item dropdown">

@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('facebook_pages', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->string('name')->nullable();
-            $table->string('type');
-            $table->string('access_token');
-            $table->timestamp('expired_at')->nullable();
+        Schema::create('settings', function (Blueprint $table) {
+            $table->id();
+            $table->string('path')->unique();
+            $table->text('content')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('facebook_pages');
+        Schema::dropIfExists('settings');
     }
 };

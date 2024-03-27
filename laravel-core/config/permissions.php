@@ -12,4 +12,6 @@ return [
 
     'users' => ['consult', 'create', 'edit', 'delete'],
     'settings' => ['consult', 'edit'],
+
+    'facebook' => ['consult', 'edit', 'reconnect']
 ];
