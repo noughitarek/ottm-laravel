@@ -7,7 +7,7 @@ $user = Auth::user();
 <div class="col-12 col-lg-12 col-xxl-12 d-flex">
   <div class="card flex-fill">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="card-title mb-0">Conversation with {{ $conversation->User->name}}</h5>
+      <h5 class="card-title mb-0">Conversation with {{ $conversation->User()->name}}</h5>
       <a href="{{route('conversations')}}" class="btn btn-secondary">Back</a>
     </div>
   </div>
@@ -20,30 +20,30 @@ $user = Auth::user();
         <div class="py-2 px-4 border-bottom d-none d-lg-block">
           <div class="d-flex align-items-center py-1">
             <div class="position-relative">
-              <img src="{{asset('assets/img/avatars/unknown.png')}}" class="rounded-circle me-1" alt="{{$conversation->User->name}}" width="40" height="40">
+              <img src="{{asset('assets/img/avatars/unknown.png')}}" class="rounded-circle me-1" alt="{{$conversation->User()->name}}" width="40" height="40">
             </div>
             <div class="flex-grow-1 ps-3">
-              <strong>{{$conversation->User->name}}</strong>
+              <strong>{{$conversation->User()->name}}</strong>
             </div>
           </div>
         </div>
         <div class="position-relative">
           <div class="chat-messages p-4">
-            @foreach($conversation->Messages as $message)
+            @foreach($conversation->Messages() as $message)
             @if($message->sented_from != 'page')
             <div class="chat-message-left pb-4">
               <div>
-                <img src="{{asset('assets/img/avatars/unknown.png')}}" class="rounded-circle me-1" alt="{{$conversation->User->name}}" width="40" height="40">
+                <img src="{{asset('assets/img/avatars/unknown.png')}}" class="rounded-circle me-1" alt="{{$conversation->User()->name}}" width="40" height="40">
                 <div class="text-muted small text-nowrap mt-2">{{$message->created_at}}</div>
               </div>
               <div class="flex-shrink-1 bg-light rounded py-2 px-3 ms-3">
-                <div class="font-weight-bold mb-1">{{$conversation->User->name}}</div> {{$message->message}}
+                <div class="font-weight-bold mb-1">{{$conversation->User()->name}}</div> {{$message->message}}
               </div>
             </div>
             @else
             <div class="chat-message-right pb-4">
               <div>
-                <img src="{{asset('assets/img/avatars/unknown.png')}}" class="rounded-circle me-1" alt="{{$conversation->User->name}}" width="40" height="40">
+                <img src="{{asset('assets/img/avatars/unknown.png')}}" class="rounded-circle me-1" alt="{{$conversation->User()->name}}" width="40" height="40">
                 <div class="text-muted small text-nowrap mt-2">{{$message->created_at}}</div>
               </div>
               <div class="flex-shrink-1 bg-primary text-white rounded py-2 px-3 me-3">

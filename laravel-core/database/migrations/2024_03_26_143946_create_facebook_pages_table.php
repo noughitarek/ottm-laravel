@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('facebook_pages', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
+            $table->string('facebook_page_id')->unique();
             $table->string('name')->nullable();
             $table->string('type');
-            $table->string('access_token');
+            $table->text('access_token');
             $table->timestamp('expired_at')->nullable();
             $table->timestamps();
         });

@@ -31,6 +31,9 @@ $user = Auth::user();
 					Facebook
 				</a>
 				@endif
+				<a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#messages" role="tab">
+					Message templates
+				</a>
 				<a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#notifications" role="tab">
 					Notifications
 				</a>
@@ -113,6 +116,58 @@ $user = Auth::user();
 				</div>
 			</div>
 			@endif
+			<div class="tab-pane fade" id="messages" role="tabpanel">
+				<div class="card">
+					<div class="card-header">
+						<h5 class="card-title mb-0">Notifications</h5>
+					</div>
+					<div class="card-body mb-2">
+						<div class="row mb-2 d-flex align-items-center">
+							<div class="col-md-12">
+								<div class="mb-3">
+									<label for="validating">Validating</label>
+									<textarea class="form-control" name="settings-messages_template-validating" id="settings-messages_template-validating">{{config('settings.messages_template.validating')}}</textarea>
+								</div>
+								<div class="mb-3">
+									<label for="shipping">Shipping</label>
+									<textarea class="form-control" name="settings-messages_template-shipping" id="settings-messages_template-shipping">{{config('settings.messages_template.shipping')}}</textarea>
+								</div>
+								<div class="mb-3">
+									<label for="wilaya">Wilaya</label>
+									<textarea class="form-control" name="settings-messages_template-wilaya" id="settings-messages_template-wilaya">{{config('settings.messages_template.wilaya')}}</textarea>
+								</div>
+								<div class="mb-3">
+									<label for="delivery">Delivery</label>
+									<textarea class="form-control" name="settings-messages_template-delivery" id="settings-messages_template-delivery">{{config('settings.messages_template.delivery')}}</textarea>
+								</div>
+								<div class="mb-3">
+									<label for="delivered">Delivered</label>
+									<textarea class="form-control" name="settings-messages_template-delivered" id="settings-messages_template-delivered">{{config('settings.messages_template.delivered')}}</textarea>
+								</div>
+								<div class="mb-3">
+									<label for="ready">Ready</label>
+									<textarea class="form-control" name="settings-messages_template-ready" id="settings-messages_template-ready">{{config('settings.messages_template.ready')}}</textarea>
+								</div>
+								<div class="mb-3">
+									<label for="recovering">Recovering</label>
+									<textarea class="form-control" name="settings-messages_template-recovering" id="settings-messages_template-recovering">{{config('settings.messages_template.recovering')}}</textarea>
+								</div>
+								<div class="mb-3">
+									<label for="back">Back</label>
+									<textarea class="form-control" name="settings-messages_template-back" id="settings-messages_template-back">{{config('settings.messages_template.back')}}</textarea>
+								</div>
+								<div class="mb-3">
+									<label for="back_Ready">Back Ready</label>
+									<textarea class="form-control" name="settings-messages_template-back_Ready" id="settings-messages_template-back_Ready">{{config('settings.messages_template.back_Ready')}}</textarea>
+								</div>
+							</div>
+						</div>
+                	@if($user->Has_Permission('settings_edit'))
+					<button type="submit" class="btn btn-primary">Save changes</button>
+					@endif
+					</div>
+				</div>
+			</div>
 			<div class="tab-pane fade" id="notifications" role="tabpanel">
 				<div class="card">
 					<div class="card-header">

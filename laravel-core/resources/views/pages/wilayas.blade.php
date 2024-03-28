@@ -12,7 +12,10 @@ $user = Auth::user();
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">Wilayas</h5>
         @if($user->Has_Permission('wilayas_edit'))
+        <div>
+        <button type="submit" class="btn btn-success" > Auto Update prices (API) </button>
         <button type="submit" class="btn btn-primary" > Save </button>
+        </div>
         @endif
       </div>
     </div>

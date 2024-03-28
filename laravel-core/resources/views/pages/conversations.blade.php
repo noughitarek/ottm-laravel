@@ -27,14 +27,14 @@ $user = Auth::user();
             @foreach($facebook_users as $facebook_user)
             <tr>
                 <td class="d-xl-table-cell">
-                    <i class="align-middle me-2 fas fa-fw fa-hashtag"></i> 
-                    <a href="{{route('conversations_conversation', $facebook_user->Conversations()->first()->id)}}">{{$facebook_user->id}}</a><br>
+                    
+                    <a href="{{route('conversations_conversation', $facebook_user->Conversation()->facebook_conversation_id)}}"><i class="align-middle me-2 fas fa-fw fa-hashtag"></i> {{$facebook_user->facebook_user_id}}</a><br>
                     <i class="align-middle me-2 fas fa-fw fa-user"></i> {{$facebook_user->name}}<br>
                     <i class="align-middle me-2 fas fa-fw fa-at"></i> {{$facebook_user->email}}<br>
                 </td>
                 <td>
-                    <i class="align-middle me-2 fas fa-fw fa-user-cog"></i> {{$facebook_user->Conversations()->first()->page()->name}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-envelope-open"></i> {{$facebook_user->Conversations()->first()->Messages()->count()}}
+                    <i class="align-middle me-2 fas fa-fw fa-user-cog"></i> {{$facebook_user->Conversation()->Page()->name}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-envelop-open"></i> {{$facebook_user->Conversation()->Messages()->count()}}<br>
                 </td>
                 <td>
                     <span class="text-primary">0</span> |

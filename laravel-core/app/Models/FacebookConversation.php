@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\FacebookPage;
 use App\Models\FacebookUser;
 use App\Models\FacebookMessage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -12,22 +13,27 @@ class FacebookConversation extends Model
 {
     use HasFactory;
     
-    protected $fillable = ['id', 'page', 'user', 'can_reply'];
+    protected $fillable = ['facebook_conversation_id', 'page', 'user', 'can_reply'];
 
     public function Messages()
     {
-        return $this->hasMany(FacebookMessage::class, 'conversation')->latest('created_at');
+        return FacebookMessage::where('conversation', $this->facebook_conversation_id)->orderBy('created_at', 'desc')->get();
     }
 
     public function User()
     {
-        $user = FacebookUser::find($this->user);
+        $user = FacebookUser::where('facebook_user_id', $this->user)->first();
         return $user;
     }
 
     public function Page()
     {
-        $page = FacebookPage::find($this->page);
+        $page = FacebookPage::where('facebook_page_id', $this->page)->where('expired_at', null)->first();
         return $page;
+    }
+
+    public function Send_Message($message)
+    {
+        return $this->Page()->Send_Message($this->user, $message);
     }
 }

@@ -25,13 +25,13 @@ $user = Auth::user();
           <label class="form-label">Conversation <span class="text-danger">*</span></label>
           @if(isset($conversation))
             <br>{{$conversation->name}}
-            <input type="hidden" name="conversation" value="{{$conversation->id}}">
+            <input type="hidden" name="conversation" value="{{$conversation->Conversation()->facebook_conversation_id}}">
             <b><a href="{{route('orders_create')}}" class="text-danger">X</a></b>
           @else
           <select name="conversation" class="form-control conversation-select" required>
               <option value disabled selected>Select the conversation</option>
               @foreach($conversations as $conversationSelect)
-              <option value="{{$conversationSelect->id}}">{{$conversationSelect->name}}</option>
+              <option value="{{$conversationSelect->Conversation()->facebook_conversation_id}}">{{$conversationSelect->name}}</option>
               @endforeach
           </select>
           @endif
@@ -134,6 +134,34 @@ $user = Auth::user();
           <input name="clean_price_show" id="clean_price_show" type="number" min="0" class="form-control" disabled>
           <input name="clean_price" id="clean_price" type="hidden" class="form-control">
         </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-12 col-lg-12 col-xxl-12 d-flex">
+    <div class="card flex-fill">
+      <div class="card-header">
+        <h5 class="card-title">Confirmation</h5>
+        <div class="mb-3">
+          <label class="form-label">Created by</label>
+          <input type="text" value="{{$user->name}}" class="form-control" disabled>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea name="description" maxlength="200" id="description" class="form-control"></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" class="form-check m-0">
+            <input type="checkbox" name="add_to_ecotrack" id="add_to_ecotrack" class="form-check-input" checked>
+            <span class="form-check-label">Add to Ecotrack</span>
+          </label>&nbsp;
+          <label class="form-label" class="form-check m-0">
+            <input type="checkbox" name="validate" id="validate" class="form-check-input" checked>
+            <span class="form-check-label">Validate shipping</span>
+          </label>
+        </div>
+      </div>
+      <div class="card-body">
         <div class="mb-3">
           <button type="submit" class="btn btn-primary">Create</button>
         </div>

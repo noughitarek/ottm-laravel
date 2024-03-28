@@ -40,7 +40,7 @@ $user = Auth::user();
             </td>
             <td class="d-xl-table-cell single-line">
               <p>
-                <i class="align-middle me-2 fas fa-fw fa-envelope-open-text"></i> <a href="{{$order->conversation!=null?route('conversations_conversation', $order->conversation):'#'}}">{{$order->Conversation()->User->name}}</a><br>
+                <i class="align-middle me-2 fas fa-fw fa-envelope-open-text"></i> <a href="{{$order->conversation!=null?route('conversations_conversation', $order->conversation):'#'}}">{{$order->Conversation()->User()->name}}</a><br>
                 <i class="align-middle me-2 fas fa-fw fa-user-tie"></i> {{$order->name}}<br>
                 <i class="align-middle me-2 fas fa-fw fa-phone"></i> <a href="tel:{{$order->phone}}">{{$order->phone}}</a><br>
                 <i class="align-middle me-2 fas fa-fw"></i> <a href="tel:{{$order->phone2}}">{{$order->phone2}}</a>

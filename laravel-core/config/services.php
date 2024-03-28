@@ -32,9 +32,9 @@ return [
     ],
 
     'facebook' => [
-        'client_id' => "",
-        'client_secret' => "",
-        'redirect' => "",
+        'client_id' => "7456487857722920",
+        'client_secret' => "df08dd625700dc4a7c21cdd19b2bd264",
+        'redirect' => "https://ottm.gizmodz.shop/oauth/facebook/callback",
     ],
     
 

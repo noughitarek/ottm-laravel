@@ -11,7 +11,7 @@ class TokensValidityCheckCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:tokens-validity-check-command';
+    protected $signature = 'app:tokens-validity-check';
 
     /**
      * The console command description.

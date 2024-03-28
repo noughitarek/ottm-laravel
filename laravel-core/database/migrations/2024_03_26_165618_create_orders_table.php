@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('phone2')->nullable();
             $table->string('address');
+            $table->text('description');
             $table->unsignedBigInteger('commune');
             $table->foreign('commune')->references('id')->on('communes');
             $table->integer('quantity')->default(1);
@@ -33,7 +34,6 @@ return new class extends Migration
             $table->unsignedBigInteger('desk')->nullable();
             $table->foreign('desk')->references('id')->on('desks');
             $table->string('conversation')->nullable();
-            $table->foreign('conversation')->references('id')->on('facebook_conversations');
             $table->timestamp('validated_at')->nullable();
             $table->timestamp('shipped_at')->nullable();
             $table->timestamp('wilaya_at')->nullable();

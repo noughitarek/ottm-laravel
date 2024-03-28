@@ -14,33 +14,28 @@ class ConversationsController extends Controller
      */
     public function index()
     {
-        $facebook_users = FacebookUser::with(['conversations.messages' => function ($query) {
-            $query->latest('created_at');
-        }])->get()->sortByDesc(function ($user) {
-            return optional($user->conversations->first())->messages->first()->created_at ?? null;
-        });
-        
-        $perPage = 20;
-        $currentPage = request()->query('page', 1);
-        $offset = ($currentPage - 1) * $perPage;
-        $items = $facebook_users->slice($offset, $perPage)->values();
-        $total = $facebook_users->count();
-        
-        $facebook_users = new \Illuminate\Pagination\LengthAwarePaginator($items, $total, $perPage, $currentPage);
-        $facebook_users->setPath(request()->url());
-        
-        $facebook_users->appends(request()->query())->links('pagination::bootstrap-4');
-        
-        $facebook_users->onEachSide(2);
-        
+        $facebook_users = FacebookUser::orderByDesc(
+            DB::raw('(
+                SELECT MAX(created_at) FROM facebook_messages
+                WHERE conversation = (
+                    SELECT facebook_conversation_id FROM facebook_conversations
+                    WHERE facebook_conversations.user = facebook_users.facebook_user_id
+                    ORDER BY created_at DESC
+                    LIMIT 1
+                )
+            )')
+        )->paginate(20)->onEachSide(2);
         return view('pages.conversations')->with('facebook_users' , $facebook_users);
     }
     /**
      * Display a listing of the resource.
      */
-    public function conversation(FacebookConversation $conversation)
+    public function conversation($conversation)
     {
-        
+        $conversation = FacebookConversation::where('facebook_conversation_id', $conversation)->first();
+        if(!$conversation){
+            return abort(404);
+        }
         return view('pages.conversation')->with('conversation' , $conversation);
     }
 }

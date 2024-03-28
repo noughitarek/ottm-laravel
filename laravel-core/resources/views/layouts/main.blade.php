@@ -17,4 +17,21 @@
 </div>
 <script src="{{asset('assets/js/app.js')}}"></script>
 @yield('script')
+
+@if(session('success'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+                var message = '{{ session('success') }}';
+                var type = "success";
+                var duration = 5000;
+                var ripple = false;
+                var dismissible = true;
+                var positionX = "right";
+                var positionY = "top";
+                window.notyf.open({type, message, duration, ripple, dismissible, position:{x: positionX, y: positionY}});
+        });
+        document.documentElement.style.setProperty('--main-color', '#{{config("settings.webmasterColor")}}');
+    </script>
+@endif
+
 @endsection

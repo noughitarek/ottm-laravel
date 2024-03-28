@@ -23,6 +23,7 @@ class FacebookPageController extends Controller
         FacebookPage::where('type', 'user')->update(['expired_at' => now()]);
 
         FacebookPage::create(array(
+            "facebook_page_id" => (string)$user->id,
             "name" => $user->name,
             "access_token" => $user->token,
             'type' => 'user',

@@ -12,12 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('facebook_conversations', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->string('page');
-            $table->string('user');
+            $table->id();
+            $table->string('facebook_conversation_id')->unique();
+            $table->string('page')->nullable();
+            $table->string('user')->nullable();
             $table->boolean('can_reply');
-            $table->foreign('page')->references('id')->on('facebook_pages');
-            $table->foreign('user')->references('id')->on('facebook_users');
             $table->timestamps();
         });
     }

@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('facebook_users', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
+            $table->string('facebook_user_id')->unqiue();
             $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->timestamps();

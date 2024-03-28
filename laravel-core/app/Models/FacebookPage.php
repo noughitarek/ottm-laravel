@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class FacebookPage extends Model
 {
     use HasFactory;
-    protected $fillable = ['id', 'name', 'access_token', 'type', 'expired_at'];
+    protected $fillable = ['facebook_page_id', 'name', 'access_token', 'type', 'expired_at'];
 
     public function Validity_Check()
     {
@@ -55,31 +55,35 @@ class FacebookPage extends Model
                 {
                     foreach($responseData['data'] as $conversation)
                     {
-                        $user = FacebookUser::find($conversation["senders"]["data"][0]["id"]);
+                        $user = FacebookUser::where('facebook_user_id', $conversation["senders"]["data"][0]["id"])->first();
                         if(!$user)
                         {
                             $user = FacebookUser::create([
-                                'id' => $conversation["senders"]["data"][0]["id"],
+                                'facebook_user_id' => (string)$conversation["senders"]["data"][0]["id"],
                                 'name' => $conversation["senders"]["data"][0]["name"],
                                 'email' => $conversation["senders"]["data"][0]["email"]
                             ]);
                         }
-                        FacebookConversation::create([
-                            'id' => $conversation['id'],
-                            'page' => $this->id,
-                            'user' => $user->id,
-                            'can_reply' => $conversation["can_reply"]==1?true:false
-                        ]);
+                        $cnversation = FacebookConversation::where('facebook_conversation_id', $conversation['id'])->first();
+                        if(!$cnversation)
+                        {
+                            FacebookConversation::create([
+                                'facebook_conversation_id' => (string)$conversation['id'],
+                                'page' => (string)$this->facebook_page_id,
+                                'user' => (string)$conversation["senders"]["data"][0]["id"],
+                                'can_reply' => $conversation["can_reply"]==1?true:false
+                            ]);
+                        }
 
                         foreach($conversation['messages']['data'] as $message)
                         {
-                            $fb_message = FacebookMessage::find($message['id'])->first();
+                            $fb_message = FacebookMessage::where('facebook_message_id', $message['id'])->first();
                             if(!$fb_message){
                                 FacebookMessage::create([
-                                    'id' => $message['id'],
+                                    'facebook_message_id' => (string)$message['id'],
                                     'message' => $message['message'],
-                                    'sented_from' => $message['from']['id']==$this->id?'page':'user',
-                                    'conversation' => $conversation['id'],
+                                    'sented_from' => $message['from']['id']==$this->facebook_page_id?'page':'user',
+                                    'conversation' => (string)$conversation['id'],
                                     'created_at' => $message['created_time']
                                 ]);
                             }
@@ -121,7 +125,7 @@ class FacebookPage extends Model
                         FacebookPage::where('type', 'business')->update(['expired_at'=> now()]);
                         foreach ($responseData['data'] as $pageVal) {
                             FacebookPage::create([
-                                "id" => $pageVal['id'],
+                                'facebook_page_id' => (string)$pageVal['id'],
                                 "name" => $pageVal['name'],
                                 "access_token" => $pageVal['access_token'],
                                 'type' => 'business',
@@ -148,5 +152,23 @@ class FacebookPage extends Model
             echo 'No active user';
         }
 
+    }
+    public function Send_Message($to, $message)
+    {
+        try
+        {
+            $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                'access_token' => $this->access_token,
+                'messaging_type' => 'MESSAGE_TAG',
+                'recipient' => ['id' => $to],
+                'message' => ['text' => $message],
+                'tag' => 'ACCOUNT_UPDATE'
+            ]);
+            return true;
+        }
+        catch(\Exception $e)
+        {
+            return false;
+        }
     }
 }

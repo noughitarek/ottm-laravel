@@ -12,7 +12,7 @@ class GetConversationsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:get-conversations-command';
+    protected $signature = 'app:get-conversations';
 
     /**
      * The console command description.
