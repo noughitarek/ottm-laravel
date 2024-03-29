@@ -124,12 +124,26 @@ class FacebookPage extends Model
                     {
                         FacebookPage::where('type', 'business')->update(['expired_at'=> now()]);
                         foreach ($responseData['data'] as $pageVal) {
-                            FacebookPage::create([
-                                'facebook_page_id' => (string)$pageVal['id'],
-                                "name" => $pageVal['name'],
-                                "access_token" => $pageVal['access_token'],
-                                'type' => 'business',
-                            ])->Get_Conversations();
+                            $fb_page = FacebookPage::where('facebook_page_id', (string)$pageVal['id'])->first();
+                            if(!$fb_page)
+                            {
+                                FacebookPage::create([
+                                    'facebook_page_id' => (string)$pageVal['id'],
+                                    "name" => $pageVal['name'],
+                                    "access_token" => $pageVal['access_token'],
+                                    'type' => 'business',
+                                ])->Get_Conversations();
+                            }
+                            else
+                            {
+                                $fb_page->update([
+                                    'facebook_page_id' => (string)$pageVal['id'],
+                                    "name" => $pageVal['name'],
+                                    "access_token" => $pageVal['access_token'],
+                                    'type' => 'business',
+                                    'expired_at' => null
+                                ]);   
+                            }
                         }
                     }
                     else

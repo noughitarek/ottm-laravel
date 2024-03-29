@@ -20,6 +20,11 @@ return [
         'recovering' => '',
         'back' => '',
         'back_Ready' => '',
-    ]
+    ],
 
+    "scheduler" => [
+        "conversations" => false,
+        "orders_states_check" => false,
+        "tokens_validity_check" => false,
+    ]
 ];

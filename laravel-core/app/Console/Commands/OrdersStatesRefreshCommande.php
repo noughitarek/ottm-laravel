@@ -26,6 +26,8 @@ class OrdersStatesRefreshCommande extends Command
      */
     public function handle()
     {
+        if(!config('settings.scheduler.orders_states_check'))
+            exit;
         #Order::Save_orders();
         $orders = Order::orderBy('updated_at', 'asc')->get();
         $ordersToUpdate = [];

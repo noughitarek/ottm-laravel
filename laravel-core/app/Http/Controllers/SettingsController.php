@@ -15,6 +15,7 @@ class SettingsController extends Controller
     {
         foreach($request->all() as $path=>$content)
         {
+            if($path == "_token") continue;
             $setting = Setting::where('path', $path)->first();
             if(!$setting){
                 $setting = Setting::create([

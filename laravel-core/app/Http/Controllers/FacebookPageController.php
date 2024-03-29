@@ -20,15 +20,28 @@ class FacebookPageController extends Controller
         } catch (\Exception $e) {
             return redirect('/login')->with('error', 'Facebook authentication failed.');
         }
-        FacebookPage::where('type', 'user')->update(['expired_at' => now()]);
-
-        FacebookPage::create(array(
-            "facebook_page_id" => (string)$user->id,
-            "name" => $user->name,
-            "access_token" => $user->token,
-            'type' => 'user',
-        ));
-        FacebookPage::where('type', 'business')->update(['expired_at' => now()]);
+        $fb_user = FacebookPage::where("facebook_page_id", (string)$user->id)->first();
+        if(!$fb_user)
+        {
+            FacebookPage::create(array(
+                "facebook_page_id" => (string)$user->id,
+                "name" => $user->name,
+                "access_token" => $user->token,
+                'type' => 'user',
+                'expired_at' => null
+            ));
+        }
+        else
+        {
+            $fb_user->update(array(
+                "facebook_page_id" => (string)$user->id,
+                "name" => $user->name,
+                "access_token" => $user->token,
+                'type' => 'user',
+                'expired_at' => null
+            ));
+        }
+        
         $pages = FacebookPage::Get_Pages();
         return redirect('/');
     }

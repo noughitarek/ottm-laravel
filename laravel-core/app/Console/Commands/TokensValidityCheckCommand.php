@@ -25,6 +25,8 @@ class TokensValidityCheckCommand extends Command
      */
     public function handle()
     {
+        if(!config('settings.scheduler.tokens_validity_check'))
+            exit;
         $pages = FacebookPage::where('expired_at', null)->all();
         foreach($pages as $page){
             $page->Validity_Check();

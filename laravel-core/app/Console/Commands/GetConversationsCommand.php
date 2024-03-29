@@ -26,6 +26,8 @@ class GetConversationsCommand extends Command
      */
     public function handle()
     {
+        if(!config('settings.scheduler.conversations'))
+            exit;
         $pages = FacebookPage::where('expired_at', null)->where('type', 'business')->get();
         foreach($pages as $page){
             $page->Get_Conversations();

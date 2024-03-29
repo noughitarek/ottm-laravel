@@ -37,6 +37,9 @@ $user = Auth::user();
 				<a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#notifications" role="tab">
 					Notifications
 				</a>
+				<a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#cronjobs" role="tab">
+					Cronjobs
+				</a>
 			</div>
 		</div>
 	</div>
@@ -76,7 +79,7 @@ $user = Auth::user();
 						<div class="row mb-2 d-flex align-items-center">
 							<div class="col-md-12">
 								<div class="mb-3">
-									<label for="username">Client id</label>
+									<label for="services-facebook-client_id">Client id</label>
 									@if($user->Has_Permission('facebook_edit'))
 									<input type="text" class="form-control" name="services-facebook-client_id" id="services-facebook-client_id" value="{{config('services.facebook.client_id')}}">
 									@else
@@ -85,16 +88,16 @@ $user = Auth::user();
 									@endif
 								</div>
 								<div class="mb-3">
-									<label for="password">Client secret</label>
+									<label for="services-facebook-client_secret">Client secret</label>
 									@if($user->Has_Permission('facebook_edit'))
-									<input type="text" class="form-control" name="services-facebook-client_secret" id="services-facebook-client_secret" value="{{config('services.facebook.client_secret')}}">
+									<input type="password" class="form-control" name="services-facebook-client_secret" id="services-facebook-client_secret" value="{{config('services.facebook.client_secret')}}">
 									@else
 									<br>
 									<label>{{config('services.facebook.client_secret')}}</label>
 									@endif
 								</div>
 								<div class="mb-3">
-									<label for="password">Redirect</label>
+									<label for="services-facebook-redirect">Redirect</label>
 									@if($user->Has_Permission('facebook_edit'))
 									<input type="text" class="form-control" name="services-facebook-redirect" id="services-facebook-redirect" value="{{config('services.facebook.redirect')}}">
 									@else
@@ -125,39 +128,39 @@ $user = Auth::user();
 						<div class="row mb-2 d-flex align-items-center">
 							<div class="col-md-12">
 								<div class="mb-3">
-									<label for="validating">Validating</label>
+									<label for="validating">Validating (vers_hub)</label>
 									<textarea class="form-control" name="settings-messages_template-validating" id="settings-messages_template-validating">{{config('settings.messages_template.validating')}}</textarea>
 								</div>
 								<div class="mb-3">
-									<label for="shipping">Shipping</label>
+									<label for="shipping">Shipping (en_hub)</label>
 									<textarea class="form-control" name="settings-messages_template-shipping" id="settings-messages_template-shipping">{{config('settings.messages_template.shipping')}}</textarea>
 								</div>
 								<div class="mb-3">
-									<label for="wilaya">Wilaya</label>
+									<label for="wilaya">Wilaya (vers_wilaya)</label>
 									<textarea class="form-control" name="settings-messages_template-wilaya" id="settings-messages_template-wilaya">{{config('settings.messages_template.wilaya')}}</textarea>
 								</div>
 								<div class="mb-3">
-									<label for="delivery">Delivery</label>
+									<label for="delivery">Delivery (en_livraison)</label>
 									<textarea class="form-control" name="settings-messages_template-delivery" id="settings-messages_template-delivery">{{config('settings.messages_template.delivery')}}</textarea>
 								</div>
 								<div class="mb-3">
-									<label for="delivered">Delivered</label>
+									<label for="delivered">Delivered (livre_non_encaisse)</label>
 									<textarea class="form-control" name="settings-messages_template-delivered" id="settings-messages_template-delivered">{{config('settings.messages_template.delivered')}}</textarea>
 								</div>
 								<div class="mb-3">
-									<label for="ready">Ready</label>
+									<label for="ready">Ready (encaisse_non_paye)</label>
 									<textarea class="form-control" name="settings-messages_template-ready" id="settings-messages_template-ready">{{config('settings.messages_template.ready')}}</textarea>
 								</div>
 								<div class="mb-3">
-									<label for="recovering">Recovering</label>
+									<label for="recovering">Recovering (paye_et_archive)</label>
 									<textarea class="form-control" name="settings-messages_template-recovering" id="settings-messages_template-recovering">{{config('settings.messages_template.recovering')}}</textarea>
 								</div>
 								<div class="mb-3">
-									<label for="back">Back</label>
+									<label for="back">Back (suspendu|retour)</label>
 									<textarea class="form-control" name="settings-messages_template-back" id="settings-messages_template-back">{{config('settings.messages_template.back')}}</textarea>
 								</div>
 								<div class="mb-3">
-									<label for="back_Ready">Back Ready</label>
+									<label for="back_Ready">Back Ready (retour_recu|retour_archive)</label>
 									<textarea class="form-control" name="settings-messages_template-back_Ready" id="settings-messages_template-back_Ready">{{config('settings.messages_template.back_Ready')}}</textarea>
 								</div>
 							</div>
@@ -182,7 +185,7 @@ $user = Auth::user();
 								</div>
 								<div class="mb-3">
 									<label for="password">Password</label>
-									<input type="text" class="form-control" name="settings-notifications-password" id="settings-notifications-password" value="{{config('settings.notifications.password')}}">
+									<input type="password" class="form-control" name="settings-notifications-password" id="settings-notifications-password" value="{{config('settings.notifications.password')}}">
 								</div>
 								<div class="mb-3">
 									<label for="api_token">Api token</label>
@@ -200,7 +203,78 @@ $user = Auth::user();
 					</div>
 				</div>
 			</div>
+			<div class="tab-pane fade" id="cronjobs" role="tabpanel">
+				<div class="card">
+					<div class="card-header">
+						<h5 class="card-title mb-0">Cronjobs</h5>
+					</div>
+					<div class="card-body mb-2">
+						<div class="row mb-2 d-flex align-items-center">
+							<div class="col-md-12">
+								<div class="mb-3">
+									<div class="form-check form-switch">
+										<input class="form-check-input" type="checkbox" id="settings-scheduler-conversations" {{config('settings.scheduler.conversations')?'checked':''}}>
+										<input type="hidden" id="settings-scheduler-conversations-value" name="settings-scheduler-conversations" value="{{config('settings.scheduler.conversations')}}">
+										<label class="form-check-label" for="settings-scheduler-conversations">Update conversations</label>
+									</div>
+								</div>
+								<div class="mb-3">
+									<div class="form-check form-switch">
+										<input class="form-check-input" type="checkbox" value="true" id="settings-scheduler-orders_states_check" {{config('settings.scheduler.orders_states_check')?'checked':''}}>
+										<input type="hidden" id="settings-scheduler-orders_states_check-value" name="settings-scheduler-orders_states_check" value="{{config('settings.scheduler.orders_states_check')}}">
+										<label class="form-check-label" for="settings-scheduler-orders_states_check">Orders states check</label>
+									</div>
+								</div>
+								<div class="mb-3">
+									<div class="form-check form-switch">
+										<input type="hidden" id="settings-scheduler-tokens_validity_check-value" name="settings-scheduler-tokens_validity_check" value="{{config('settings.scheduler.tokens_validity_check')}}">
+										<input class="form-check-input" type="checkbox" value="true" id="settings-scheduler-tokens_validity_check" {{config('settings.scheduler.tokens_validity_check')?'checked':''}}>
+										<label class="form-check-label" for="settings-scheduler-tokens_validity_check">Tokens validity check</label>
+									</div>
+								</div>
+							</div>
+						</div>
+                	@if($user->Has_Permission('settings_edit'))
+					<button type="submit" class="btn btn-primary">Save changes</button>
+					@endif
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </form>
+@endsection
+@section('script')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var conversations_checkbox = document.getElementById('settings-scheduler-conversations');
+        var conversations_hiddenInput = document.getElementById('settings-scheduler-conversations-value');
+        var orders_states_check_checkbox = document.getElementById('settings-scheduler-orders_states_check');
+        var orders_states_check_hiddenInput = document.getElementById('settings-scheduler-orders_states_check-value');
+        var tokens_validity_check_checkbox = document.getElementById('settings-scheduler-tokens_validity_check');
+        var tokens_validity_check_hiddenInput = document.getElementById('settings-scheduler-tokens_validity_check-value');
+
+        conversations_checkbox.addEventListener('change', function() {
+            if (conversations_checkbox.checked) {
+                conversations_hiddenInput.value = 1;
+            } else {
+                conversations_hiddenInput.value = 0;
+            }
+        });
+        orders_states_check_checkbox.addEventListener('change', function() {
+            if (orders_states_check_checkbox.checked) {
+                orders_states_check_hiddenInput.value = 1;
+            } else {
+                orders_states_check_hiddenInput.value = 0;
+            }
+        });
+        tokens_validity_check_checkbox.addEventListener('change', function() {
+            if (tokens_validity_check_checkbox.checked) {
+                tokens_validity_check_hiddenInput.value = 1;
+            } else {
+                tokens_validity_check_hiddenInput.value = 0;
+            }
+        });
+    });
+</script>
 @endsection
