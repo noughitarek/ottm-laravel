@@ -5,6 +5,7 @@ use App\Http\Controllers\DeskController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\StockController;
 use App\Http\Controllers\WilayaController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -60,6 +61,12 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::post('', "store")->middleware('permission:users_create')->name('users_create');
         Route::put('{user}/edit', "update")->middleware('permission:users_edit')->name('users_edit');
         Route::delete('{user}/delete', "destroy")->middleware('permission:users_delete')->name('users_delete');
+    });
+    Route::middleware('permission:stock_consult')->prefix("stock")->controller(StockController::class)->group(function(){
+        Route::get('', "index")->name('stock');
+        Route::post('', "store")->middleware('permission:stock_create')->name('stock_create');
+        Route::put('{stock}/edit', "update")->middleware('permission:stock_edit')->name('stock_edit');
+        Route::delete('{stock}/delete', "destroy")->middleware('permission:stock_delete')->name('stock_delete');
     });
     Route::middleware('permission:settings_consult')->prefix("settings")->controller(SettingsController::class)->group(function(){
         Route::get('', "index")->name('settings');

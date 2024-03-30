@@ -8,7 +8,7 @@ $user = Auth::user();
   <div class="card flex-fill">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="card-title mb-0">Users</h5>
-      @if($user->Has_Permission('users_edit'))
+      @if($user->Has_Permission('users_create'))
       <button data-bs-toggle="modal" data-bs-target="#createUser" class="btn btn-primary" > Create a user </button>
       @endif
     </div>

@@ -45,8 +45,8 @@ class FacebookPage extends Model
         {
             $response = Http::get('https://graph.facebook.com/me/conversations', [
                 'access_token' => $this->access_token,
-                'limit' => 100,
-                'fields' => 'can_reply,senders,messages.limit(1000){id,message,created_time,from,to}',
+                'limit' => config('settings.limits.conversations'),
+                'fields' => 'can_reply,senders,messages.limit('.config('settings.limits.message_per_conversation').'){id,message,created_time,from,to}',
             ]);
             if ($response->successful())
             {

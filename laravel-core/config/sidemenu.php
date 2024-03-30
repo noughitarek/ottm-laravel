@@ -26,7 +26,7 @@ return array(
         "route" => "wilayas",
         "icon" => array("type" => "feather", "content" => "map"),
     ),
-    array("type" => "text", "content"=> "Orders", "permissions" => ["products_consult", "conversations_consult", ["orders_consult", "orders_restricted_consult"]]),
+    array("type" => "text", "content"=> "Orders", "permissions" => ["products_consult", "conversations_consult", ["orders_consult", "orders_restricted_consult"], "stock_consult"]),
     
     array(
         "type" => "link",
@@ -95,6 +95,14 @@ return array(
                 "route" => "orders_archived",
             ),
         )
+    ),
+    array(
+        "type" => "link",
+        "content" => "Stock",
+        "permissions" => "stock_consult",
+        "section" => "stock",
+        "route" => "stock",
+        "icon" => array("type" => "feather", "content" => "clipboard"),
     ),
     array("type" => "text", "content"=> "Administration", "permissions" => ["users_consult", "settings_consult"]),
     array(

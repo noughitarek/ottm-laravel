@@ -22,6 +22,7 @@ $user = Auth::user();
           <tr>
             <th class="d-xl-table-cell">Product</th>
             <th class="d-xl-table-cell">Orders</th>
+            <th class="d-xl-table-cell">Stock</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -37,6 +38,9 @@ $user = Auth::user();
                     <span class="text-primary">0</span> |
                     <span class="text-success">0</span> |
                     <span class="text-danger">0</span> 
+                </td>
+                <td>
+                  {{$product->Stock()}}
                 </td>
                 <td>
                 

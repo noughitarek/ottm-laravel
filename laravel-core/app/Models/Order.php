@@ -272,7 +272,6 @@ class Order extends Model
         })
         ->orderBy('created_at', 'desc');
     }
-    
     public function After_Validating()
     {
         if(config('settings.messages_template.validating') == ''){

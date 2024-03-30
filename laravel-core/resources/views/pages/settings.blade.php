@@ -61,6 +61,14 @@ $user = Auth::user();
 									<label class="form-label" for="title">Title</label>
 									<input type="text" class="form-control" name="settings-title" id="settings-title" value="{{config('settings.title')}}">
 								</div>
+								<div class="mb-3">
+									<label class="form-label" for="title">Conversations limit</label>
+									<input type="text" class="form-control" name="settings-limits-conversations" id="settings-limits-conversations" value="{{config('settings.limits.conversations')}}">
+								</div>
+								<div class="mb-3">
+									<label class="form-label" for="title">Message per conversation limit</label>
+									<input type="text" class="form-control" name="settings-limits-message_per_conversation" id="settings-limits-message_per_conversation" value="{{config('settings.limits.message_per_conversation')}}">
+								</div>
 							</div>
 						</div>
                         @if($user->Has_Permission('settings_edit'))

@@ -26,5 +26,10 @@ return [
         "conversations" => false,
         "orders_states_check" => false,
         "tokens_validity_check" => false,
-    ]
+    ],
+
+    "limits" => [
+        'conversations' => 100,
+        'message_per_conversation' => 1000,
+    ] 
 ];
