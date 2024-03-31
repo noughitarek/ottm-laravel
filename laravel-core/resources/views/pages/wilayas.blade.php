@@ -13,7 +13,7 @@ $user = Auth::user();
         <h5 class="card-title mb-0">Wilayas</h5>
         @if($user->Has_Permission('wilayas_edit'))
         <div>
-        <button type="submit" class="btn btn-success" > Auto Update prices (API) </button>
+        <a href="{{route('wilayas_auto_edit')}}" class="btn btn-success" > Auto Update prices (API) </a>
         <button type="submit" class="btn btn-primary" > Save </button>
         </div>
         @endif

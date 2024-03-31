@@ -38,4 +38,13 @@ class ConversationsController extends Controller
         }
         return view('pages.conversation')->with('conversation' , $conversation);
     }
+
+    public function sendmessage(Request $request, $conversation)
+    {
+        $conversation = FacebookConversation::where('facebook_conversation_id', $conversation)->first();
+        $conversation->Send_Message($request->message);
+        return back()->with("success", "Message has been sented successfully");
+
+
+    }
 }

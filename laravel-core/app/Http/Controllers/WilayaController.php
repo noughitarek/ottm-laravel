@@ -33,6 +33,15 @@ class WilayaController extends Controller
                 'desk' => $wilaya['desk']??null
             ]);
         }
-        return back()->with("success", "Wilaya has been updated successfully");
+        return back()->with("success", "Wilayas has been updated successfully");
+    }
+
+    public function auto_update()
+    {
+        foreach(Desk::all() as $desk)
+        {
+            $desk->Update_API();
+        }
+        return back()->with("success", "Wilayas has been updated successfully");
     }
 }

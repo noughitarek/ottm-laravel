@@ -29,6 +29,7 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     Route::middleware('permission:wilayas_consult')->prefix("wilayas")->controller(WilayaController::class)->group(function(){
         Route::get('', "index")->name('wilayas');
         Route::put('edit', "update")->middleware('permission:wilayas_edit')->name('wilayas_edit');
+        Route::get('edit/auto', "auto_update")->middleware('permission:wilayas_edit')->name('wilayas_auto_edit');
     });
     Route::middleware('permission:products_consult')->prefix("products")->controller(ProductController::class)->group(function(){
         Route::get('', "index")->name('products');
@@ -38,6 +39,7 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     });
     Route::middleware('permission:conversations_consult')->prefix("conversations")->controller(ConversationsController::class)->group(function(){
         Route::get('', "index")->name('conversations');
+        Route::post('{conversation}', "sendmessage")->name('conversations_sendmessage');
         Route::get('{conversation}', "conversation")->name('conversations_conversation');
     });
     Route::middleware('permission:orders_restricted_consult')->prefix("orders")->controller(OrderController::class)->group(function(){

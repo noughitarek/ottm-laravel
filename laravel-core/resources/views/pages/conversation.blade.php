@@ -55,10 +55,13 @@ $user = Auth::user();
           </div>
         </div>
         <div class="flex-grow-0 py-3 px-4 border-top">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Type your message">
-            <button class="btn btn-primary">Send</button>
-          </div>
+          <form method="POST" action="{{route('conversations_sendmessage', $conversation->facebook_conversation_id)}}">
+            @csrf
+            <div class="input-group">
+              <input type="text" name="message" class="form-control" placeholder="Type your message">
+              <button class="btn btn-primary">Send</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
