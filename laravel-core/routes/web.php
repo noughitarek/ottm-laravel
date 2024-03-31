@@ -82,6 +82,7 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::get('/documentation', [PageController::class, 'documentation'])->name('documentation');
 });
 
 Route::middleware('guest')->group(function () {
@@ -90,5 +91,3 @@ Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 });
-
-Route::get('privacy-policy', [PageController::class, 'privacy_policy'])->name('privacy_policy');

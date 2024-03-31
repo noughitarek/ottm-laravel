@@ -163,7 +163,7 @@
           <a class="dropdown-item" href="{{route('settings')}}">
             <i class="align-middle me-1" data-feather="settings"></i> Settings & Privacy 
           </a>
-          <a class="dropdown-item" href="#">
+          <a class="dropdown-item" href="{{route('documentation')}}">
             <i class="align-middle me-1" data-feather="help-circle"></i> Help Center 
           </a>
           <div class="dropdown-divider"></div>

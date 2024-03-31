@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-    public function privacy_policy()
+    public function documentation()
     {
-        return view('privacy-policy');
+        return view('pages.documentation');
     }
 }

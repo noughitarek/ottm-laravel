@@ -115,7 +115,7 @@ class OrderController extends Controller
             )')
         )->get();
         $products = Product::all();
-        $wilayas = Wilaya::all();
+        $wilayas = Wilaya::where('desk', "!=", null)->get();
         return view('pages.orders.create')->with('products', $products)->with('wilayas', $wilayas)->with('conversations', $conversations);
     }
 
@@ -135,7 +135,7 @@ class OrderController extends Controller
                 )
             )')
         )->get();
-        $wilayas = Wilaya::all();
+        $wilayas = Wilaya::where('desk', "!=", null)->get();
         return view('pages.orders.create')->with('product', $product)->with('wilayas', $wilayas)->with('conversations', $conversations);
     }
 
@@ -145,7 +145,7 @@ class OrderController extends Controller
     public function create_from_conversation(FacebookUser $conversation)
     {
         $products = Product::all();
-        $wilayas = Wilaya::all();
+        $wilayas = Wilaya::where('desk', "!=", null)->get();
         return view('pages.orders.create')->with('products', $products)->with('wilayas', $wilayas)->with('conversation', $conversation);
     }
     
