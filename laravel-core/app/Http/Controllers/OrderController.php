@@ -7,6 +7,7 @@ use App\Models\Wilaya;
 use App\Models\Commune;
 use App\Models\Product;
 use App\Models\FacebookUser;
+use App\Models\OrderProducts;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -155,7 +156,6 @@ class OrderController extends Controller
     public function store(StoreOrderRequest $request)
     {
         $order = Order::create([
-            'product' => $request->input('product'),
             'name' => $request->input('name'),
             'phone' => $request->input('phone'),
             'phone2' => $request->input('phone2'),
@@ -164,7 +164,6 @@ class OrderController extends Controller
             'address' => $request->input('address'),
             'fragile' => $request->has('fragile'),
             'stopdesk' => $request->has('stopdesk'),
-            'quantity' => $request->input('quantity'),
             'description' => $request->input('description'),
             'total_price' => $request->input('total_price'),
             'delivery_price' => $request->input('delivery_price'),
@@ -174,6 +173,14 @@ class OrderController extends Controller
             'IP' => $_SERVER['REMOTE_ADDR'],
             'conversation' => $request->input('conversation'),
         ]);
+        foreach($request->products as $product){
+            if(!isset($product['id']) || $product['id']==null)continue;
+            OrderProducts::create([
+                'order' => $order->id,
+                'product' => $product['id'],
+                'quantity' => $product['quantity']??1,
+            ]);
+        }
         if($request->has('add_to_ecotrack'))
         {
             $order->Add_To_Ecotrack();

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Commune;
 use App\Models\Product;
+use App\Models\OrderProducts;
 use App\Models\FacebookConversation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,7 +29,7 @@ class Order extends Model
 
     public function Product()
     {
-        return Product::find($this->product);
+        return OrderProducts::where('order', $this->id)->get();
     }
 
     public function Desk()
@@ -58,7 +59,6 @@ class Order extends Model
             'stop_desk' => $this->stopdesk,
             'montant' => $this->total_price,
             'remarque' => $this->description,
-            'produit' => $this->Product()->slug,
             'type' => 1,
             'api_token' => $this->Desk()->ecotrack_token
         );

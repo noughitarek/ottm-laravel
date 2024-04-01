@@ -13,6 +13,9 @@ $user = Auth::user();
     </div>
   </div>
 
+  @foreach ($errors->all() as $title=>$error)
+                <li>{{ $title.'-'.$error }}</li>
+            @endforeach
 <form method="POST" action="{{route('orders_create')}}">
 @csrf
   <div class="col-12 col-lg-12 col-xxl-12 d-flex">
@@ -36,24 +39,6 @@ $user = Auth::user();
           </select>
           @endif
           @error('conversation')
-            <div class="text-danger">{{ $message }}</div>
-          @enderror
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Product <span class="text-danger">*</span></label>
-          @if(isset($product))
-            <br>{{$product->name}}
-            <input type="hidden" name="product" value="{{$product->id}}">
-            <b><a href="{{route('orders_create')}}" class="text-danger">X</a></b>
-          @else
-          <select name="product" class="form-control product-select" required>
-              <option value disabled selected>Select the product</option>
-              @foreach($products as $productSelect)
-              <option {{ old('product')==$productSelect->id?'selected':'' }} value="{{$productSelect->id}}">{{$productSelect->name}}</option>
-              @endforeach
-          </select>
-          @endif
-          @error('product')
             <div class="text-danger">{{ $message }}</div>
           @enderror
         </div>
@@ -147,25 +132,51 @@ $user = Auth::user();
   </div>
   <div class="col-12 col-lg-12 col-xxl-12 d-flex">
     <div class="card flex-fill">
-      <div class="card-header">
+      <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title">Pricing information</h5>
+        <button type="button" id="moreProducts" class="btn btn-primary">More products</button>
       </div>
       <div class="card-body">
-        <div class="row">
-          <div class="mb-3 col-md-6">
-            <label class="form-label">Quantity <span class="text-danger">*</span></label>
-            <input name="quantity" type="number" min="1" class="form-control" value="{{old('quantity')}}" required>
-            @error('quantity')
-              <div class="text-danger">{{ $message }}</div>
-            @enderror
+        <div id="productsRows">
+          @foreach($products as $productIndex=>$productRow)
+          <div class="row productsRow {{$productIndex!=0?'d-none':''}}" id="product-{{$productIndex}}">
+            <div class="mb-3 col-md-6">
+              @if(isset($product))
+              <label class="form-label">Product <span class="text-danger">*</span></label>
+                <br>{{$product->name}}
+                <input type="hidden" name="products[{{$productIndex}}][id]" value="{{$product->id}}">
+                <b><a href="{{route('orders_create')}}" class="text-danger">X</a></b>
+              @else
+              <label class="form-label">Product <span class="text-danger">*</span></label>
+              <select name="products[{{$productIndex}}][id]" class="form-control product-select" {{$productIndex==0?'required':''}}>
+                  <option value disabled selected>Select the product</option>
+                  @foreach($products as $productSelect)
+                  <option value="{{$productSelect->id}}">{{$productSelect->name}}</option>
+                  @endforeach
+              </select>
+              @endif
+            </div>
+            <div class="mb-3 col-md-5">
+              <label class="form-label">Quantity <span class="text-danger">*</span></label>
+              <input name="products[{{$productIndex}}][quantity]" type="number" min="1" class="form-control" value="{{old('quantity')}}">
+            </div>
+            <div class="mb-3 col-md-1">
+              <label class="form-label"></label>
+              <button type="button" row-id="{{$productIndex}}" class="btn btn-danger w-100 removeButton" {{$productIndex==0?'disabled':''}}>X</button>
+            </div>
           </div>
-          <div class="mb-3 col-md-6">
-            <label class="form-label">Total price <span class="text-danger">*</span></label>
-            <input name="total_price" id="total_price" type="number" min="0" value="{{old('total_price')}}" class="form-control" required>
-            @error('total_price')
-              <div class="text-danger">{{ $message }}</div>
-            @enderror
-          </div>
+          @endforeach
+          @error('products')
+            <div class="text-danger">{{ $message }}</div>
+          @enderror
+        </div>
+          
+        <div class="mb-3">
+          <label class="form-label">Total price <span class="text-danger">*</span></label>
+          <input name="total_price" id="total_price" type="number" min="0" value="{{old('total_price')}}" class="form-control" required>
+          @error('total_price')
+            <div class="text-danger">{{ $message }}</div>
+          @enderror
         </div>
         <!--
         <div class="mb-3">
@@ -239,6 +250,8 @@ $user = Auth::user();
 
 </script>
 <script>
+    var product = 1
+    var productsRows = document.getElementById('productsRows');
     function updateCommunes(){
         var selectedWilayaId = document.getElementById('wilaya').value;
         var communeSelect = document.getElementById('commune');
@@ -304,12 +317,31 @@ $user = Auth::user();
               stopdesk_checkbox.disabled = true;
             });
     }
+    function lessProduct(id)
+    {
+      var toshowElem = document.getElementById("product-"+id);
+      toshowElem.classList.add('d-none')
+    }
     document.getElementById('wilaya').addEventListener('change', function() {
         updateCommunes()
         updateDelvieryPrice()
         updatePrices()
         updateStopdesk()
     });
+    document.getElementById('moreProducts').addEventListener('click', function() {
+      var toshowElem = document.querySelector('.productsRow.d-none');
+      toshowElem.classList.remove('d-none')
+    });
+    document.querySelectorAll('.removeButton').forEach((button) => {
+      button.addEventListener('click', function() {
+          var rowId = button.getAttribute('row-id');
+          var tohideElem = document.getElementById("product-"+rowId);
+          tohideElem.classList.add('d-none')
+      });
+    });
+
+
+
     document.getElementById('total_price').addEventListener('input', updatePrices);
     document.getElementById('delivery_price').addEventListener('input', updatePrices);
 </script>

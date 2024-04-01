@@ -50,14 +50,15 @@ $user = Auth::user();
               <p>
                 <i class="align-middle me-2 fas fa-fw fa-map-pin"></i> {{$order->address}}<br>
                 <i class="align-middle me-2 fas fa-fw fa-map"></i> {{$order->Commune()->name}} - {{$order->Commune()->Wilaya()->name}}<br>
-                <i class="align-middle me-2 fas fa-fw fa-globe"></i> {{$order->ip}}
+                <i class="align-middle me-2 fas fa-fw fa-globe"></i> {{$order->IP}}
               </p>
             </td>
             <td class="d-xl-table-cell single-line">
               <p>
                 <i class="align-middle me-2 fas fa-fw fa-user-cog"></i> {{$order->Created_by()->name}}<br>
-                <i class="align-middle me-2 fas fa-fw fa-box"></i> {{$order->Product()->name}}<br>  
-                <i class="align-middle me-2 fas fa-fw fa-boxes"></i> {{$order->quantity}}<br>
+                @foreach($order->Product() as $product)
+                <i class="align-middle me-2 fas fa-fw fa-box"></i> {{$product->quantity.' X '.$product->Product()->name}}<br>  
+                @endforeach
                 <i class="align-middle me-2 fas fa-fw fa-pallet"></i>
                 <span class="badge bg-success">
                   {{$order->State()}}
