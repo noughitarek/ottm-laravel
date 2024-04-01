@@ -46,7 +46,7 @@ class Order extends Model
     public function Add_To_Ecotrack()
     {
         $data = array(
-            'referece' => $this->intern_tracking,
+            'reference' => $this->intern_tracking,
             'nom_client' => $this->name,
             'telephone' => preg_replace("/[^0-9]/", "", $this->phone),
             'telephone_2' => preg_replace("/[^0-9]/", "", $this->phone2),

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Wilaya extends Model
 {
     use HasFactory;
-    protected $fillable = ['name_ar', 'delivery_price', 'desk'];
+    protected $fillable = ['name_ar', 'delivery_price', 'desk', 'stopdesk'];
     public function Desk()
     {
         if($this->desk != null)

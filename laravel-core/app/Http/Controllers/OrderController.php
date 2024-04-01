@@ -154,11 +154,6 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request)
     {
-        $timestamp = now()->timestamp;
-        $randomNumber = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
-        $uniqueNumber = $timestamp . $randomNumber;
-        $intern_tracking = str_pad($uniqueNumber, 14, '0', STR_PAD_RIGHT);
-
         $order = Order::create([
             'product' => $request->input('product'),
             'name' => $request->input('name'),
@@ -174,7 +169,7 @@ class OrderController extends Controller
             'total_price' => $request->input('total_price'),
             'delivery_price' => $request->input('delivery_price'),
             'clean_price' => $request->input('clean_price'),
-            'intern_tracking' => config("settings.id").$intern_tracking,
+            'intern_tracking' => $request->input('intern_tracking'),
             'created_by' => Auth::user()->id,
             'IP' => $_SERVER['REMOTE_ADDR'],
             'conversation' => $request->input('conversation'),

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('phone2')->nullable();
             $table->string('address');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->unsignedBigInteger('commune');
             $table->foreign('commune')->references('id')->on('communes');
             $table->integer('quantity')->default(1);
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->integer('delivery_price');
             $table->integer('clean_price');
             $table->string('tracking')->nullable();
-            $table->string('intern_tracking')->unique();
+            $table->string('intern_tracking');
             $table->string('IP')->nullable();
             $table->boolean('fragile')->default(0);
             $table->boolean('stopdesk')->default(0);

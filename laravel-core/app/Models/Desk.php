@@ -15,7 +15,7 @@ class Desk extends Model
     {
         return Wilaya::where('desk', $this->id)->get();
     }
-    public static function Update_API()
+    public function Update_API()
     {
         
         $apiUrl = $this->ecotrack_link."api/v1/get/fees";
@@ -41,8 +41,8 @@ class Desk extends Model
             $wilaya = Wilaya::find($wilayaData["wilaya_id"]);
             if($wilaya && $wilaya->desk == $this->id) {
                 $wilaya->update([
-                    "real_price" => $wilayaData["tarif"],
-                    "shown_price" => $wilayaData["tarif"]-300,
+                    "delivery_price" => $wilayaData["tarif"],
+                    "stopdesk" => $wilayaData["tarif_stopdesk"]!=0,
                 ]);
             }
         }

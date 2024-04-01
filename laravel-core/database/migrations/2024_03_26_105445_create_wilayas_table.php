@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('delivery_price')->default(0);
             $table->unsignedBigInteger('desk')->nullable();
             $table->foreign('desk')->references('id')->on('desks');
+            $table->boolean('stopdesk')->default(false);
             $table->timestamps();
         });
     }

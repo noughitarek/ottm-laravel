@@ -30,9 +30,11 @@ class WilayaController extends Controller
             $w->update([
                 'name_ar' => $wilaya['name_ar'],
                 'delivery_price' => $wilaya['delivery_price']??0,
-                'desk' => $wilaya['desk']??null
+                'desk' => $wilaya['desk']??null,
+                'stopdesk' => isset($wilaya['stopdesk'])
             ]);
         }
+        $this->auto_update();
         return back()->with("success", "Wilayas has been updated successfully");
     }
 

@@ -13,7 +13,6 @@ $user = Auth::user();
         <h5 class="card-title mb-0">Wilayas</h5>
         @if($user->Has_Permission('wilayas_edit'))
         <div>
-        <a href="{{route('wilayas_auto_edit')}}" class="btn btn-success" > Auto Update prices (API) </a>
         <button type="submit" class="btn btn-primary" > Save </button>
         </div>
         @endif
@@ -47,7 +46,7 @@ $user = Auth::user();
                 <td>
                     @if($user->Has_Permission('wilayas_edit'))
                     <label>Price :</label>
-                    <input type="text" class="form-control" value="{{$wilaya->delivery_price}}" name="wilayas[{{$wilaya->id}}][delivery_price]">
+                    <input type="text" class="form-control" value="{{$wilaya->delivery_price}}" name="wilayas[{{$wilaya->id}}][delivery_price]" disabled>
                     <label>Desk :</label>
                     <select class="form-control" name="wilayas[{{$wilaya->id}}][desk]">
                       <option value disabled selected>Select  the desk</a>
@@ -55,6 +54,8 @@ $user = Auth::user();
                       <option value="{{$desk->id}}" {{$desk->id==$wilaya->desk?"selected":""}}>{{$desk->name}}</option>
                       @endforeach
                     </select>
+                    <label>Desk :</label>
+                    <input type="checkbox" value="true" name="wilayas[{{$wilaya->id}}][stopdesk]" {{$wilaya->stopdesk?'checked':''}} disabled>
                     @else
                     <i class="align-middle me-2 fas fa-fw fa-dollar-sign"></i> {{$wilaya->delivery_price}}<br>
                     <i class="align-middle me-2 fas fa-fw fa-tv"></i> {{$wilaya->Desk()->name}}<br>
