@@ -11,6 +11,9 @@ return [
     'orders' => ['consult', 'restricted_consult', 'create', 'edit', 'restricted_edit', 'delete', 'restricted_delete'],
     'stock' => ['consult', 'create', 'edit', 'delete'],
 
+    'remarketing' => ['consult', 'create', 'edit', 'delete'],
+    'tracking' => ['consult', 'edit'],
+
     'users' => ['consult', 'create', 'edit', 'delete'],
     'settings' => ['consult', 'edit'],
 

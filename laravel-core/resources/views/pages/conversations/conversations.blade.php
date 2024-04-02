@@ -31,6 +31,8 @@ $user = Auth::user();
                     <a href="{{route('conversations_conversation', $facebook_user->Conversation()->facebook_conversation_id)}}"><i class="align-middle me-2 fas fa-fw fa-hashtag"></i> {{$facebook_user->facebook_user_id}}</a><br>
                     <i class="align-middle me-2 fas fa-fw fa-user"></i> {{$facebook_user->name}}<br>
                     <i class="align-middle me-2 fas fa-fw fa-at"></i> {{$facebook_user->email}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-calendar"></i> {{$facebook_user->Conversation()->Messages()->first()->created_at}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-calendar-plus"></i> {{$facebook_user->Conversation()->Messages()->last()->created_at}}<br>
                 </td>
                 <td>
                     <i class="align-middle me-2 fas fa-fw fa-user-cog"></i> {{$facebook_user->Conversation()->Page()->name}}<br>

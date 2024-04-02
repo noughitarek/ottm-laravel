@@ -104,6 +104,23 @@ return array(
         "route" => "stock",
         "icon" => array("type" => "feather", "content" => "clipboard"),
     ),
+    array("type" => "text", "content"=> "Tools", "permissions" => ["remarketing_consult", "tracking_consult"]),
+    array(
+        "type" => "link",
+        "content" => "OTTM",
+        "permissions" => "tracking_consult",
+        "section" => "tracking",
+        "route" => "tracking",
+        "icon" => array("type" => "feather", "content" => "compass"),
+    ),
+    array(
+        "type" => "link",
+        "content" => "RTM",
+        "permissions" => "remarketing_consult",
+        "section" => "remarketing",
+        "route" => "remarketing",
+        "icon" => array("type" => "feather", "content" => "volume-2"),
+    ),
     array("type" => "text", "content"=> "Administration", "permissions" => ["users_consult", "settings_consult"]),
     array(
         "type" => "link",

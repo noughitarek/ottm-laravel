@@ -24,9 +24,7 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             'products' => 'required|array|min:1',
-            'products.ids.*' => 'exists:products,id',
-
-
+            'products.id.*' => 'exists:products,id',
             'name' => 'required|string|max:255',
             'phone' => 'required|string|regex:/^0[5-7][0-9]{8}$/',
             'phone2' => 'nullable|string|regex:/^0[5-7][0-9]{8}$/',

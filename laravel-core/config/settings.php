@@ -1,7 +1,7 @@
 <?php
 return [
-    "id" => "OTTM",
-    "title" => "Order Tracking Tool for Messages",
+    "id" => "ITCEM",
+    "title" => "ITCentre - Ecommerce management",
     
     "notifications" =>[
         "username" => 'ottm',
@@ -26,6 +26,7 @@ return [
         "conversations" => false,
         "orders_states_check" => false,
         "tokens_validity_check" => false,
+        "remarketing_send" => false,
     ],
 
     "limits" => [

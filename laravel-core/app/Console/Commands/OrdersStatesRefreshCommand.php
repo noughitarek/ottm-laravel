@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Order;
 use Illuminate\Console\Command;
 
-class OrdersStatesRefreshCommande extends Command
+class OrdersStatesRefreshCommand extends Command
 {
     /**
      * The name and signature of the console command.

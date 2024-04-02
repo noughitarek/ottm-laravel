@@ -31,9 +31,6 @@ $user = Auth::user();
 					Facebook
 				</a>
 				@endif
-				<a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#messages" role="tab">
-					Message templates
-				</a>
 				<a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#notifications" role="tab">
 					Notifications
 				</a>
@@ -127,58 +124,6 @@ $user = Auth::user();
 				</div>
 			</div>
 			@endif
-			<div class="tab-pane fade" id="messages" role="tabpanel">
-				<div class="card">
-					<div class="card-header">
-						<h5 class="card-title mb-0">Notifications</h5>
-					</div>
-					<div class="card-body mb-2">
-						<div class="row mb-2 d-flex align-items-center">
-							<div class="col-md-12">
-								<div class="mb-3">
-									<label for="validating">Validating (vers_hub)</label>
-									<textarea class="form-control" name="settings-messages_template-validating" id="settings-messages_template-validating">{{config('settings.messages_template.validating')}}</textarea>
-								</div>
-								<div class="mb-3">
-									<label for="shipping">Shipping (en_hub)</label>
-									<textarea class="form-control" name="settings-messages_template-shipping" id="settings-messages_template-shipping">{{config('settings.messages_template.shipping')}}</textarea>
-								</div>
-								<div class="mb-3">
-									<label for="wilaya">Wilaya (vers_wilaya)</label>
-									<textarea class="form-control" name="settings-messages_template-wilaya" id="settings-messages_template-wilaya">{{config('settings.messages_template.wilaya')}}</textarea>
-								</div>
-								<div class="mb-3">
-									<label for="delivery">Delivery (en_livraison)</label>
-									<textarea class="form-control" name="settings-messages_template-delivery" id="settings-messages_template-delivery">{{config('settings.messages_template.delivery')}}</textarea>
-								</div>
-								<div class="mb-3">
-									<label for="delivered">Delivered (livre_non_encaisse)</label>
-									<textarea class="form-control" name="settings-messages_template-delivered" id="settings-messages_template-delivered">{{config('settings.messages_template.delivered')}}</textarea>
-								</div>
-								<div class="mb-3">
-									<label for="ready">Ready (encaisse_non_paye)</label>
-									<textarea class="form-control" name="settings-messages_template-ready" id="settings-messages_template-ready">{{config('settings.messages_template.ready')}}</textarea>
-								</div>
-								<div class="mb-3">
-									<label for="recovering">Recovering (paye_et_archive)</label>
-									<textarea class="form-control" name="settings-messages_template-recovering" id="settings-messages_template-recovering">{{config('settings.messages_template.recovering')}}</textarea>
-								</div>
-								<div class="mb-3">
-									<label for="back">Back (suspendu|retour)</label>
-									<textarea class="form-control" name="settings-messages_template-back" id="settings-messages_template-back">{{config('settings.messages_template.back')}}</textarea>
-								</div>
-								<div class="mb-3">
-									<label for="back_Ready">Back Ready (retour_recu|retour_archive)</label>
-									<textarea class="form-control" name="settings-messages_template-back_Ready" id="settings-messages_template-back_Ready">{{config('settings.messages_template.back_Ready')}}</textarea>
-								</div>
-							</div>
-						</div>
-                	@if($user->Has_Permission('settings_edit'))
-					<button type="submit" class="btn btn-primary">Save changes</button>
-					@endif
-					</div>
-				</div>
-			</div>
 			<div class="tab-pane fade" id="notifications" role="tabpanel">
 				<div class="card">
 					<div class="card-header">
@@ -240,6 +185,13 @@ $user = Auth::user();
 										<label class="form-check-label" for="settings-scheduler-tokens_validity_check">Tokens validity check</label>
 									</div>
 								</div>
+								<div class="mb-3">
+									<div class="form-check form-switch">
+										<input type="hidden" id="settings-scheduler-remarketing_send-value" name="settings-scheduler-remarketing_send" value="{{config('settings.scheduler.remarketing_send')}}">
+										<input class="form-check-input" type="checkbox" value="true" id="settings-scheduler-remarketing_send" {{config('settings.scheduler.remarketing_send')?'checked':''}}>
+										<label class="form-check-label" for="settings-scheduler-remarketing_send">Send remarketing messages</label>
+									</div>
+								</div>
 							</div>
 						</div>
                 	@if($user->Has_Permission('settings_edit'))
@@ -261,6 +213,8 @@ $user = Auth::user();
         var orders_states_check_hiddenInput = document.getElementById('settings-scheduler-orders_states_check-value');
         var tokens_validity_check_checkbox = document.getElementById('settings-scheduler-tokens_validity_check');
         var tokens_validity_check_hiddenInput = document.getElementById('settings-scheduler-tokens_validity_check-value');
+        var remarketing_send_checkbox = document.getElementById('settings-scheduler-remarketing_send');
+        var remarketing_send_hiddenInput = document.getElementById('settings-scheduler-remarketing_send-value');
 
         conversations_checkbox.addEventListener('change', function() {
             if (conversations_checkbox.checked) {
@@ -281,6 +235,13 @@ $user = Auth::user();
                 tokens_validity_check_hiddenInput.value = 1;
             } else {
                 tokens_validity_check_hiddenInput.value = 0;
+            }
+        });
+        remarketing_send_checkbox.addEventListener('change', function() {
+            if (remarketing_send_checkbox.checked) {
+                remarketing_send_hiddenInput.value = 1;
+            } else {
+                remarketing_send_hiddenInput.value = 0;
             }
         });
     });

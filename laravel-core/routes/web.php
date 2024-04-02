@@ -10,7 +10,9 @@ use App\Http\Controllers\WilayaController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RemarketingController;
 use App\Http\Controllers\FacebookPageController;
 use App\Http\Controllers\ConversationsController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -69,6 +71,18 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::post('', "store")->middleware('permission:stock_create')->name('stock_create');
         Route::put('{stock}/edit', "update")->middleware('permission:stock_edit')->name('stock_edit');
         Route::delete('{stock}/delete', "destroy")->middleware('permission:stock_delete')->name('stock_delete');
+    });
+    Route::middleware('permission:remarketing_consult')->prefix("remarketing")->controller(RemarketingController::class)->group(function(){
+        Route::get('', "index")->name('remarketing');
+        Route::get('create', "create")->middleware('permission:remarketing_create')->name('remarketing_create');
+        Route::post('create', "store")->middleware('permission:remarketing_create');
+        Route::get('{remarketing}/edit', "edit")->middleware('permission:remarketing_edit')->name('remarketing_edit');
+        Route::put('{remarketing}/edit', "update")->middleware('permission:remarketing_edit');
+        Route::delete('{remarketing}/delete', "destroy")->middleware('permission:remarketing_delete')->name('remarketing_delete');
+    });
+    Route::middleware('permission:tracking_consult')->prefix("tracking")->controller(TrackingController::class)->group(function(){
+        Route::get('', "index")->name('tracking');
+        Route::post('edit', "edit")->middleware('permission:tracking_edit')->name('tracking_edit');
     });
     Route::middleware('permission:settings_consult')->prefix("settings")->controller(SettingsController::class)->group(function(){
         Route::get('', "index")->name('settings');

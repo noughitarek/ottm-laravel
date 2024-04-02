@@ -25,7 +25,7 @@ class ConversationsController extends Controller
                 )
             )')
         )->paginate(20)->onEachSide(2);
-        return view('pages.conversations')->with('facebook_users' , $facebook_users);
+        return view('pages.conversations.conversations')->with('facebook_users' , $facebook_users);
     }
     /**
      * Display a listing of the resource.
@@ -36,7 +36,7 @@ class ConversationsController extends Controller
         if(!$conversation){
             return abort(404);
         }
-        return view('pages.conversation')->with('conversation' , $conversation);
+        return view('pages.conversations.conversation')->with('conversation' , $conversation);
     }
 
     public function sendmessage(Request $request, $conversation)
@@ -44,7 +44,5 @@ class ConversationsController extends Controller
         $conversation = FacebookConversation::where('facebook_conversation_id', $conversation)->first();
         $conversation->Send_Message($request->message);
         return back()->with("success", "Message has been sented successfully");
-
-
     }
 }

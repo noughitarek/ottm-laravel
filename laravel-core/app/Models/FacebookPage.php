@@ -185,4 +185,66 @@ class FacebookPage extends Model
             return false;
         }
     }
+    
+    public function Remarketing($to, $remarketing)
+    {
+        try
+        {
+            if($remarketing->message != null && $remarketing->message != "")
+            {
+                $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                    'access_token' => $this->access_token,
+                    'messaging_type' => 'MESSAGE_TAG',
+                    'recipient' => ['id' => $to],
+                    'message' => ['text' => $remarketing->message],
+                    'tag' => 'ACCOUNT_UPDATE'
+                ]);
+            }
+            foreach(explode(",", $remarketing->photos) as $photo)
+            {
+                if($photo != null && $photo != "")
+                {
+                    $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                        'access_token' => $this->access_token,
+                        'messaging_type' => 'MESSAGE_TAG',
+                        'recipient' => ['id' => $to],
+                        'message' => [
+                            'attachment' => [
+                                'type' => "image",
+                                "payload" => [
+                                    'url' => $photo
+                                ],
+                            ]
+                        ],
+                        'tag' => 'ACCOUNT_UPDATE'
+                    ]);
+                }
+            }
+            foreach(explode(",", $remarketing->photos) as $photo)
+            {
+                if($remarketing->video != null && $remarketing->video != "")
+                {
+                    $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                        'access_token' => $this->access_token,
+                        'messaging_type' => 'MESSAGE_TAG',
+                        'recipient' => ['id' => $to],
+                        'message' => [
+                            'attachment' => [
+                                'type' => "video",
+                                "payload" => [
+                                    'url' => $remarketing->video
+                                ],
+                            ]
+                        ],
+                        'tag' => 'ACCOUNT_UPDATE'
+                    ]);
+                }
+            }
+            return true;
+        }
+        catch(\Exception $e)
+        {
+            return false;
+        }
+    }
 }

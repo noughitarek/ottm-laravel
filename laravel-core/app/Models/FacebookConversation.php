@@ -36,4 +36,9 @@ class FacebookConversation extends Model
     {
         return $this->Page()->Send_Message($this->user, $message);
     }
+
+    public function Remarketing(Remarketing $remarketing)
+    {
+        return $this->Page()->Remarketing($this->user, $remarketing);
+    }
 }
