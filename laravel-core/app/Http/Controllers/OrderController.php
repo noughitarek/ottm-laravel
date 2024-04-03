@@ -10,6 +10,7 @@ use App\Models\FacebookUser;
 use App\Models\OrderProducts;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\FacebookConversation;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
@@ -104,18 +105,8 @@ class OrderController extends Controller
      */
     public function create()
     {
-        $conversations = FacebookUser::orderByDesc(
-            DB::raw('(
-                SELECT MAX(created_at) FROM facebook_messages
-                WHERE conversation = (
-                    SELECT facebook_conversation_id FROM facebook_conversations
-                    WHERE facebook_conversations.user = facebook_users.facebook_user_id
-                    ORDER BY created_at DESC
-                    LIMIT 1
-                )
-            )')
-        )->get();
-        $products = Product::all();
+        $conversations = FacebookUser::Get_Conversations();
+        $products = Product::where('deleted_at', null)->get();
         $wilayas = Wilaya::where('desk', "!=", null)->get();
         return view('pages.orders.create')->with('products', $products)->with('wilayas', $wilayas)->with('conversations', $conversations);
     }
@@ -125,17 +116,7 @@ class OrderController extends Controller
      */
     public function create_from_product(Product $product)
     {
-        $conversations = FacebookUser::orderByDesc(
-            DB::raw('(
-                SELECT MAX(created_at) FROM facebook_messages
-                WHERE conversation = (
-                    SELECT facebook_conversation_id FROM facebook_conversations
-                    WHERE facebook_conversations.user = facebook_users.facebook_user_id
-                    ORDER BY created_at DESC
-                    LIMIT 1
-                )
-            )')
-        )->get();
+        $conversations = FacebookUser::Get_Conversations();
         $wilayas = Wilaya::where('desk', "!=", null)->get();
         return view('pages.orders.create')->with('product', $product)->with('wilayas', $wilayas)->with('conversations', $conversations);
     }
@@ -145,7 +126,7 @@ class OrderController extends Controller
      */
     public function create_from_conversation(FacebookUser $conversation)
     {
-        $products = Product::all();
+        $products = Product::where('deleted_at', null)->get();
         $wilayas = Wilaya::where('desk', "!=", null)->get();
         return view('pages.orders.create')->with('products', $products)->with('wilayas', $wilayas)->with('conversation', $conversation);
     }

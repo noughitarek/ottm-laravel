@@ -50,9 +50,11 @@ $user = Auth::user();
               <a href="{{$photo}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>Open</a><br>
             @endif
             @endforeach
-            @if($remarketing->video != "")
-              <a href="{{$remarketing->video}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-video"></i>Open</a><br>
+            @foreach(explode(',',$remarketing->video) as $video)
+            @if($photo != "")
+              <a href="{{$video}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-video"></i>Open</a><br>
             @endif
+            @endforeach
           </td>
           <td class="single-line">
             {{$remarketing->message}}

@@ -110,12 +110,22 @@ class RemarketingController extends Controller
                 $photos[] = asset('storage/remarketing/' . $filename);
             }
         }
+        if($request->has('oldPhotos')){
+            foreach($request->oldPhotos as $oldPhoto){
+                $photos[] = $oldPhoto;
+            }
+        }
         if($request->hasFile('videos'))
         {
             foreach($request->file('videos') as $video){
                 $filename = time() . '_' . $video->getClientOriginalName();
                 $video->move(public_path('storage/remarketing'), $filename);
                 $videos[] = asset('storage/remarketing/' . $filename);
+            }
+        }
+        if($request->has('oldVideos')){
+            foreach($request->oldVideos as $oldVideo){
+                $videos[] = $oldVideo;
             }
         }
 
@@ -129,8 +139,8 @@ class RemarketingController extends Controller
                     "last_message_from" => $request->input('last_message_from'),
                     "make_order" => $request->input('make_order'),
                     "since" => $request->input('since'),
-                    "photos" => implode(',', array_merge($photos, $request->input('oldPhotos'))),
-                    "video" => implode(',',array_merge($videos, $request->input('oldVideos'))),
+                    "photos" => implode(',', $photos),
+                    "video" => implode(',', $videos),
                     "message" => $request->input('message')
                 ]);
             }

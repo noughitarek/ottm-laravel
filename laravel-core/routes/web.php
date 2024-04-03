@@ -41,6 +41,7 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     });
     Route::middleware('permission:conversations_consult')->prefix("conversations")->controller(ConversationsController::class)->group(function(){
         Route::get('', "index")->name('conversations');
+        Route::get('page/{page}', "conversations")->name('conversations_page');
         Route::post('{conversation}', "sendmessage")->name('conversations_sendmessage');
         Route::get('{conversation}', "conversation")->name('conversations_conversation');
     });
