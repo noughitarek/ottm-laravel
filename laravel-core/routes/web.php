@@ -79,6 +79,7 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::post('create', "store")->middleware('permission:remarketing_create');
         Route::get('{remarketing}/activate', "activate")->middleware('permission:remarketing_edit')->name('remarketing_activate');
         Route::put('{remarketing}/activate', "activate_store")->middleware('permission:remarketing_edit');
+        Route::put('{remarketing}/deactivate', "deactivate_store")->middleware('permission:remarketing_edit')->name('remarketing_deactivate');
         Route::get('{remarketing}/edit', "edit")->middleware('permission:remarketing_edit')->name('remarketing_edit');
         Route::put('{remarketing}/edit', "update")->middleware('permission:remarketing_edit');
         Route::delete('{remarketing}/delete', "destroy")->middleware('permission:remarketing_delete')->name('remarketing_delete');

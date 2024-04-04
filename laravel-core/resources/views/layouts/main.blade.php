@@ -33,5 +33,20 @@
         document.documentElement.style.setProperty('--main-color', '#{{config("settings.webmasterColor")}}');
     </script>
 @endif
+@if(session('error'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+                var message = '{{ session('error') }}';
+                var type = "danger";
+                var duration = 5000;
+                var ripple = false;
+                var dismissible = true;
+                var positionX = "right";
+                var positionY = "top";
+                window.notyf.open({type, message, duration, ripple, dismissible, position:{x: positionX, y: positionY}});
+        });
+        document.documentElement.style.setProperty('--main-color', '#{{config("settings.webmasterColor")}}');
+    </script>
+@endif
 
 @endsection

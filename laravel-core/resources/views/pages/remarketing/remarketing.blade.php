@@ -44,16 +44,21 @@ $user = Auth::user();
             <i class="align-middle me-2 fas fa-fw"></i>if last message from <b>{{($remarketing->last_message_from=="any"?"Any":($remarketing->last_message_from=="page"?"Page":"User"))}}</b> <br>
             <i class="align-middle me-2 fas fa-fw"></i>and if <b>{{($remarketing->make_order?"the customer didn't make an order":"any")}}</b> <br>
             <i class="align-middle me-2 fas fa-fw"></i>since <b>{{($remarketing->since=='last_from_user'?"the last message from costumer":($remarketing->since=='last_from_page'?"the last message from page":"the first message of the conversation"))}}</b> <br>
+            @if($remarketing->expire_after == null)
+            <i class="align-middle me-2 fas fa-fw"></i>expire after <b>Never</b><br>
+            @else
+            <i class="align-middle me-2 fas fa-fw"></i>expire after <b>{{$remarketing->Expire_After()}}</b><br>
+            @endif
           </td>
           <td class="single-line">
             @foreach(explode(',',$remarketing->photos) as $photo)
             @if($photo != "")
-              <a href="{{$photo}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>Open</a><br>
+              <a href="{{$photo}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>{{explode('/', $photo)[count(explode('/', $photo))-1]}}</a><br>
             @endif
             @endforeach
             @foreach(explode(',',$remarketing->video) as $video)
             @if($photo != "")
-              <a href="{{$video}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-video"></i>Open</a><br>
+              <a href="{{$video}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-video"></i>{{explode('/', $video)[count(explode('/', $video))-1]}}</a><br>
             @endif
             @endforeach
           </td>
@@ -62,11 +67,16 @@ $user = Auth::user();
           </td>
           <td>
             @if($user->Has_Permission('remarketing_edit'))
+            <form method="POST" action="{{route('remarketing_deactivate', $remarketing->id)}}">
+            @csrf
+            @method('PUT')
+            @if(!$remarketing->is_active)
             <a href="{{route('remarketing_activate', $remarketing->id)}}" class="btn btn-success" >
               Activate
             </a>
+            @else
+              <button type="submit" class="btn btn-primary">Deactivate</button>
             @endif
-            @if($user->Has_Permission('remarketing_edit'))
             <a href="{{route('remarketing_edit', $remarketing->id)}}" class="btn btn-warning" >
               Edit
             </a>
@@ -75,6 +85,7 @@ $user = Auth::user();
             <button data-bs-toggle="modal" data-bs-target="#deleteRemarketing{{$remarketing->id}}" class="btn btn-danger" >
               Delete
             </button>
+            </form>
             @endif
           </td>
         </tr>

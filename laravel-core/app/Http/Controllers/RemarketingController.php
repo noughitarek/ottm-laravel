@@ -52,7 +52,6 @@ class RemarketingController extends Controller
                 $videos[] = asset('storage/remarketing/' . $filename);
             }
         }
-
         foreach($request->pages as $page){
             $remarketing = Remarketing::create([
                 "name" => $request->input('name'),
@@ -75,6 +74,10 @@ class RemarketingController extends Controller
      */
     public function activate(Remarketing $remarketing)
     {
+        if($remarketing->is_active)
+        {
+            return redirect()->route('remarketing')->with('success', session('success'))->with('error', session('error'));
+        }
         return view('pages.remarketing.activate')->with('remarketing', $remarketing);
     }
 
@@ -90,6 +93,21 @@ class RemarketingController extends Controller
         {
             $remarketing->update(['is_active'=>true]);
             return back()->with('success', 'Message has been activated successfully');
+        }
+    }
+    
+    /**
+     * deactivate the specified resource.
+     */
+    public function deactivate_store(Remarketing $remarketing)
+    {
+        if(!$remarketing->is_active){
+            return back()->with('error', 'Message already inactive');
+        }
+        else
+        {
+            $remarketing->update(['is_active'=>false]);
+            return back()->with('success', 'Message has been deactivated successfully');
         }
     }
 
@@ -135,7 +153,6 @@ class RemarketingController extends Controller
                 $videos[] = $oldVideo;
             }
         }
-
         foreach($request->pages as $page){
             if($page == $remarketing->facebook_page_id)
             {
@@ -146,16 +163,10 @@ class RemarketingController extends Controller
                     "last_message_from" => $request->input('last_message_from'),
                     "make_order" => $request->input('make_order'),
                     "since" => $request->input('since'),
-<<<<<<< HEAD
-                    "photos" => implode(',', array_merge($photos, $request->input('oldPhotos'))),
-                    "video" => implode(',',array_merge($videos, $request->input('oldVideos'))),
-                    "message" => $request->input('message'),
-                    "expire_after" => $request->input('expire_after')*$request->input('expire_time_unit'),
-=======
                     "photos" => implode(',', $photos),
                     "video" => implode(',', $videos),
-                    "message" => $request->input('message')
->>>>>>> 2f426b795007b5d04ee13212847289f63e3423de
+                    "message" => $request->input('message'),
+                    "expire_after" => $request->input('expire_after')*$request->input('expire_time_unit'),
                 ]);
             }
             else
@@ -167,8 +178,8 @@ class RemarketingController extends Controller
                     "last_message_from" => $request->input('last_message_from'),
                     "make_order" => $request->input('make_order'),
                     "since" => $request->input('since'),
-                    "photos" => implode(',', array_merge($photos, $request->input('oldPhotos'))),
-                    "video" => implode(',',array_merge($videos, $request->input('oldVideos'))),
+                    "photos" => implode(',', implode(',', $photos)),
+                    "video" => implode(',',implode(',', $videos)),
                     "message" => $request->input('message'),
                     "expire_after" => $request->input('expire_after')*$request->input('expire_time_unit'),
                 ]);
@@ -182,7 +193,7 @@ class RemarketingController extends Controller
      */
     public function destroy(Remarketing $remarketing)
     {
-        $remarketing->update(['deleted_at' => now()]);
+        $remarketing->update(['deleted_at' => now(), 'is_active'=>false]);
         return back()->with('success', "Remarketing message has been deleted");
     }
 }

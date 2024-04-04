@@ -45,6 +45,15 @@ $user = Auth::user();
             <div class="text-danger">{{ $message }}</div>
           @enderror
         </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-12 col-xxl-12 d-flex">
+    <div class="card flex-fill">
+      <div class="card-header">
+        <h5 class="card-title">Algorithme</h5>
+      </div>
+      <div class="card-body">
         <div class="row">
           <div class="mb-3 col-md-6">
             <label class="form-label" for="send_after">Send after <span class="text-danger">*</span></label>
@@ -97,6 +106,25 @@ $user = Auth::user();
               <div class="text-danger">{{ $message }}</div>
             @enderror
           </div>
+          <div class="mb-3 col-md-6">
+            <label class="form-label" for="expire_after">Expire after</label>
+            <input type="number" name="expire_after" value="{{old('expire_after')??$remarketing->expire_after}}" id="expire_after" class="form-control">
+            @error('expire_after')
+              <div class="text-danger">{{ $message }}</div>
+            @enderror
+          </div>
+          <div class="mb-3 col-md-6">
+            <label class="form-label" for="expire_time_unit">Time unit</label>
+            <select name="expire_time_unit" id="expire_time_unit" class="form-control">
+              <option {{old('expire_time_unit') == 1?'selected':''}} value="1">Seconds</option>
+              <option {{old('expire_time_unit') == 60 ?'selected':''}} value="60">Minutes</option>
+              <option {{old('expire_time_unit') == 3600 ?'selected':''}} value="3600">Hours</option>
+              <option {{old('expire_time_unit') == 86400 ?'selected':''}} value="86400">Days</option>
+            </select>
+            @error('expire_time_unit')
+              <div class="text-danger">{{ $message }}</div>
+            @enderror
+          </div>
         </div>
       </div>
     </div>
@@ -115,12 +143,12 @@ $user = Auth::user();
               <label class="form-label" class="form-check m-0">
                 <input type="checkbox" name="oldPhotos[]" class="form-check-input" value="{{$photo}}" checked>
                 <span class="form-check-label">
-                  <a href="{{$photo}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>Open</a>
+                  <a href="{{$photo}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>{{explode('/', $photo)[count(explode('/', $photo))-1]}}</a>
                 </span>
               </label><br>
               @endif
             @endforeach
-            <input type="file" name="photos[]" id="photos" class="form-control" multiple accept="image/*">
+            <input type="file" name="photos[]" id="photos" class="form-control" multiple accept="image/jpeg">
             @error('photos')
               <div class="text-danger">{{ $message }}</div>
             @enderror
@@ -132,12 +160,12 @@ $user = Auth::user();
               <label class="form-label" class="form-check m-0">
                 <input type="checkbox" name="oldVideos[]" class="form-check-input" value="{{$video}}" checked>
                 <span class="form-check-label">
-                  <a href="{{$video}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>Open</a>
+                  <a href="{{$video}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>{{explode('/', $video)[count(explode('/', $photo))-1]}}</a>
                 </span>
               </label><br>
               @endif
             @endforeach
-            <input type="file" name="videos[]" id="videos" class="form-control" accept="video/*" multiple>
+            <input type="file" name="videos[]" id="videos" class="form-control" accept="video/mp4" multiple>
             @error('videos')
               <div class="text-danger">{{ $message }}</div>
             @enderror

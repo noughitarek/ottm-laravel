@@ -40,6 +40,15 @@ $user = Auth::user();
             <div class="text-danger">{{ $message }}</div>
           @enderror
         </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-12 col-xxl-12 d-flex">
+    <div class="card flex-fill">
+      <div class="card-header">
+        <h5 class="card-title">Algorithme</h5>
+      </div>
+      <div class="card-body">
         <div class="row">
           <div class="mb-3 col-md-6">
             <label class="form-label" for="send_after">Send after <span class="text-danger">*</span></label>
@@ -124,14 +133,14 @@ $user = Auth::user();
         <div class="row">
           <div class="mb-3 col-md-6">
             <label class="form-label" for="photos">Photos</label>
-            <input type="file" name="photos[]" id="photos" class="form-control" multiple accept="image/*">
+            <input type="file" name="photos[]" id="photos" class="form-control" multiple accept="image/jpeg">
             @error('photos')
               <div class="text-danger">{{ $message }}</div>
             @enderror
           </div>
           <div class="mb-3 col-md-6">
             <label class="form-label" for="videos">Videos</label>
-            <input type="file" name="videos[]" id="videos" class="form-control" accept="video/*" multiple>
+            <input type="file" name="videos[]" id="videos" class="form-control" accept="video/mp4" multiple>
             @error('videos')
               <div class="text-danger">{{ $message }}</div>
             @enderror

@@ -31,6 +31,18 @@ class Remarketing extends Model
             return (string)($this->send_after). ' seconds';
         }
     }
+    public function Expire_After()
+    {
+        if ($this->expire_after/60/60/24 > 1) {
+            return (string)($this->expire_after/60/60/24). ' days';
+        } elseif ($this->expire_after/60/60 > 1) {
+            return (string)($this->expire_after/60/60). ' hours';
+        } elseif ($this->expire_after/60 > 1) {
+            return (string)($this->expire_after/60). ' minutes';
+        } else {
+            return (string)($this->expire_after). ' seconds';
+        }
+    }
 
     public function Get_Supported_Conversations()
     {
@@ -67,7 +79,11 @@ class Remarketing extends Model
             $expireTime = Carbon::createFromTimestamp($expireTime);
             if($sendAfterTime->lessThanOrEqualTo($now))
             {
-                if($this->expire_after == null || $expireTime->greaterThanOrEqualTo($now))
+                if($this->expire_after == null)
+                {
+                    $supported[] = $conversation->User();
+                }
+                elseif($expireTime->greaterThanOrEqualTo($now))
                 {
                     $supported[] = $conversation->User();
                 }
