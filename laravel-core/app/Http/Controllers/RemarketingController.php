@@ -63,27 +63,34 @@ class RemarketingController extends Controller
                 "since" => $request->input('since'),
                 "photos" => implode(',', $photos),
                 "video" => implode(',', $videos),
-                "message" => $request->input('message')
+                "message" => $request->input('message'),
+                "expire_after" => $request->input('expire_after')*$request->input('expire_time_unit'),
             ]);
-            
-            $conversations = FacebookConversation::all();
-            foreach($conversations as $conversation){
-                RemarketingMessages::create([
-                    'remarketing' => $remarketing->id,
-                    'facebook_conversation_id' => $conversation->facebook_conversation_id,
-                    'last_use' => now(),
-                ]);
-            }
         }
         return back()->with('success', "Remarketing message has been created");
     }
 
     /**
-     * Display the specified resource.
+     * activate the specified resource.
      */
-    public function show(Remarketing $remarketing)
+    public function activate(Remarketing $remarketing)
     {
-        //
+        return view('pages.remarketing.activate')->with('remarketing', $remarketing);
+    }
+
+    /**
+     * activate the specified resource.
+     */
+    public function activate_store(Remarketing $remarketing)
+    {
+        if($remarketing->is_active){
+            return back()->with('error', 'Message already active');
+        }
+        else
+        {
+            $remarketing->update(['is_active'=>true]);
+            return back()->with('success', 'Message has been activated successfully');
+        }
     }
 
     /**
@@ -131,7 +138,8 @@ class RemarketingController extends Controller
                     "since" => $request->input('since'),
                     "photos" => implode(',', array_merge($photos, $request->input('oldPhotos'))),
                     "video" => implode(',',array_merge($videos, $request->input('oldVideos'))),
-                    "message" => $request->input('message')
+                    "message" => $request->input('message'),
+                    "expire_after" => $request->input('expire_after')*$request->input('expire_time_unit'),
                 ]);
             }
             else
@@ -145,7 +153,8 @@ class RemarketingController extends Controller
                     "since" => $request->input('since'),
                     "photos" => implode(',', array_merge($photos, $request->input('oldPhotos'))),
                     "video" => implode(',',array_merge($videos, $request->input('oldVideos'))),
-                    "message" => $request->input('message')
+                    "message" => $request->input('message'),
+                    "expire_after" => $request->input('expire_after')*$request->input('expire_time_unit'),
                 ]);
             }
         }

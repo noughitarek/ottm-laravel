@@ -31,6 +31,8 @@ class StoreRemarketingRequest extends FormRequest
             "last_message_from" => "required|string|in:user,page,any",
             "make_order" => "required|boolean",
             "since" => "required|string|in:conversation_start,last_from_page,last_from_user",
+            "expire_time_unit" => "required|integer|in:1,60,3600,86400",
+            "expire_after" => "nullable|integer",
         ];
     }
 }

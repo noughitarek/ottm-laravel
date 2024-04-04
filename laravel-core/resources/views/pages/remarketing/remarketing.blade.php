@@ -37,6 +37,7 @@ $user = Auth::user();
             @foreach($remarketing->Pages() as $page)
             <i class="align-middle me-2 fas fa-fw fa-user-cog"></i>{{$page->name}}<br>
             @endforeach
+            <i class="align-middle me-2 fas fa-fw fa-toggle-{{$remarketing->is_active?'on':'off'}}"></i>{{$remarketing->is_active?'Active':'Inactive'}}<br>
           </td>
           <td class="single-line">
             <i class="align-middle me-2 fas fa-fw fa-robot"></i>Send it after <b>{{$remarketing->Send_After()}}</b><br>
@@ -58,6 +59,11 @@ $user = Auth::user();
             {{$remarketing->message}}
           </td>
           <td>
+            @if($user->Has_Permission('remarketing_edit'))
+            <a href="{{route('remarketing_activate', $remarketing->id)}}" class="btn btn-success" >
+              Activate
+            </a>
+            @endif
             @if($user->Has_Permission('remarketing_edit'))
             <a href="{{route('remarketing_edit', $remarketing->id)}}" class="btn btn-warning" >
               Edit

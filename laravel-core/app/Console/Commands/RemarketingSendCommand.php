@@ -32,46 +32,10 @@ class RemarketingSendCommand extends Command
     {
         if(!config('settings.scheduler.remarketing_send'))
             exit;
-        $now = Carbon::now();
-        $remarketings = Remarketing::where('deleted_at', null)->get();
+        $remarketings = Remarketing::where('deleted_at', null)->where('is_active', true)->get();
         
         foreach ($remarketings as $remarketing) {
-            $conversations = FacebookConversation::where('page', $remarketing->facebook_page_id)->get();
             
-            foreach ($conversations as $conversation) {
-                if($remarketing->last_message_from != "any" && $conversation->Messages()->first()->sented_from != $remarketing->last_message_from)continue;
-                $order = Order::where('conversation', $conversation->facebook_conversation_id)->first();
-                if($remarketing->make_order && !$order)
-                    continue;
-                elseif(!$remarketing->make_order && $order)
-                    continue;
-                $last_use = RemarketingMessages::where('remarketing', $remarketing->id)->where('facebook_conversation_id', $conversation->facebook_conversation_id)->first();
-                if($last_use)continue;
-                
-                if($remarketing->since == 'conversation_start'){
-                    $created_at = $conversation->Messages()->last();
-                }elseif($remarketing->since == 'conversation_end'){
-                    $created_at = $conversation->Messages()->first();
-                }elseif($remarketing->since =='last_from_user'){
-                    $created_at = $conversation->Messages()->where('sented_from', 'user')->first();
-                }elseif($remarketing->since =='last_from_page'){
-                    $created_at = $conversation->Messages()->where('sented_from', 'page')->first();
-                }
-
-                if(!$created_at)continue;
-                $messageCreatedAt = Carbon::parse($created_at->created_at);
-                $sendAfterTime = (int)$remarketing->send_after+(int)$messageCreatedAt->timestamp;
-                $sendAfterTime = Carbon::createFromTimestamp($sendAfterTime);
-                if ($sendAfterTime->lessThanOrEqualTo($now))
-                {
-                    RemarketingMessages::create([
-                        'remarketing' => $remarketing->id,
-                        'facebook_conversation_id' => $conversation->facebook_conversation_id,
-                        'last_use' => now(),
-                    ]);
-                    $conversation->Remarketing($remarketing);
-                }
-            }
         }
             
     }

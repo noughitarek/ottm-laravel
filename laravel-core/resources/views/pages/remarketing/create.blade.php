@@ -56,7 +56,7 @@ $user = Auth::user();
               <option {{old('time_unit') == 3600 ?'selected':''}} value="3600">Hours</option>
               <option {{old('time_unit') == 86400 ?'selected':''}} value="86400">Days</option>
             </select>
-            @error('page')
+            @error('time_unit')
               <div class="text-danger">{{ $message }}</div>
             @enderror
           </div>
@@ -67,7 +67,7 @@ $user = Auth::user();
               <option {{old('last_message_from')=='page'?'selected':''}} value="page">Page</option>
               <option {{old('last_message_from')=='any'?'selected':''}} value="any">Any</option>
             </select>
-            @error('page')
+            @error('last_message_from')
               <div class="text-danger">{{ $message }}</div>
             @enderror
           </div>
@@ -88,7 +88,26 @@ $user = Auth::user();
               <option {{old('since')=="last_from_page"?'selected':''}} value="last_from_page">Last message from page</option>
               <option {{old('since')=="conversation_start"?'selected':''}} value="conversation_start" selected>Conversation starting</option>
             </select>
-            @error('page')
+            @error('since')
+              <div class="text-danger">{{ $message }}</div>
+            @enderror
+          </div>
+          <div class="mb-3 col-md-6">
+            <label class="form-label" for="expire_after">Expire after</label>
+            <input type="number" name="expire_after" value="{{old('expire_after')}}" id="expire_after" class="form-control">
+            @error('expire_after')
+              <div class="text-danger">{{ $message }}</div>
+            @enderror
+          </div>
+          <div class="mb-3 col-md-6">
+            <label class="form-label" for="expire_time_unit">Time unit</label>
+            <select name="expire_time_unit" id="expire_time_unit" class="form-control">
+              <option {{old('expire_time_unit') == 1?'selected':''}} value="1">Seconds</option>
+              <option {{old('expire_time_unit') == 60 ?'selected':''}} value="60">Minutes</option>
+              <option {{old('expire_time_unit') == 3600 ?'selected':''}} value="3600">Hours</option>
+              <option {{old('expire_time_unit') == 86400 ?'selected':''}} value="86400">Days</option>
+            </select>
+            @error('expire_time_unit')
               <div class="text-danger">{{ $message }}</div>
             @enderror
           </div>
@@ -121,7 +140,7 @@ $user = Auth::user();
         <div class="mb-3">
           <label class="form-label" for="message">Message</label>
           <textarea name="message" id="message" class="form-control">{{old('message')}}</textarea>
-          @error('page')
+          @error('message')
             <div class="text-danger">{{ $message }}</div>
           @enderror
         </div>
