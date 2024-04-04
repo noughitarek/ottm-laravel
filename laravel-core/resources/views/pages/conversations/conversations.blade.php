@@ -8,6 +8,7 @@ $user = Auth::user();
   <div class="card flex-fill">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="card-title mb-0">Conversations</h5>
+      <a href="{{route('conversations_page', $facebook_page->facebook_page_id)}}" class="btn btn-secondary">{{$facebook_page->name}}</a>
     </div>
   </div>
 </div>
@@ -55,7 +56,6 @@ $user = Auth::user();
         </tbody>
       </table>
     </div>
-    {{ $facebook_users->links('components.pagination') }}
   </div>
 </div>
 @endsection

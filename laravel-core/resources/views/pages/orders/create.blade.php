@@ -34,7 +34,7 @@ $user = Auth::user();
           <select name="conversation" class="form-control conversation-select" required>
               <option value disabled selected>Select the conversation</option>
               @foreach($conversations as $conversationSelect)
-              <option {{ old('conversation')==$conversationSelect->Conversation()->facebook_conversation_id?'selected':'' }} value="{{$conversationSelect->Conversation()->facebook_conversation_id}}">{{$conversationSelect->name}}</option>
+              <option {{ old('conversation')==$conversationSelect->Conversation()->facebook_conversation_id?'selected':'' }} value="{{$conversationSelect->Conversation()->facebook_conversation_id}}">{{$conversationSelect->name}} - {{$conversationSelect->Conversation()->Page()->name}}</option>
               @endforeach
           </select>
           @endif
@@ -239,7 +239,26 @@ $user = Auth::user();
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         @if(!isset($product))
-        new Choices(".product-select", {shouldSort: false});
+        var productSelects = document.querySelectorAll(".product-select")
+        productSelects.forEach(function (select) {
+            select.addEventListener('change', function () {
+              
+                var selectedProductId = this.value;
+                productSelects.forEach(function (otherSelect) {
+                    if (otherSelect !== select) {
+                        var options = otherSelect.options;
+                        for (var i = 0; i < options.length; i++) {
+                            if (options[i].value === selectedProductId) {
+                                options[i].disabled = true;
+                            } else {
+                                options[i].disabled = false;
+                            }
+                        }
+                    }
+                });
+            });
+            /*new Choices(select, {shouldSort: false});*/
+        });
         @endif
         
         @if(!isset($conversation))

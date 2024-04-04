@@ -21,11 +21,11 @@ class Remarketing extends Model
 
     public function Send_After()
     {
-        if ($this->send_after/60/60/24 > 0) {
+        if ($this->send_after/60/60/24 > 1) {
             return (string)($this->send_after/60/60/24). ' days';
-        } elseif ($sendAfter->h > 0) {
+        } elseif ($this->send_after/60/60 > 1) {
             return (string)($this->send_after/60/60). ' hours';
-        } elseif ($sendAfter->i > 0) {
+        } elseif ($this->send_after/60 > 1) {
             return (string)($this->send_after/60). ' minutes';
         } else {
             return (string)($this->send_after). ' seconds';

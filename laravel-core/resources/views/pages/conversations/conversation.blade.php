@@ -46,8 +46,8 @@ $user = Auth::user();
                 <img src="{{asset('assets/img/avatars/unknown.png')}}" class="rounded-circle me-1" alt="{{$conversation->User()->name}}" width="40" height="40">
                 <div class="text-muted small text-nowrap mt-2">{{$message->created_at}}</div>
               </div>
-              <div class="flex-shrink-1 bg-primary text-white rounded py-2 px-3 me-3">
-                <div class="font-weight-bold mb-1">You</div> {{$message->message}}
+              <div dir="rtl" class="flex-shrink-1 bg-primary text-white rounded py-2 px-3 me-3">
+                <div class="font-weight-bold mb-1"><h4 class="text-white"><b>{{$conversation->Page()->name}}</b></h4></div> {{$message->message}}
               </div>
             </div>
             @endif
