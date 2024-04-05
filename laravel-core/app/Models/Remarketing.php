@@ -49,14 +49,11 @@ class Remarketing extends Model
         $now = Carbon::now();
         $supported = [];
         $conversations = FacebookConversation::where('page', $this->facebook_page_id)->get();
-            
         foreach ($conversations as $conversation) {
+            if(count($supported)==config('settings.limits.max_simultaneous_message'))break;
             if($this->last_message_from != "any" && $conversation->Messages()->first()->sented_from != $this->last_message_from)continue;
             $order = Order::where('conversation', $conversation->facebook_conversation_id)->first();
-            if($this->make_order && !$order)
-                continue;
-            elseif(!$this->make_order && $order)
-                continue;
+            if(!$this->make_order && $order)continue;
             
             $last_use = RemarketingMessages::where('remarketing', $this->id)->where('facebook_conversation_id', $conversation->facebook_conversation_id)->first();
             if($last_use)continue;
@@ -70,11 +67,11 @@ class Remarketing extends Model
             }elseif($this->since =='last_from_page'){
                 $created_at = $conversation->Messages()->where('sented_from', 'page')->first();
             }
-
+            
             if(!$created_at)continue;
             $messageCreatedAt = Carbon::parse($created_at->created_at);
             $sendAfterTime = (int)$this->send_after+(int)$messageCreatedAt->timestamp;
-            $expireTime = (int)$this->expire_after+(int)$messageCreatedAt->timestamp;
+            $expireTime = (int)$this->expire_after+(int)$messageCreatedAt->timestamp+(int)$this->send_after;
             $sendAfterTime = Carbon::createFromTimestamp($sendAfterTime);
             $expireTime = Carbon::createFromTimestamp($expireTime);
             if($sendAfterTime->lessThanOrEqualTo($now))
@@ -88,6 +85,7 @@ class Remarketing extends Model
                     $supported[] = $conversation->User();
                 }
             }
+            
         }
         return collect($supported);
     }

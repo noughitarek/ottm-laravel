@@ -7,6 +7,7 @@ use App\Models\FacebookUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\FacebookConversation;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ConversationsController extends Controller
 {
@@ -28,7 +29,7 @@ class ConversationsController extends Controller
         if(!$facebook_page){
             return abort(404);
         }
-        $facebook_users = FacebookUser::orderByDesc(
+        /*$facebook_users = FacebookUser::orderByDesc(
             DB::raw('(
                 SELECT MAX(created_at) FROM facebook_messages
                 WHERE conversation = (
@@ -39,7 +40,17 @@ class ConversationsController extends Controller
                     LIMIT 1
                 )
             )')
-        )->paginate(20)->onEachSide(2);
+        )->paginate(20)->onEachSide(2);*/
+        
+        $facebook_users = FacebookConversation::where('page', $facebook_page->facebook_page_id)->get();
+        $facebook_users->transform(function ($item) {
+            $item->first_message_created_at = $item->Messages()->first()->created_at;
+            return $item;
+        });
+        $facebook_users = $facebook_users->sortByDesc('first_message_created_at');
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $items = $facebook_users->slice(($currentPage - 1) * 20, 20)->all();
+        $facebook_users = new LengthAwarePaginator($items, $facebook_users->count(), 20, $currentPage);
         return view('pages.conversations.conversations')->with('facebook_users' , $facebook_users)->with('facebook_page', $facebook_page);
     }
 

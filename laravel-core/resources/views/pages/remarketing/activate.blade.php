@@ -3,6 +3,7 @@
 @section('content')
 @php
 $user = Auth::user();
+$conversations = $remarketing->Get_Supported_Conversations();
 @endphp
 
 @foreach ($errors->all() as $title=>$error)
@@ -29,14 +30,14 @@ $user = Auth::user();
       <table class="table table-hover my-0" id="datatables-orders">
         <thead>
           <tr>
-            <th class="d-xl-table-cell">User</th>
+            <th class="d-xl-table-cell">User ({{count($conversations)==config('settings.limits.max_simultaneous_message')?'Max: '.count($conversations):count($conversations)}})</th>
             <th class="d-xl-table-cell">Total messages</th>
             <th class="d-xl-table-cell">Orders</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-            @foreach($remarketing->Get_Supported_Conversations() as $facebook_user)
+            @foreach($conversations as $facebook_user)
             <tr>
                 <td class="d-xl-table-cell">
                     

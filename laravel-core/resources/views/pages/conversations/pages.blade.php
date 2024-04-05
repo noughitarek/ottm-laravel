@@ -31,6 +31,8 @@ $user = Auth::user();
                     <i class="align-middle me-2 fas fa-fw fa-user"></i> {{$facebook_page->name}}<br>
                 </td>
                 <td>
+                {{$facebook_page->Messages_Count()}} message on 
+                {{$facebook_page->Conversations_Count()}} conversation
                 </td>
                 <td>
                     <span class="text-primary">0</span> |

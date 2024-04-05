@@ -66,6 +66,10 @@ $user = Auth::user();
 									<label class="form-label" for="title">Message per conversation limit</label>
 									<input type="text" class="form-control" name="settings-limits-message_per_conversation" id="settings-limits-message_per_conversation" value="{{config('settings.limits.message_per_conversation')}}">
 								</div>
+								<div class="mb-3">
+									<label class="form-label" for="title">Max simultaneous message</label>
+									<input type="text" class="form-control" name="settings-limits-max_simultaneous_message" id="settings-limits-max_simultaneous_message" value="{{config('settings.limits.max_simultaneous_message')}}">
+								</div>
 							</div>
 						</div>
                         @if($user->Has_Permission('settings_edit'))
@@ -113,6 +117,9 @@ $user = Auth::user();
 								@if($user->Has_Permission('facebook_reconnect'))
 								<div class="mb-3">
         							<a href="{{route('facebook_reconnect')}}" class="btn btn-facebook"><i class="align-middle fab fa-facebook"></i> Reconnect</a>
+								</div>
+								<div class="mb-3">
+        							<a href="{{route('facebook_load_conversations')}}" class="btn btn-facebook"><i class="align-middle fab fa-facebook"></i> Load All Conversations</a>
 								</div>
 								@endif
 							</div>

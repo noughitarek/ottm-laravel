@@ -27,7 +27,9 @@ class FacebookUser extends Model
             })
             ->groupBy('facebook_users.facebook_user_id')
             ->orderByDesc('max_created_at')
+            ->take(100)
             ->get();
+        
         $conversations = [];
         foreach($facebook_users as $user){
             $conversations[] = self::where('facebook_user_id', $user->facebook_user_id)->first();

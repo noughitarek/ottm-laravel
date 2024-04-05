@@ -46,12 +46,18 @@ class Order extends Model
     
     public function Add_To_Ecotrack()
     {
+        $products = "";
+        foreach($this->Product() as $i=>$product)
+        {
+            $products .= ($i!=0?" + ":"").config('settings.quantities')[$product->quantity].$product->Product()->name;
+        }
         $data = array(
-            'reference' => $this->intern_tracking,
+            'reference' => $products,
             'nom_client' => $this->name,
             'telephone' => preg_replace("/[^0-9]/", "", $this->phone),
             'telephone_2' => preg_replace("/[^0-9]/", "", $this->phone2),
             'adresse' => $this->address,
+            'produit' => $products,
             'fragile' => $this->fragile,
             'quantity' => $this->quantity,
             'code_wilaya' => $this->Commune()->Wilaya()->id,

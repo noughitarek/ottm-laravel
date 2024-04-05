@@ -29,15 +29,15 @@ $user = Auth::user();
             <tr>
                 <td class="d-xl-table-cell">
                     
-                    <a href="{{route('conversations_conversation', $facebook_user->Conversation()->facebook_conversation_id)}}"><i class="align-middle me-2 fas fa-fw fa-hashtag"></i> {{$facebook_user->facebook_user_id}}</a><br>
-                    <i class="align-middle me-2 fas fa-fw fa-user"></i> {{$facebook_user->name}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-at"></i> {{$facebook_user->email}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-calendar"></i> {{$facebook_user->Conversation()->Messages()->first()->created_at}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-calendar-plus"></i> {{$facebook_user->Conversation()->Messages()->last()->created_at}}<br>
+                    <a href="{{route('conversations_conversation', $facebook_user->facebook_conversation_id)}}"><i class="align-middle me-2 fas fa-fw fa-hashtag"></i> {{$facebook_user->User()->facebook_user_id}}</a><br>
+                    <i class="align-middle me-2 fas fa-fw fa-user"></i> {{$facebook_user->User()->name}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-at"></i> {{$facebook_user->User()->email}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-calendar"></i> {{$facebook_user->Messages()->first()->created_at}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-calendar-plus"></i> {{$facebook_user->Messages()->last()->created_at}}<br>
                 </td>
                 <td>
-                    <i class="align-middle me-2 fas fa-fw fa-user-cog"></i> {{$facebook_user->Conversation()->Page()->name}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-envelop-open"></i> {{$facebook_user->Conversation()->Messages()->count()}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-user-cog"></i> {{$facebook_user->Page()->name}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-envelop-open"></i> {{$facebook_user->Messages()->count()}}<br>
                 </td>
                 <td>
                     <span class="text-primary">0</span> |
@@ -56,6 +56,7 @@ $user = Auth::user();
         </tbody>
       </table>
     </div>
+  {{ $facebook_users->links('components.pagination') }}
   </div>
 </div>
 @endsection

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\FacebookPage;
 use App\Models\FacebookUser;
 use App\Models\FacebookMessage;
+use Illuminate\Support\Facades\DB;
 use App\Models\FacebookConversation;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Model;
@@ -34,20 +35,12 @@ class FacebookPage extends Model
             $this->save();
         }
     }
-
-    public function Get_Conversations()
+    public function Get_Conversations_Page($data, $page=null, $all=false)
     {
-        if($this->type != 'business')
-        {
-            return false;
-        }
+        $data = $page!=null?array_merge($data, ['after'=>$page]):$data;
         try
         {
-            $response = Http::get('https://graph.facebook.com/me/conversations', [
-                'access_token' => $this->access_token,
-                'limit' => config('settings.limits.conversations'),
-                'fields' => 'can_reply,senders,messages.limit('.config('settings.limits.message_per_conversation').'){id,message,created_time,from,to}',
-            ]);
+            $response = Http::get('https://graph.facebook.com/me/conversations', $data);
             if ($response->successful())
             {
                 $responseData = $response->json();
@@ -89,11 +82,15 @@ class FacebookPage extends Model
                             }
                         }
                     }
-                    return true;
+                    echo 'Total: '.count($responseData['data'])."\n";
                 }
                 else
                 {
                     echo 'No data found in the response.';
+                }
+                if($all && isset($responseData['paging']) && isset($responseData['paging']['cursors']) && isset($responseData['paging']['cursors']['after']))
+                {
+                    $this->Get_Conversations_Page($data, $responseData['paging']['cursors']['after'], $all);
                 }
             }
             else
@@ -106,7 +103,50 @@ class FacebookPage extends Model
             echo 'Error: ' . $e->getMessage();
         }
     }
+    public function Get_Conversations($all=false)
+    {
+        if($this->type != 'business')
+        {
+            return false;
+        }
+        try
+        {
+            $data= [
+                'access_token' => $this->access_token,
+                'limit' => config('settings.limits.conversations'),
+                'fields' => 'can_reply,senders,messages.limit('.config('settings.limits.message_per_conversation').'){id,message,created_time,from,to}',
+            ];
+            $this->Get_Conversations_Page($data, null, $all);
+        }
+        catch (\Exception $e)
+        {
+            echo 'Error: ' . $e->getMessage();
+        }
+    }
 
+    public function Messages_Count()
+    {
+        $query = "SELECT SUM(message_count) AS total
+            FROM (
+                SELECT fc.facebook_conversation_id, COUNT(fm.id) AS message_count
+                FROM facebook_messages fm
+                JOIN facebook_conversations fc ON fm.conversation = fc.facebook_conversation_id
+                WHERE fc.page = :page_id
+                GROUP BY fc.facebook_conversation_id
+            ) AS subquery_alias";
+
+        $count = DB::select($query, ['page_id' => $this->facebook_page_id]);
+        
+        return $count[0]->total;
+    }
+    public function Conversations_Count()
+    {
+        $query = "SELECT count(id) AS total FROM facebook_conversations WHERE page = :page_id;";
+
+        $count = DB::select($query, ['page_id' => $this->facebook_page_id]);
+        
+        return $count[0]->total;
+    }
     public static function Get_Pages()
     {
         $active_user = FacebookPage::whereNull('expired_at')->where('type', 'user')->first();
@@ -204,40 +244,54 @@ class FacebookPage extends Model
             {
                 if($photo != null && $photo != "")
                 {
-                    $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
-                        'access_token' => $this->access_token,
-                        'messaging_type' => 'MESSAGE_TAG',
-                        'recipient' => ['id' => $to],
-                        'message' => [
-                            'attachment' => [
-                                'type' => "image",
-                                "payload" => [
-                                    'url' => $photo
-                                ],
-                            ]
-                        ],
-                        'tag' => 'ACCOUNT_UPDATE'
-                    ]);
+                    try
+                    {
+                        $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                            'access_token' => $this->access_token,
+                            'messaging_type' => 'MESSAGE_TAG',
+                            'recipient' => ['id' => $to],
+                            'message' => [
+                                'attachment' => [
+                                    'type' => "image",
+                                    "payload" => [
+                                        'url' => $photo
+                                    ],
+                                ]
+                            ],
+                            'tag' => 'ACCOUNT_UPDATE'
+                        ]);
+                    }
+                    catch(\Exception $e)
+                    {
+                        return false;
+                    }
                 }
             }
             foreach(explode(",", $remarketing->photos) as $photo)
             {
                 if($remarketing->video != null && $remarketing->video != "")
                 {
-                    $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
-                        'access_token' => $this->access_token,
-                        'messaging_type' => 'MESSAGE_TAG',
-                        'recipient' => ['id' => $to],
-                        'message' => [
-                            'attachment' => [
-                                'type' => "video",
-                                "payload" => [
-                                    'url' => $remarketing->video
-                                ],
-                            ]
-                        ],
-                        'tag' => 'ACCOUNT_UPDATE'
-                    ]);
+                    try
+                    {
+                        $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                            'access_token' => $this->access_token,
+                            'messaging_type' => 'MESSAGE_TAG',
+                            'recipient' => ['id' => $to],
+                            'message' => [
+                                'attachment' => [
+                                    'type' => "video",
+                                    "payload" => [
+                                        'url' => $remarketing->video
+                                    ],
+                                ]
+                            ],
+                            'tag' => 'ACCOUNT_UPDATE'
+                        ]);
+                    }
+                    catch(\Exception $e)
+                    {
+                        return false;
+                    }
                 }
             }
             return true;

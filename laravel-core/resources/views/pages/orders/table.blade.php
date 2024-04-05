@@ -78,6 +78,7 @@ $user = Auth::user();
         </tbody>
       </table>
     </div>
+  {{ $orders->links('components.pagination') }}
   </div>
 </div>
 @endsection

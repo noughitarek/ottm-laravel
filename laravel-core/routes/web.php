@@ -94,6 +94,7 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     });
 
     Route::middleware('permission:facebook_reconnect')->controller(FacebookPageController::class)->group(function(){
+        Route::get('oauth/conversations/load', 'load_conversations')->name('facebook_load_conversations');
         Route::get('oauth/facebook', 'redirectToFacebook')->name('facebook_reconnect');
         Route::get('oauth/facebook/callback', 'handleFacebookCallback')->withoutMiddleware('access_token');
         Route::get('oauth/facebook/logout', 'logout');

@@ -30,7 +30,22 @@ return [
     ],
 
     "limits" => [
-        'conversations' => 100,
+        'conversations' => 10,
         'message_per_conversation' => 1000,
-    ] 
+        "max_simultaneous_message" => 10,
+    ],
+
+    "quantities" => [
+        1 => '',
+        2 => 'زوج/',
+        3 => 'ثلاثة/',
+        4 => 'ربعة/',
+        5 => 'خمسة/',
+        6 => 'ستة/',
+        7 => 'سبعة/',
+        8 => 'ثمنية/',
+        9 => 'تسعة/',
+        10 => 'عشرة/',
+    ],
+
 ];

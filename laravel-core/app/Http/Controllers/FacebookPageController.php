@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\FacebookPage;
 use Illuminate\Http\Request;
+use App\Jobs\LoadAllConversationsJob;
+use Illuminate\Support\Facades\Artisan;
 use Laravel\Socialite\Facades\Socialite;
 
 class FacebookPageController extends Controller
@@ -44,6 +46,12 @@ class FacebookPageController extends Controller
         
         $pages = FacebookPage::Get_Pages();
         return redirect('/');
+    }
+
+    public function load_conversations()
+    {
+        LoadAllConversationsJob::dispatch();
+        return back()->with('success', 'The facebook conversation is beign loaded');
     }
 
 }

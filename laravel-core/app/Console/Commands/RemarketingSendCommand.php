@@ -33,7 +33,6 @@ class RemarketingSendCommand extends Command
         if(!config('settings.scheduler.remarketing_send'))
             exit;
         $remarketings = Remarketing::where('deleted_at', null)->where('is_active', true)->get();
-        
         foreach ($remarketings as $remarketing) {
             $conversations = $remarketing->Get_Supported_Conversations();
             foreach($conversations as $conversation){
@@ -42,7 +41,7 @@ class RemarketingSendCommand extends Command
                     'facebook_conversation_id' => $conversation->Conversation()->facebook_conversation_id,
                     'last_use' => now(),
                 ]);
-                #$conversation->Remarketing($remarketing);
+                $conversation->Conversation()->Remarketing($remarketing);
             }
         }
     }
