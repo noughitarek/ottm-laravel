@@ -29,29 +29,8 @@ class ConversationsController extends Controller
         if(!$facebook_page){
             return abort(404);
         }
-        /*$facebook_users = FacebookUser::orderByDesc(
-            DB::raw('(
-                SELECT MAX(created_at) FROM facebook_messages
-                WHERE conversation = (
-                    SELECT facebook_conversation_id FROM facebook_conversations
-                    WHERE facebook_conversations.page = "'.$facebook_page->facebook_page_id.'"
-                    AND facebook_conversations.user = facebook_users.facebook_user_id 
-                    ORDER BY created_at DESC
-                    LIMIT 1
-                )
-            )')
-        )->paginate(20)->onEachSide(2);*/
-        
-        $facebook_users = FacebookConversation::where('page', $facebook_page->facebook_page_id)->get();
-        $facebook_users->transform(function ($item) {
-            $item->first_message_created_at = $item->Messages()->first()->created_at;
-            return $item;
-        });
-        $facebook_users = $facebook_users->sortByDesc('first_message_created_at');
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $items = $facebook_users->slice(($currentPage - 1) * 20, 20)->all();
-        $facebook_users = new LengthAwarePaginator($items, $facebook_users->count(), 20, $currentPage);
-        return view('pages.conversations.conversations')->with('facebook_users' , $facebook_users)->with('facebook_page', $facebook_page);
+        $conversations = FacebookUser::Get_Conversations();
+        return view('pages.conversations.conversations')->with('conversations' , $conversations)->with('facebook_page', $facebook_page);
     }
 
     /**

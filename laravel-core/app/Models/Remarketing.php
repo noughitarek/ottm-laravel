@@ -3,15 +3,15 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use App\Models\FacebookPage;
-use App\Models\FacebookConversation;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Remarketing extends Model
 {
     use HasFactory;
-    protected $fillable = ["name", "facebook_page_id", "send_after", "last_message_from", "make_order", "since", "photos", "video", "message", "deleted_at", "expire_after", "is_active"];
+    protected $fillable = ["name", "facebook_page_id", "send_after", "last_message_from", "make_order", "since", "photos", "video", "message", "deleted_at", "expire_after", "is_active", "start_time", "end_time"];
 
     public function Pages()
     {
@@ -44,7 +44,7 @@ class Remarketing extends Model
         }
     }
 
-    public function Get_Supported_Conversations()
+    public function Get_Supported_Conversations0()
     {
         $now = Carbon::now();
         $supported = [];
@@ -88,5 +88,38 @@ class Remarketing extends Model
             
         }
         return collect($supported);
+    }
+
+    public function Get_Supported_Conversations()
+    {
+        $now = Carbon::now();
+
+        $started_at = Carbon::createFromTimestamp($now->timestamp - $this->send_after);
+        $ended_at = Carbon::createFromTimestamp($now->timestamp+$this->expire_after);
+        $conversations = FacebookConversation::where('page', $this->facebook_page_id)
+        ->where($this->since, '>=', $started_at->toDateTimeString())
+        ->where($this->since, '<=', $ended_at->toDateTimeString())
+        ->where(function ($query) {
+            if ($this->last_message_from !== 'any') {
+                $query->where('last_from', $this->last_message_from);
+            }
+        })
+        ->where(function ($query) {
+            if ($this->make_order === 0) {
+                $query->where('make_order', $this->make_order);
+            }
+        })
+        ->where(function ($query) {
+            $query->whereNotExists(function ($subquery) {
+                $subquery->select(DB::raw(1))
+                    ->from('remarketing_messages')
+                    ->whereColumn('facebook_conversation_id', 'facebook_conversations.facebook_conversation_id')
+                    ->where('remarketing', $this->id);
+            });
+        });
+        
+
+        return array($conversations->take(config('settings.limits.max_simultaneous_message'))->get(), $conversations->count());
+        
     }
 }

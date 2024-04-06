@@ -35,13 +35,13 @@ class RemarketingSendCommand extends Command
         $remarketings = Remarketing::where('deleted_at', null)->where('is_active', true)->get();
         foreach ($remarketings as $remarketing) {
             $conversations = $remarketing->Get_Supported_Conversations();
-            foreach($conversations as $conversation){
+            foreach($conversations[0] as $conversation){
                 RemarketingMessages::create([
                     'remarketing' => $remarketing->id,
-                    'facebook_conversation_id' => $conversation->Conversation()->facebook_conversation_id,
+                    'facebook_conversation_id' => $conversation->facebook_conversation_id,
                     'last_use' => now(),
                 ]);
-                $conversation->Conversation()->Remarketing($remarketing);
+                $conversation->Remarketing($remarketing);
             }
         }
     }

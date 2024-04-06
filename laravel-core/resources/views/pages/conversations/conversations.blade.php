@@ -25,19 +25,19 @@ $user = Auth::user();
           </tr>
         </thead>
         <tbody>
-            @foreach($facebook_users as $facebook_user)
+            @foreach($conversations as $conversation)
             <tr>
                 <td class="d-xl-table-cell">
                     
-                    <a href="{{route('conversations_conversation', $facebook_user->facebook_conversation_id)}}"><i class="align-middle me-2 fas fa-fw fa-hashtag"></i> {{$facebook_user->User()->facebook_user_id}}</a><br>
-                    <i class="align-middle me-2 fas fa-fw fa-user"></i> {{$facebook_user->User()->name}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-at"></i> {{$facebook_user->User()->email}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-calendar"></i> {{$facebook_user->Messages()->first()->created_at}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-calendar-plus"></i> {{$facebook_user->Messages()->last()->created_at}}<br>
+                    <a href="{{route('conversations_conversation', $conversation->facebook_conversation_id)}}"><i class="align-middle me-2 fas fa-fw fa-hashtag"></i> {{$conversation->facebook_conversation_id}}</a><br>
+                    <i class="align-middle me-2 fas fa-fw fa-user"></i> {{$conversation->User()->name}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-at"></i> {{$conversation->User()->email}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-calendar"></i> {{$conversation->Messages()->first()->created_at}} <br>
+                    <i class="align-middle me-2 fas fa-fw fa-calendar-plus"></i> {{$conversation->Messages()->last()->created_at}}<br>
                 </td>
                 <td>
-                    <i class="align-middle me-2 fas fa-fw fa-user-cog"></i> {{$facebook_user->Page()->name}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-envelop-open"></i> {{$facebook_user->Messages()->count()}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-user-cog"></i> {{$conversation->Page()->name}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-envelop-open"></i> {{$conversation->Messages()->count()}}<br>
                 </td>
                 <td>
                     <span class="text-primary">0</span> |
@@ -46,7 +46,7 @@ $user = Auth::user();
                 </td>
                 <td>
                   @if($user->Has_Permission('orders_create'))
-                  <a href="{{route('orders_create_conversation', $facebook_user)}}" class="btn btn-primary" >
+                  <a href="{{route('orders_create_conversation', $conversation)}}" class="btn btn-primary" >
                     New order
                   </a>
                   @endif
@@ -56,7 +56,7 @@ $user = Auth::user();
         </tbody>
       </table>
     </div>
-  {{ $facebook_users->links('components.pagination') }}
+  {{ $conversations->links('components.pagination') }}
   </div>
 </div>
 @endsection

@@ -30,7 +30,9 @@ class UpdateRemarketingRequest extends FormRequest
             "time_unit" => "required|integer|in:1,60,3600,86400",
             "last_message_from" => "required|string|in:user,page,any",
             "make_order" => "required|boolean",
-            "since" => "required|string|in:conversation_start,last_from_page,last_from_user",
+            'start_time' => 'nullable|regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/',
+            'end_time' => 'nullable|regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/',
+            "since" => "required|string|in:started_at,ended_at,last_from_page_at,last_from_user_at",
             "expire_time_unit" => "required|integer|in:1,60,3600,86400",
             "expire_after" => "nullable|integer",
         ];

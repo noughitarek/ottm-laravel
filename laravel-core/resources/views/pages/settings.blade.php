@@ -119,7 +119,7 @@ $user = Auth::user();
         							<a href="{{route('facebook_reconnect')}}" class="btn btn-facebook"><i class="align-middle fab fa-facebook"></i> Reconnect</a>
 								</div>
 								<div class="mb-3">
-        							<a href="{{route('facebook_load_conversations')}}" class="btn btn-facebook"><i class="align-middle fab fa-facebook"></i> Load All Conversations</a>
+        							<a href="{{route('facebook_load_conversations')}}" class="btn btn-facebook"><i class="align-middle fab fa-facebook"></i> {{config('next_page')!=null?"Continue Conversations Loading":"Load All Conversations"}}</a>
 								</div>
 								@endif
 							</div>

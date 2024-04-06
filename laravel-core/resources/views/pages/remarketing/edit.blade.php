@@ -98,9 +98,10 @@ $user = Auth::user();
           <div class="mb-3 col-md-4">
             <label class="form-label" for="since">Since <span class="text-danger">*</span></label>
             <select class="form-control" name="since" id="since">
-              <option {{old('since')==null&&$remarketing->since=='last_from_user'?'selected':''}} {{old('since')=="last_from_user"?'selected':''}} value="last_from_user">Last message from costumer</option>
-              <option {{old('since')==null&&$remarketing->since=='last_from_page'?'selected':''}} {{old('since')=="last_from_page"?'selected':''}} value="last_from_page">Last message from page</option>
-              <option {{old('since')==null&&$remarketing->since=='conversation_start'?'selected':''}} {{old('since')=="conversation_start"?'selected':''}} value="conversation_start">Conversation starting</option>
+              <option {{old('since')==null&&$remarketing->since=='last_from_user_at'?'selected':''}} {{old('since')=="last_from_user_at"?'selected':''}} value="last_from_user_at">Last message from costumer</option>
+              <option {{old('since')==null&&$remarketing->since=='last_from_page_at'?'selected':''}} {{old('since')=="last_from_page_at"?'selected':''}} value="last_from_page_at">Last message from page</option>
+              <option {{old('since')==null&&$remarketing->since=='ended_at'?'selected':''}} value="ended_at" selected>Conversation ending</option>
+              <option {{old('since')==null&&$remarketing->since=='started_at'?'selected':''}} {{old('since')=="started_at"?'selected':''}} value="started_at">Conversation starting</option>
             </select>
             @error('page')
               <div class="text-danger">{{ $message }}</div>
@@ -122,6 +123,20 @@ $user = Auth::user();
               <option {{old('expire_time_unit') == 86400 ?'selected':''}} value="86400">Days</option>
             </select>
             @error('expire_time_unit')
+              <div class="text-danger">{{ $message }}</div>
+            @enderror
+          </div>
+          <div class="mb-3 col-md-6">
+            <label class="form-label" for="start_time">Execute it between</label>
+            <input type="text" name="start_time"  data-inputmask-regex="^(?:[01][0-9]|2[0-3]):[0-5][0-9]$" required value="{{old('start_time')??$remarketing->start_time}}" id="start_time" class="form-control">
+            @error('start_time')
+              <div class="text-danger">{{ $message }}</div>
+            @enderror
+          </div>
+          <div class="mb-3 col-md-6">
+            <label class="form-label" for="end_time">And</label>
+            <input type="text" name="end_time"  data-inputmask-regex="^(?:[01][0-9]|2[0-3]):[0-5][0-9]$" required value="{{old('end_time')??$remarketing->end_time}}" id="end_time" class="form-control">
+            @error('end_time')
               <div class="text-danger">{{ $message }}</div>
             @enderror
           </div>

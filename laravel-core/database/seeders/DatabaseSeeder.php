@@ -17,6 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DeskSeeder::class);
         $this->call(WilayaSeeder::class);
         $this->call(CommuneSeeder::class);
-        #$this->call(ConversationsSeeder::class);
+        $this->call(MySQLSeeder::class);
     }
 }

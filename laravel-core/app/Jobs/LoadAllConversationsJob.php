@@ -13,7 +13,7 @@ class LoadAllConversationsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = 3600;
+    public $timeout = 7200;
     /**
      * Create a new job instance.
      */

@@ -4,6 +4,9 @@
 @php
 $user = Auth::user();
 $conversations = $remarketing->Get_Supported_Conversations();
+$total = $conversations[1];
+$conversations = $conversations[0]; 
+
 @endphp
 
 @foreach ($errors->all() as $title=>$error)
@@ -30,26 +33,26 @@ $conversations = $remarketing->Get_Supported_Conversations();
       <table class="table table-hover my-0" id="datatables-orders">
         <thead>
           <tr>
-            <th class="d-xl-table-cell">User ({{count($conversations)==config('settings.limits.max_simultaneous_message')?'Max: '.count($conversations):count($conversations)}})</th>
+            <th class="d-xl-table-cell">User ({{count($conversations)==config('settings.limits.max_simultaneous_message')?'Max: '.count($conversations).'/'.$total:count($conversations)}})</th>
             <th class="d-xl-table-cell">Total messages</th>
             <th class="d-xl-table-cell">Orders</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-            @foreach($conversations as $facebook_user)
+            @foreach($conversations as $conversation)
             <tr>
                 <td class="d-xl-table-cell">
                     
-                    <a href="{{route('conversations_conversation', $facebook_user->Conversation()->facebook_conversation_id)}}"><i class="align-middle me-2 fas fa-fw fa-hashtag"></i> {{$facebook_user->facebook_user_id}}</a><br>
-                    <i class="align-middle me-2 fas fa-fw fa-user"></i> {{$facebook_user->name}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-at"></i> {{$facebook_user->email}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-calendar"></i> {{$facebook_user->Conversation()->Messages()->first()->created_at}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-calendar-plus"></i> {{$facebook_user->Conversation()->Messages()->last()->created_at}}<br>
+                    <a href="{{route('conversations_conversation', $conversation->facebook_conversation_id)}}"><i class="align-middle me-2 fas fa-fw fa-hashtag"></i> {{$conversation->facebook_conversation_id}}</a><br>
+                    <i class="align-middle me-2 fas fa-fw fa-user"></i> {{$conversation->User()->name}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-at"></i> {{$conversation->User()->email}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-calendar"></i> {{$conversation->ended_at}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-calendar-plus"></i> {{$conversation->started_at}}<br>
                 </td>
                 <td>
-                    <i class="align-middle me-2 fas fa-fw fa-user-cog"></i> {{$facebook_user->Conversation()->Page()->name}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-envelop-open"></i> {{$facebook_user->Conversation()->Messages()->count()}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-user-cog"></i> {{$conversation->Page()->name}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-envelop-open"></i> {{$conversation->Messages()->count()}}<br>
                 </td>
                 <td>
                     <span class="text-primary">0</span> |
@@ -58,7 +61,7 @@ $conversations = $remarketing->Get_Supported_Conversations();
                 </td>
                 <td>
                   @if($user->Has_Permission('orders_create'))
-                  <a href="{{route('orders_create_conversation', $facebook_user)}}" class="btn btn-primary" >
+                  <a href="{{route('orders_create_conversation', $conversation)}}" class="btn btn-primary" >
                     New order
                   </a>
                   @endif

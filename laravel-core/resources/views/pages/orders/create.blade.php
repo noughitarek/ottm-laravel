@@ -28,13 +28,13 @@ $user = Auth::user();
           <label class="form-label">Conversation <span class="text-danger">*</span></label>
           @if(isset($conversation))
             <br>{{$conversation->name}}
-            <input type="hidden" name="conversation" value="{{$conversation->Conversation()->facebook_conversation_id}}">
+            <input type="hidden" name="conversation" value="{{$conversation->facebook_conversation_id}}">
             <b><a href="{{route('orders_create')}}" class="text-danger">X</a></b>
           @else
           <select name="conversation" class="form-control conversation-select" required>
               <option value disabled selected>Select the conversation</option>
               @foreach($conversations as $conversationSelect)
-              <option {{ old('conversation')==$conversationSelect->Conversation()->facebook_conversation_id?'selected':'' }} value="{{$conversationSelect->Conversation()->facebook_conversation_id}}">{{$conversationSelect->name}} - {{$conversationSelect->Conversation()->Page()->name}}</option>
+              <option {{ old('conversation')==$conversationSelect->facebook_conversation_id?'selected':'' }} value="{{$conversationSelect->facebook_conversation_id}}">{{$conversationSelect->User()->name}} - {{$conversationSelect->Page()->name}}</option>
               @endforeach
           </select>
           @endif

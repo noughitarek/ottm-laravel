@@ -37,10 +37,18 @@ class FacebookPage extends Model
     }
     public function Get_Conversations_Page($data, $page=null, $all=false)
     {
-        $data = $page!=null?array_merge($data, ['after'=>$page]):$data;
+        $setting = Setting::where('path' ,'next_page')->first();
+        if($setting)
+        {
+            $page = $setting->content;
+        }
+        if($page!=null)
+        {
+            $data = array_merge($data, ['after'=>$page]);
+        }
         try
         {
-            $response = Http::get('https://graph.facebook.com/me/conversations', $data);
+            $response = Http::timeout(240)->get('https://graph.facebook.com/me/conversations', $data);
             if ($response->successful())
             {
                 $responseData = $response->json();
@@ -60,11 +68,11 @@ class FacebookPage extends Model
                         $cnversation = FacebookConversation::where('facebook_conversation_id', $conversation['id'])->first();
                         if(!$cnversation)
                         {
-                            FacebookConversation::create([
+                            $cnversation = FacebookConversation::create([
                                 'facebook_conversation_id' => (string)$conversation['id'],
                                 'page' => (string)$this->facebook_page_id,
                                 'user' => (string)$conversation["senders"]["data"][0]["id"],
-                                'can_reply' => $conversation["can_reply"]==1?true:false
+                                'can_reply' => $conversation["can_reply"]==1?true:false,
                             ]);
                         }
 
@@ -72,7 +80,7 @@ class FacebookPage extends Model
                         {
                             $fb_message = FacebookMessage::where('facebook_message_id', $message['id'])->first();
                             if(!$fb_message){
-                                FacebookMessage::create([
+                                $fb_message = FacebookMessage::create([
                                     'facebook_message_id' => (string)$message['id'],
                                     'message' => $message['message'],
                                     'sented_from' => $message['from']['id']==$this->facebook_page_id?'page':'user',
@@ -80,6 +88,25 @@ class FacebookPage extends Model
                                     'created_at' => $message['created_time']
                                 ]);
                             }
+                            if($cnversation->started_at == null || $cnversation->started_at > $fb_message->created_at)
+                            {
+                                $cnversation->started_at = $fb_message->created_at;
+                            }
+                            if($cnversation->ended_at == null ||$cnversation->ended_at < $fb_message->created_at)
+                            {
+                                $cnversation->last_from = $message['from']['id']==$this->facebook_page_id?'page':'user';
+                                $cnversation->ended_at = $fb_message->created_at;
+                            }
+                            $cnversation->make_order = false;
+                            if($message['from']['id']==$this->facebook_page_id && $cnversation->last_from_page_at < $fb_message->created_at)
+                            {
+                                $cnversation->last_from_page_at = $fb_message->created_at;
+                            }
+                            if($message['from']['id']!=$this->facebook_page_id && $cnversation->last_from_user_at < $fb_message->created_at)
+                            {
+                                $cnversation->last_from_user_at = $fb_message->created_at;
+                            }
+                            $cnversation->save();
                         }
                     }
                     echo 'Total: '.count($responseData['data'])."\n";
@@ -90,12 +117,27 @@ class FacebookPage extends Model
                 }
                 if($all && isset($responseData['paging']) && isset($responseData['paging']['cursors']) && isset($responseData['paging']['cursors']['after']))
                 {
+                    $setting = Setting::where('path' ,'next_page')->first();
+                    if(!$setting)
+                    {
+                        $setting = Setting::create([
+                            'path' => 'next_page',
+                            'content' => $responseData['paging']['cursors']['after'],
+                        ]);
+                    }
+                    $setting->update(['content'=>$responseData['paging']['cursors']['after']]);
+
                     $this->Get_Conversations_Page($data, $responseData['paging']['cursors']['after'], $all);
+                }
+                else
+                {
+                    Setting::where('path' ,'next_page')->delete();
                 }
             }
             else
             {
                 echo 'Error occurred while fetching data from Facebook API.';
+                $this->Get_Conversations_Page($data, $page, $all);
             }
         }
         catch (\Exception $e)
@@ -248,6 +290,7 @@ class FacebookPage extends Model
                     {
                         $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
                             'access_token' => $this->access_token,
+                            'Content-Type' => 'image/jpeg',
                             'messaging_type' => 'MESSAGE_TAG',
                             'recipient' => ['id' => $to],
                             'message' => [
@@ -263,7 +306,7 @@ class FacebookPage extends Model
                     }
                     catch(\Exception $e)
                     {
-                        return false;
+                        echo $e;
                     }
                 }
             }
@@ -290,7 +333,7 @@ class FacebookPage extends Model
                     }
                     catch(\Exception $e)
                     {
-                        return false;
+                        echo $e;
                     }
                 }
             }
@@ -298,7 +341,7 @@ class FacebookPage extends Model
         }
         catch(\Exception $e)
         {
-            return false;
+            echo $e;
         }
     }
 }

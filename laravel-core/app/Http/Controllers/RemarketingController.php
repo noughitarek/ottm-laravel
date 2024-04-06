@@ -64,6 +64,8 @@ class RemarketingController extends Controller
                 "video" => implode(',', $videos),
                 "message" => $request->input('message'),
                 "expire_after" => $request->input('expire_after')*$request->input('expire_time_unit'),
+                'start_time'=> $request->input('start_time'),
+                'end_time'=> $request->input('end_time'),
             ]);
         }
         return back()->with('success', "Remarketing message has been created");
@@ -167,6 +169,8 @@ class RemarketingController extends Controller
                     "video" => implode(',', $videos),
                     "message" => $request->input('message'),
                     "expire_after" => $request->input('expire_after')*$request->input('expire_time_unit'),
+                    'start_time'=> $request->input('start_time'),
+                    'end_time'=> $request->input('end_time'),
                 ]);
             }
             else
@@ -182,6 +186,8 @@ class RemarketingController extends Controller
                     "video" => implode(',',implode(',', $videos)),
                     "message" => $request->input('message'),
                     "expire_after" => $request->input('expire_after')*$request->input('expire_time_unit'),
+                    'start_time'=> $request->input('start_time'),
+                    'end_time'=> $request->input('end_time'),
                 ]);
             }
         }

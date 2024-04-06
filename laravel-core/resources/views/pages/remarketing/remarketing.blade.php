@@ -43,7 +43,8 @@ $user = Auth::user();
             <i class="align-middle me-2 fas fa-fw fa-robot"></i>Send it after <b>{{$remarketing->Send_After()}}</b><br>
             <i class="align-middle me-2 fas fa-fw"></i>if last message from <b>{{($remarketing->last_message_from=="any"?"Any":($remarketing->last_message_from=="page"?"Page":"User"))}}</b> <br>
             <i class="align-middle me-2 fas fa-fw"></i>and if <b>{{($remarketing->make_order?"the customer didn't make an order":"any")}}</b> <br>
-            <i class="align-middle me-2 fas fa-fw"></i>since <b>{{($remarketing->since=='last_from_user'?"the last message from costumer":($remarketing->since=='last_from_page'?"the last message from page":"the first message of the conversation"))}}</b> <br>
+            <i class="align-middle me-2 fas fa-fw"></i>since <b>{{($remarketing->since=='last_from_user_at'?"the last message from costumer":($remarketing->since=='last_from_page_at'?"the last message from page":($remarketing->since=='started_at'?"the first message of the conversation":"the last message of the conversation")))}}</b> <br>
+            <i class="align-middle me-2 fas fa-fw"></i>between <b>{{$remarketing->start_time}}</b> and <b>{{$remarketing->end_time}}</b>
             @if($remarketing->expire_after == null)
             <i class="align-middle me-2 fas fa-fw"></i>expire after <b>Never</b><br>
             @else

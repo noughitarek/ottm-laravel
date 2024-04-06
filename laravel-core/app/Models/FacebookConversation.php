@@ -13,7 +13,8 @@ class FacebookConversation extends Model
 {
     use HasFactory;
     
-    protected $fillable = ['facebook_conversation_id', 'page', 'user', 'can_reply'];
+    protected $fillable = ['facebook_conversation_id', 'page', 'user', 'can_reply', 'started_at', 'ended_at',
+    'make_order', 'last_from', 'last_from_page_at', 'last_from_user_at'];
 
     public function Messages()
     {
