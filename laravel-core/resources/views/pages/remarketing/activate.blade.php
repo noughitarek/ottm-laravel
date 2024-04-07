@@ -5,6 +5,8 @@
 $user = Auth::user();
 $conversations = $remarketing->Get_Supported_Conversations();
 $total = $conversations[1];
+$start = $conversations[2];
+$end = $conversations[3];
 $conversations = $conversations[0]; 
 
 @endphp
@@ -33,7 +35,10 @@ $conversations = $conversations[0];
       <table class="table table-hover my-0" id="datatables-orders">
         <thead>
           <tr>
-            <th class="d-xl-table-cell">User ({{count($conversations)==config('settings.limits.max_simultaneous_message')?'Max: '.count($conversations).'/'.$total:count($conversations)}})</th>
+            <th class="d-xl-table-cell">
+              User ({{count($conversations)==config('settings.limits.max_simultaneous_message')?'Max: '.count($conversations).'/'.$total:count($conversations)}})
+              Between {{$start}} and {{$end}} 
+            </th>
             <th class="d-xl-table-cell">Total messages</th>
             <th class="d-xl-table-cell">Orders</th>
             <th>Action</th>

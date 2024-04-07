@@ -8,9 +8,12 @@ $user = Auth::user();
   <div class="card flex-fill">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="card-title mb-0">RTM</h5>
+        <div>
+        <a href="{{route('remarketing_create')}}" class="btn btn-secondary" > History </a>
         @if($user->Has_Permission("remarketing_create"))
         <a href="{{route('remarketing_create')}}" class="btn btn-primary" > Create a message </a>
         @endif
+        </div>
     </div>
   </div>
 </div>

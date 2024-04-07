@@ -95,7 +95,7 @@ class Remarketing extends Model
         $now = Carbon::now();
 
         $started_at = Carbon::createFromTimestamp($now->timestamp - $this->send_after);
-        $ended_at = Carbon::createFromTimestamp($now->timestamp+$this->expire_after);
+        $ended_at = Carbon::createFromTimestamp($now->timestamp  - $this->send_after + $this->expire_after);
         $conversations = FacebookConversation::where('page', $this->facebook_page_id)
         ->where($this->since, '>=', $started_at->toDateTimeString())
         ->where($this->since, '<=', $ended_at->toDateTimeString())
@@ -116,10 +116,13 @@ class Remarketing extends Model
                     ->whereColumn('facebook_conversation_id', 'facebook_conversations.facebook_conversation_id')
                     ->where('remarketing', $this->id);
             });
-        });
-        
-
-        return array($conversations->take(config('settings.limits.max_simultaneous_message'))->get(), $conversations->count());
+        });       
+        return array(
+            $conversations->take(config('settings.limits.max_simultaneous_message'))->get(),
+            $conversations->count(),
+            $started_at->toDateTimeString(),
+            $ended_at->toDateTimeString()
+        );
         
     }
 }
