@@ -148,7 +148,7 @@ $user = Auth::user();
         <div class="mb-3">
           <label class="form-label" for="template">Template</label>
           <select name="template" id="template" class="form-control">
-              <option value="0" selected>Select the template</option>
+              <option value selected>Select the template</option>
               @foreach($templates as $template)
               <option value="{{$template->id}}">{{$template->name}}</option>
               @endforeach
@@ -196,7 +196,7 @@ $user = Auth::user();
 const template = document.getElementById('template');
 const NotTemplate = document.getElementById('NotTemplate');
 template.addEventListener('change', function(){
-  if(template.value!=0){
+  if(template.value!=""){
     NotTemplate.classList.add("d-none")
   }else{
     NotTemplate.classList.remove("d-none")
