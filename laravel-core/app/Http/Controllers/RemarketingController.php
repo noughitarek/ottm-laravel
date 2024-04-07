@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Remarketing;
 use App\Models\FacebookPage;
+use App\Models\MessagesTemplates;
 use App\Models\RemarketingMessages;
 use App\Models\FacebookConversation;
 use App\Http\Requests\StoreRemarketingRequest;
@@ -26,7 +27,8 @@ class RemarketingController extends Controller
     public function create()
     {
         $pages = FacebookPage::where('expired_at', null)->where('type', 'business')->get();
-        return view('pages.remarketing.create')->with('pages', $pages);
+        $templates = MessagesTemplates::where('deleted_at', null)->get();
+        return view('pages.remarketing.create')->with('pages', $pages)->with('templates', $templates);
     }
 
     /**
@@ -66,6 +68,7 @@ class RemarketingController extends Controller
                 "expire_after" => $request->input('expire_after')*$request->input('expire_time_unit'),
                 'start_time'=> $request->input('start_time'),
                 'end_time'=> $request->input('end_time'),
+                'template' => $request->input('template'),
             ]);
         }
         return back()->with('success', "Remarketing message has been created");
@@ -119,7 +122,8 @@ class RemarketingController extends Controller
     public function edit(Remarketing $remarketing)
     {
         $pages = FacebookPage::where('expired_at', null)->where('type', 'business')->get();
-        return view('pages.remarketing.edit')->with('remarketing', $remarketing)->with('pages', $pages);
+        $templates = MessagesTemplates::where('deleted_at', null)->get();
+        return view('pages.remarketing.edit')->with('remarketing', $remarketing)->with('pages', $pages)->with('templates', $templates);
     }
 
     /**
@@ -171,6 +175,7 @@ class RemarketingController extends Controller
                     "expire_after" => $request->input('expire_after')*$request->input('expire_time_unit'),
                     'start_time'=> $request->input('start_time'),
                     'end_time'=> $request->input('end_time'),
+                    'template' => $request->input('template'),
                 ]);
             }
             else
@@ -188,6 +193,7 @@ class RemarketingController extends Controller
                     "expire_after" => $request->input('expire_after')*$request->input('expire_time_unit'),
                     'start_time'=> $request->input('start_time'),
                     'end_time'=> $request->input('end_time'),
+                    'template' => $request->input('template'),
                 ]);
             }
         }
@@ -201,5 +207,10 @@ class RemarketingController extends Controller
     {
         $remarketing->update(['deleted_at' => now(), 'is_active'=>false]);
         return back()->with('success', "Remarketing message has been deleted");
+    }
+    
+    public function history(Remarketing $remarketing)
+    {
+        return view('pages.remarketing.history')->with('remarketing', $remarketing);
     }
 }

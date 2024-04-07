@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Models\MessagesTemplates;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Remarketing extends Model
 {
     use HasFactory;
-    protected $fillable = ["name", "facebook_page_id", "send_after", "last_message_from", "make_order", "since", "photos", "video", "message", "deleted_at", "expire_after", "is_active", "start_time", "end_time"];
+    protected $fillable = ["name", "facebook_page_id", "send_after", "last_message_from", "make_order", "since", "photos", "video", "template", "message", "deleted_at", "expire_after", "is_active", "start_time", "end_time"];
 
     public function Pages()
     {
@@ -89,6 +90,22 @@ class Remarketing extends Model
         }
         return collect($supported);
     }
+    public function Template()
+    {
+        return MessagesTemplates::find($this->template);
+    }
+
+    public function Start_date()
+    {
+        $now = Carbon::now();
+        return Carbon::createFromTimestamp($now->timestamp  - $this->send_after)->toDateTimeString();
+    }
+
+    public function End_date()
+    {
+        $now = Carbon::now();
+        return Carbon::createFromTimestamp($now->timestamp  - $this->send_after + $this->expire_after)->toDateTimeString();
+    }
 
     public function Get_Supported_Conversations()
     {
@@ -124,5 +141,10 @@ class Remarketing extends Model
             $ended_at->toDateTimeString()
         );
         
+    }
+    
+    public function History()
+    {
+        return RemarketingMessages::where('remarketing', $this->id)->paginate(20)->onEachSide(2);
     }
 }

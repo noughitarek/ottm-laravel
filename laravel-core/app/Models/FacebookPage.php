@@ -270,78 +270,121 @@ class FacebookPage extends Model
     
     public function Remarketing($to, $remarketing)
     {
-        try
+        if($remarketing->template == null)
         {
-            if($remarketing->message != null && $remarketing->message != "")
+            try
             {
-                $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
-                    'access_token' => $this->access_token,
-                    'messaging_type' => 'MESSAGE_TAG',
-                    'recipient' => ['id' => $to],
-                    'message' => ['text' => $remarketing->message],
-                    'tag' => 'ACCOUNT_UPDATE'
-                ]);
-            }
-            foreach(explode(",", $remarketing->photos) as $photo)
-            {
-                if($photo != null && $photo != "")
+                if($remarketing->message != null && $remarketing->message != "")
                 {
-                    try
+                    $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                        'access_token' => $this->access_token,
+                        'messaging_type' => 'MESSAGE_TAG',
+                        'recipient' => ['id' => $to],
+                        'message' => ['text' => $remarketing->message],
+                        'tag' => 'ACCOUNT_UPDATE'
+                    ]);
+                }
+                foreach(explode(",", $remarketing->photos) as $photo)
+                {
+                    if($photo != null && $photo != "")
                     {
-                        $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
-                            'access_token' => $this->access_token,
-                            'Content-Type' => 'image/jpeg',
-                            'messaging_type' => 'MESSAGE_TAG',
-                            'recipient' => ['id' => $to],
-                            'message' => [
-                                'attachment' => [
-                                    'type' => "image",
-                                    "payload" => [
-                                        'url' => $photo
-                                    ],
-                                ]
-                            ],
-                            'tag' => 'ACCOUNT_UPDATE'
-                        ]);
-                    }
-                    catch(\Exception $e)
-                    {
-                        echo $e;
+                        try
+                        {
+                            $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                                'access_token' => $this->access_token,
+                                'messaging_type' => 'MESSAGE_TAG',
+                                'recipient' => ['id' => $to],
+                                'message' => [
+                                    'attachment' => [
+                                        'type' => "image",
+                                        "payload" => [
+                                            'url' => $photo
+                                        ],
+                                    ]
+                                ],
+                                'tag' => 'ACCOUNT_UPDATE'
+                            ]);
+                        }
+                        catch(\Exception $e)
+                        {
+                            echo $e;
+                        }
                     }
                 }
-            }
-            foreach(explode(",", $remarketing->photos) as $photo)
-            {
-                if($remarketing->video != null && $remarketing->video != "")
+                foreach(explode(",", $remarketing->photos) as $photo)
                 {
-                    try
+                    if($remarketing->video != null && $remarketing->video != "")
                     {
-                        $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
-                            'access_token' => $this->access_token,
-                            'messaging_type' => 'MESSAGE_TAG',
-                            'recipient' => ['id' => $to],
-                            'message' => [
-                                'attachment' => [
-                                    'type' => "video",
-                                    "payload" => [
-                                        'url' => $remarketing->video
-                                    ],
-                                ]
-                            ],
-                            'tag' => 'ACCOUNT_UPDATE'
-                        ]);
-                    }
-                    catch(\Exception $e)
-                    {
-                        echo $e;
+                        try
+                        {
+                            $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                                'access_token' => $this->access_token,
+                                'messaging_type' => 'MESSAGE_TAG',
+                                'recipient' => ['id' => $to],
+                                'message' => [
+                                    'attachment' => [
+                                        'type' => "video",
+                                        "payload" => [
+                                            'url' => $remarketing->video
+                                        ],
+                                    ]
+                                ],
+                                'tag' => 'ACCOUNT_UPDATE'
+                            ]);
+                        }
+                        catch(\Exception $e)
+                        {
+                            echo $e;
+                        }
                     }
                 }
+                return true;
             }
-            return true;
+            catch(\Exception $e)
+            {
+                echo $e;
+            }
         }
-        catch(\Exception $e)
+        else
         {
-            echo $e;
+            foreach($remarketing->Template()->Asset() as $asset)
+            {
+                if($asset['type'] == "message")
+                {
+                    $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                        'access_token' => $this->access_token,
+                        'messaging_type' => 'MESSAGE_TAG',
+                        'recipient' => ['id' => $to],
+                        'message' => ['text' => $asset['content']],
+                        'tag' => 'ACCOUNT_UPDATE'
+                    ]);
+                }
+                else
+                {
+                    
+                    try
+                    {
+                        $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                            'access_token' => $this->access_token,
+                            'messaging_type' => 'MESSAGE_TAG',
+                            'recipient' => ['id' => $to],
+                            'message' => [
+                                'attachment' => [
+                                    'type' => $asset['type'],
+                                    "payload" => [
+                                        'url' => $asset['content'],
+                                    ],
+                                ]
+                            ],
+                            'tag' => 'ACCOUNT_UPDATE'
+                        ]);
+                    }
+                    catch(\Exception $e)
+                    {
+                        echo $e;
+                    }
+                }
+            }
         }
     }
 }

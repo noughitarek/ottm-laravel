@@ -8,7 +8,7 @@ $user = Auth::user();
   <div class="card flex-fill">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="card-title mb-0">Conversation with {{ $conversation->User()->name}}</h5>
-      <a href="{{route('conversations')}}" class="btn btn-secondary">Back</a>
+      <a href="{{url()->previous()}}" class="btn btn-secondary">Back</a>
     </div>
   </div>
 </div>

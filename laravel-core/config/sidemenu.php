@@ -45,6 +45,14 @@ return array(
         "icon" => array("type" => "feather", "content" => "message-square"),
     ),
     array(
+        "type" => "link",
+        "content" => "Messages templates",
+        "permissions" => "messagestemplates_consult",
+        "section" => "messagestemplates",
+        "route" => "messagestemplates",
+        "icon" => array("type" => "feather", "content" => "message-circle"),
+    ),
+    array(
         "type" => "group",
         "content" => "Orders",
         "permissions" => ["orders_consult", "orders_restricted_consult", "orders_create"],

@@ -9,7 +9,6 @@ $user = Auth::user();
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="card-title mb-0">RTM</h5>
         <div>
-        <a href="{{route('remarketing_create')}}" class="btn btn-secondary" > History </a>
         @if($user->Has_Permission("remarketing_create"))
         <a href="{{route('remarketing_create')}}" class="btn btn-primary" > Create a message </a>
         @endif
@@ -42,35 +41,49 @@ $user = Auth::user();
             @endforeach
             <i class="align-middle me-2 fas fa-fw fa-toggle-{{$remarketing->is_active?'on':'off'}}"></i>{{$remarketing->is_active?'Active':'Inactive'}}<br>
           </td>
-          <td class="single-line">
+          <td>
+            <i class="align-middle me-2 fas fa-fw fa-robot"></i> Send it for :<br>
+            <i class="align-middle me-2 fas fa-fw"></i>between: {{$remarketing->Start_date()}}<br>
+            <i class="align-middle me-2 fas fa-fw"></i>and {{$remarketing->End_date()}}<br>
+            <i class="align-middle me-2 fas fa-fw"></i>from <b>{{($remarketing->since=='last_from_user_at'?"the last message from costumer":($remarketing->since=='last_from_page_at'?"the last message from page":($remarketing->since=='started_at'?"the first message of the conversation":"the last message of the conversation")))}}</b> <br>
+            <i class="align-middle me-2 fas fa-fw"></i>if last message from <b>{{($remarketing->last_message_from=="any"?"Any":($remarketing->last_message_from=="page"?"Page":"User"))}}</b> <br>
+            <i class="align-middle me-2 fas fa-fw"></i>and if <b>{{($remarketing->make_order?"the customer didn't make an order":"any")}}</b> <br>
+            
+            <!--
             <i class="align-middle me-2 fas fa-fw fa-robot"></i>Send it after <b>{{$remarketing->Send_After()}}</b><br>
             <i class="align-middle me-2 fas fa-fw"></i>if last message from <b>{{($remarketing->last_message_from=="any"?"Any":($remarketing->last_message_from=="page"?"Page":"User"))}}</b> <br>
             <i class="align-middle me-2 fas fa-fw"></i>and if <b>{{($remarketing->make_order?"the customer didn't make an order":"any")}}</b> <br>
             <i class="align-middle me-2 fas fa-fw"></i>since <b>{{($remarketing->since=='last_from_user_at'?"the last message from costumer":($remarketing->since=='last_from_page_at'?"the last message from page":($remarketing->since=='started_at'?"the first message of the conversation":"the last message of the conversation")))}}</b> <br>
-            <i class="align-middle me-2 fas fa-fw"></i>between <b>{{$remarketing->start_time}}</b> and <b>{{$remarketing->end_time}}</b>
+            <i class="align-middle me-2 fas fa-fw"></i>between <b>{{$remarketing->start_time}}</b> and <b>{{$remarketing->end_time}}</b><br>
             @if($remarketing->expire_after == null)
             <i class="align-middle me-2 fas fa-fw"></i>expire after <b>Never</b><br>
             @else
             <i class="align-middle me-2 fas fa-fw"></i>expire after <b>{{$remarketing->Expire_After()}}</b><br>
             @endif
+            -->
           </td>
           <td class="single-line">
+            @if($remarketing->template!=null)
+            <i class="align-middle me-2 fas fa-fw fa-file"></i> {{$remarketing->Template()->name}}
+            @else
             @foreach(explode(',',$remarketing->photos) as $photo)
-            @if($photo != "")
+            @if($photo != null && $photo != "")
               <a href="{{$photo}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>{{explode('/', $photo)[count(explode('/', $photo))-1]}}</a><br>
             @endif
             @endforeach
             @foreach(explode(',',$remarketing->video) as $video)
-            @if($photo != "")
+            @if($video!= null && $video != "")
               <a href="{{$video}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-video"></i>{{explode('/', $video)[count(explode('/', $video))-1]}}</a><br>
             @endif
             @endforeach
+            @endif
           </td>
           <td class="single-line">
             {{$remarketing->message}}
           </td>
           <td>
             @if($user->Has_Permission('remarketing_edit'))
+            <a href="{{route('remarketing_history', $remarketing->id)}}" class="btn btn-secondary" > History </a>
             <form method="POST" action="{{route('remarketing_deactivate', $remarketing->id)}}">
             @csrf
             @method('PUT')

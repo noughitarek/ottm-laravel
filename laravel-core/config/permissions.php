@@ -9,6 +9,7 @@ return [
     'products' => ['consult', 'create', 'edit', 'delete'],
     'conversations' => ['consult'],
     'orders' => ['consult', 'restricted_consult', 'create', 'edit', 'restricted_edit', 'delete', 'restricted_delete'],
+    'messagestemplates' => ['consult', 'create', 'edit', 'delete'],
     'stock' => ['consult', 'create', 'edit', 'delete'],
 
     'remarketing' => ['consult', 'create', 'edit', 'delete'],

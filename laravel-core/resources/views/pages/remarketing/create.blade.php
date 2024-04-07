@@ -145,28 +145,42 @@ $user = Auth::user();
         <h5 class="card-title">Message</h5>
       </div>
       <div class="card-body">
-        <div class="row">
-          <div class="mb-3 col-md-6">
-            <label class="form-label" for="photos">Photos</label>
-            <input type="file" name="photos[]" id="photos" class="form-control" multiple accept="image/jpeg">
-            @error('photos')
-              <div class="text-danger">{{ $message }}</div>
-            @enderror
-          </div>
-          <div class="mb-3 col-md-6">
-            <label class="form-label" for="videos">Videos</label>
-            <input type="file" name="videos[]" id="videos" class="form-control" accept="video/mp4" multiple>
-            @error('videos')
-              <div class="text-danger">{{ $message }}</div>
-            @enderror
-          </div>
-        </div>
         <div class="mb-3">
-          <label class="form-label" for="message">Message</label>
-          <textarea name="message" id="message" class="form-control">{{old('message')}}</textarea>
-          @error('message')
+          <label class="form-label" for="template">Template</label>
+          <select name="template" id="template" class="form-control">
+              <option value="0" selected>Select the template</option>
+              @foreach($templates as $template)
+              <option value="{{$template->id}}">{{$template->name}}</option>
+              @endforeach
+          </select>
+          @error('template')
             <div class="text-danger">{{ $message }}</div>
           @enderror
+        </div>
+        <div id="NotTemplate">
+          <div class="row">
+            <div class="mb-3 col-md-6">
+              <label class="form-label" for="photos">Photos</label>
+              <input type="file" name="photos[]" id="photos" class="form-control" multiple accept="image/jpeg">
+              @error('photos')
+                <div class="text-danger">{{ $message }}</div>
+              @enderror
+            </div>
+            <div class="mb-3 col-md-6">
+              <label class="form-label" for="videos">Videos</label>
+              <input type="file" name="videos[]" id="videos" class="form-control" accept="video/mp4" multiple>
+              @error('videos')
+                <div class="text-danger">{{ $message }}</div>
+              @enderror
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="message">Message</label>
+            <textarea name="message" id="message" class="form-control">{{old('message')}}</textarea>
+            @error('message')
+              <div class="text-danger">{{ $message }}</div>
+            @enderror
+          </div>
         </div>
         <div class="mb-3">
           <button type="submit" class="btn btn-primary">Create</button>
@@ -176,4 +190,17 @@ $user = Auth::user();
   </div>
 </form>
 
+@endsection
+@section('script')
+<script>
+const template = document.getElementById('template');
+const NotTemplate = document.getElementById('NotTemplate');
+template.addEventListener('change', function(){
+  if(template.value!=0){
+    NotTemplate.classList.add("d-none")
+  }else{
+    NotTemplate.classList.remove("d-none")
+  }
+});
+</script>
 @endsection

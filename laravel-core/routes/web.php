@@ -15,6 +15,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RemarketingController;
 use App\Http\Controllers\FacebookPageController;
 use App\Http\Controllers\ConversationsController;
+use App\Http\Controllers\MessagesTemplatesController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
@@ -59,7 +60,13 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::get('delivered', "delivered")->name('orders_delivered');
         Route::get('back', "back")->name('orders_back');
         Route::get('archived', "archived")->name('orders_archived');
-        
+    });
+    
+    Route::middleware('permission:messagestemplates_consult')->prefix("templates")->controller(MessagesTemplatesController::class)->group(function(){
+        Route::get('', "index")->name('messagestemplates');
+        Route::post('', "store")->middleware('permission:users_create')->name('messagestemplates_create');
+        Route::put('{template}/edit', "update")->middleware('permission:messagestemplates_edit')->name('messagestemplates_edit');
+        Route::delete('{template}/delete', "destroy")->middleware('permission:messagestemplates_delete')->name('messagestemplates_delete');
     });
     Route::middleware('permission:users_consult')->prefix("users")->controller(UserController::class)->group(function(){
         Route::get('', "index")->name('users');
@@ -75,6 +82,7 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     });
     Route::middleware('permission:remarketing_consult')->prefix("remarketing")->controller(RemarketingController::class)->group(function(){
         Route::get('', "index")->name('remarketing');
+        Route::get('{remarketing}/history', "history")->name('remarketing_history');
         Route::get('create', "create")->middleware('permission:remarketing_create')->name('remarketing_create');
         Route::post('create', "store")->middleware('permission:remarketing_create');
         Route::get('{remarketing}/activate', "activate")->middleware('permission:remarketing_edit')->name('remarketing_activate');

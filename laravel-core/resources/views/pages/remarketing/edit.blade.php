@@ -150,48 +150,63 @@ $user = Auth::user();
         <h5 class="card-title">Message</h5>
       </div>
       <div class="card-body">
-        <div class="row">
-          <div class="mb-3 col-md-6">
-            <label class="form-label" for="photos">Photos</label><br>
-            @foreach(explode(',',$remarketing->photos) as $photo)
-              @if($photo != null && $photo != '')
-              <label class="form-label" class="form-check m-0">
-                <input type="checkbox" name="oldPhotos[]" class="form-check-input" value="{{$photo}}" checked>
-                <span class="form-check-label">
-                  <a href="{{$photo}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>{{explode('/', $photo)[count(explode('/', $photo))-1]}}</a>
-                </span>
-              </label><br>
-              @endif
-            @endforeach
-            <input type="file" name="photos[]" id="photos" class="form-control" multiple accept="image/jpeg">
-            @error('photos')
-              <div class="text-danger">{{ $message }}</div>
-            @enderror
-          </div>
-          <div class="mb-3 col-md-6">
-            <label class="form-label" for="videos">Video</label><br>
-            @foreach(explode(',',$remarketing->video) as $video)
-              @if($video != null && $video != '')
-              <label class="form-label" class="form-check m-0">
-                <input type="checkbox" name="oldVideos[]" class="form-check-input" value="{{$video}}" checked>
-                <span class="form-check-label">
-                  <a href="{{$video}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>{{explode('/', $video)[count(explode('/', $photo))-1]}}</a>
-                </span>
-              </label><br>
-              @endif
-            @endforeach
-            <input type="file" name="videos[]" id="videos" class="form-control" accept="video/mp4" multiple>
-            @error('videos')
-              <div class="text-danger">{{ $message }}</div>
-            @enderror
-          </div>
-        </div>
         <div class="mb-3">
-          <label class="form-label" for="message">Message</label>
-          <textarea name="message" id="message" class="form-control">{{old('message')??$remarketing->message}}</textarea>
-          @error('page')
+          <label class="form-label" for="template">Template</label>
+          <select name="template" id="template" class="form-control">
+              <option value="0" selected>Select the template</option>
+              @foreach($templates as $template)
+              <option {{$remarketing->template==$template->id?'selected':''}} value="{{$template->id}}">{{$template->name}}</option>
+              @endforeach
+          </select>
+          @error('template')
             <div class="text-danger">{{ $message }}</div>
           @enderror
+        </div>
+        
+        <div id="NotTemplate">
+          <div class="row">
+            <div class="mb-3 col-md-6">
+              <label class="form-label" for="photos">Photos</label><br>
+              @foreach(explode(',',$remarketing->photos) as $photo)
+                @if($photo != null && $photo != '')
+                <label class="form-label" class="form-check m-0">
+                  <input type="checkbox" name="oldPhotos[]" class="form-check-input" value="{{$photo}}" checked>
+                  <span class="form-check-label">
+                    <a href="{{$photo}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>{{explode('/', $photo)[count(explode('/', $photo))-1]}}</a>
+                  </span>
+                </label><br>
+                @endif
+              @endforeach
+              <input type="file" name="photos[]" id="photos" class="form-control" multiple accept="image/jpeg">
+              @error('photos')
+                <div class="text-danger">{{ $message }}</div>
+              @enderror
+            </div>
+            <div class="mb-3 col-md-6">
+              <label class="form-label" for="videos">Video</label><br>
+              @foreach(explode(',',$remarketing->video) as $video)
+                @if($video != null && $video != '')
+                <label class="form-label" class="form-check m-0">
+                  <input type="checkbox" name="oldVideos[]" class="form-check-input" value="{{$video}}" checked>
+                  <span class="form-check-label">
+                    <a href="{{$video}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>{{explode('/', $video)[count(explode('/', $video))-1]}}</a>
+                  </span>
+                </label><br>
+                @endif
+              @endforeach
+              <input type="file" name="videos[]" id="videos" class="form-control" accept="video/mp4" multiple>
+              @error('videos')
+                <div class="text-danger">{{ $message }}</div>
+              @enderror
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="message">Message</label>
+            <textarea name="message" id="message" class="form-control">{{old('message')??$remarketing->message}}</textarea>
+            @error('page')
+              <div class="text-danger">{{ $message }}</div>
+            @enderror
+          </div>
         </div>
         <div class="mb-3">
           <button type="submit" class="btn btn-primary">Edit</button>
@@ -201,4 +216,20 @@ $user = Auth::user();
   </div>
 </form>
 
+@endsection
+@section('script')
+<script>
+const template = document.getElementById('template');
+const NotTemplate = document.getElementById('NotTemplate');
+template.addEventListener('change', templateHandle);
+function templateHandle()
+{
+  if(template.value!=0){
+    NotTemplate.classList.add("d-none")
+  }else{
+    NotTemplate.classList.remove("d-none")
+  }
+}
+templateHandle()
+</script>
 @endsection
