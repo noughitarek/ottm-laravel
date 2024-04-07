@@ -24,7 +24,6 @@ class StoreMessagesTemplatesRequest extends FormRequest
     {
         return [
             "name" => "required",
-            'product' => 'required|exists:products,id',
         ];
     }
 }

@@ -25,7 +25,6 @@ class UpdateMessagesTemplatesRequest extends FormRequest
     {
         return [
             "name" => "required",
-            'product' => 'required|exists:products,id',
         ];
     }
 }

@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('messages_templates', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('product')->nullable();
-            $table->foreign('product')->references('id')->on('products');
             $table->text('photos')->nullable();
             $table->text('video')->nullable();
             $table->text('message')->nullable();

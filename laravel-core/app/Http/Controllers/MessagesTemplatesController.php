@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Models\MessagesTemplates;
 use App\Http\Requests\StoreMessagesTemplatesRequest;
 use App\Http\Requests\UpdateMessagesTemplatesRequest;
@@ -15,8 +14,7 @@ class MessagesTemplatesController extends Controller
     public function index()
     {
         $template = MessagesTemplates::where('deleted_at', null)->get(); 
-        $products = Product::where('deleted_at', null)->get();
-        return view('pages.messagestemplates')->with('messagestemplates', $template)->with('products', $products);
+        return view('pages.messagestemplates')->with('messagestemplates', $template);
     }
 
     /**
@@ -44,7 +42,6 @@ class MessagesTemplatesController extends Controller
         }
         MessagesTemplates::create([
             'name' => $request->input('name'),
-            'product' => $request->input('product'),
             'photos' => implode(',', $photos),
             'video' => implode(',', $videos),
             'message' => $request->input('message'),
@@ -87,7 +84,6 @@ class MessagesTemplatesController extends Controller
         }
         $template->update([
             'name' => $request->input('name'),
-            'product' => $request->input('product'),
             'photos' => implode(',', $photos),
             'video' => implode(',', $videos),
             'message' => $request->input('message'),

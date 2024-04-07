@@ -32,7 +32,6 @@ $user = Auth::user();
               <td class="d-xl-table-cell">
                   <i class="align-middle me-2 fas fa-fw fa-hashtag"></i> {{$template->id}}<br>
                   <i class="align-middle me-2 fas fa-fw fa-box"></i> {{$template->name}}<br>
-                  <i class="align-middle me-2 fas fa-fw fa-at"></i> {{$template->Product()->name}}<br>
               </td>
               <td class="single-line">
                 @foreach(explode(',',$template->photos) as $photo)
@@ -89,15 +88,6 @@ $user = Auth::user();
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="mb-3">
-              <label class="form-label">Product <span class="text-danger">*</span></label>
-              <select name="product" class="form-control" required>
-                  <option value disabled selected>Select the product</option>
-                  @foreach($products as $productSelect)
-                  <option value="{{$productSelect->id}}">{{$productSelect->name}}</option>
-                  @endforeach
-              </select>
-            </div>
             <div class="row">
             <div class="mb-3 col-md-6">
                 <label class="form-label" for="photos">Photos</label>
@@ -150,15 +140,6 @@ $user = Auth::user();
                 @error('name')
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Product <span class="text-danger">*</span></label>
-              <select name="product" class="form-control" required>
-                  <option value disabled selected>Select the product</option>
-                  @foreach($products as $productSelect)
-                  <option value="{{$productSelect->id}}" {{(old('product')??$template->product)==$productSelect->id?'selected':''}}>{{$productSelect->name}}</option>
-                  @endforeach
-              </select>
             </div>
             <div class="row">
             <div class="mb-3 col-md-6">
