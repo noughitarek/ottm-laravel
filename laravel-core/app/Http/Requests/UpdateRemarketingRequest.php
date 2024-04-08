@@ -33,7 +33,7 @@ class UpdateRemarketingRequest extends FormRequest
             "since" => "required|string|in:started_at,ended_at,last_from_page_at,last_from_user_at",
             "expire_time_unit" => "required|integer|in:1,60,3600,86400",
             "expire_after" => "nullable|integer",
-            'template' => 'nullable|exists:messages_templates,id',
+            'template' => 'required|exists:messages_templates,id',
             #'start_time' => 'nullable|regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/',
             #'end_time' => 'nullable|regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/',
         ];

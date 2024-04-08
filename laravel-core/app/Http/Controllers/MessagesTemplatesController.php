@@ -24,6 +24,7 @@ class MessagesTemplatesController extends Controller
     {
         $photos = [];
         $videos = [];
+        $audios = [];
         if($request->hasFile('photos'))
         {
             foreach($request->file('photos') as $photo){
@@ -40,10 +41,19 @@ class MessagesTemplatesController extends Controller
                 $videos[] = asset('storage/remarketing/' . $filename);
             }
         }
+        if($request->hasFile('audios'))
+        {
+            foreach($request->file('audios') as $audio){
+                $filename = time() . '_' . $audio->getClientOriginalName();
+                $audio->move(public_path('storage/remarketing'), $filename);
+                $audios[] = asset('storage/remarketing/' . $filename);
+            }
+        }
         MessagesTemplates::create([
             'name' => $request->input('name'),
             'photos' => implode(',', $photos),
             'video' => implode(',', $videos),
+            'audios' => implode(',', $audios),
             'message' => $request->input('message'),
         ]);
         return back()->with("success", "template has been created successfully");
@@ -56,6 +66,7 @@ class MessagesTemplatesController extends Controller
     {
         $photos = [];
         $videos = [];
+        $audios = [];
         if($request->hasFile('photos'))
         {
             foreach($request->file('photos') as $photo){
@@ -82,10 +93,24 @@ class MessagesTemplatesController extends Controller
                 $videos[] = $oldVideo;
             }
         }
+        if($request->hasFile('audios'))
+        {
+            foreach($request->file('audios') as $audio){
+                $filename = time() . '_' . $audio->getClientOriginalName();
+                $audio->move(public_path('storage/remarketing'), $filename);
+                $audios[] = asset('storage/remarketing/' . $filename);
+            }
+        }
+        if($request->has('oldAudios')){
+            foreach($request->oldAudios as $oldAudio){
+                $audios[] = $oldAudio;
+            }
+        }
         $template->update([
             'name' => $request->input('name'),
             'photos' => implode(',', $photos),
             'video' => implode(',', $videos),
+            'audios' => implode(',', $audios),
             'message' => $request->input('message'),
         ]);
         return back()->with("success", "template has been updated successfully");

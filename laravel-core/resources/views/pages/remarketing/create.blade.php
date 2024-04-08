@@ -146,8 +146,8 @@ $user = Auth::user();
       </div>
       <div class="card-body">
         <div class="mb-3">
-          <label class="form-label" for="template">Template</label>
-          <select name="template" id="template" class="form-control">
+          <label class="form-label" for="template">Template <span class="text-danger">*</span></label>
+          <select name="template" id="template" class="form-control" required>
               <option value selected>Select the template</option>
               @foreach($templates as $template)
               <option value="{{$template->id}}">{{$template->name}}</option>
@@ -157,7 +157,7 @@ $user = Auth::user();
             <div class="text-danger">{{ $message }}</div>
           @enderror
         </div>
-        <div id="NotTemplate">
+        <!--<div id="NotTemplate">
           <div class="row">
             <div class="mb-3 col-md-6">
               <label class="form-label" for="photos">Photos</label>
@@ -181,7 +181,7 @@ $user = Auth::user();
               <div class="text-danger">{{ $message }}</div>
             @enderror
           </div>
-        </div>
+        </div>-->
         <div class="mb-3">
           <button type="submit" class="btn btn-primary">Create</button>
         </div>
@@ -192,6 +192,7 @@ $user = Auth::user();
 
 @endsection
 @section('script')
+<!--
 <script>
 const template = document.getElementById('template');
 const NotTemplate = document.getElementById('NotTemplate');
@@ -203,4 +204,5 @@ template.addEventListener('change', function(){
   }
 });
 </script>
+-->
 @endsection

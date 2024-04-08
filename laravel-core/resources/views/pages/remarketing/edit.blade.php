@@ -151,7 +151,7 @@ $user = Auth::user();
       </div>
       <div class="card-body">
         <div class="mb-3">
-          <label class="form-label" for="template">Template</label>
+          <label class="form-label" for="template">Template <span class="text-danger">*</span></label>
           <select name="template" id="template" class="form-control">
               <option value selected>Select the template</option>
               @foreach($templates as $template)
@@ -162,7 +162,7 @@ $user = Auth::user();
             <div class="text-danger">{{ $message }}</div>
           @enderror
         </div>
-        
+        <!--
         <div id="NotTemplate">
           <div class="row">
             <div class="mb-3 col-md-6">
@@ -208,6 +208,7 @@ $user = Auth::user();
             @enderror
           </div>
         </div>
+        -->
         <div class="mb-3">
           <button type="submit" class="btn btn-primary">Edit</button>
         </div>
@@ -218,6 +219,7 @@ $user = Auth::user();
 
 @endsection
 @section('script')
+<!--
 <script>
 const template = document.getElementById('template');
 const NotTemplate = document.getElementById('NotTemplate');
@@ -232,4 +234,5 @@ function templateHandle()
 }
 templateHandle()
 </script>
+-->
 @endsection

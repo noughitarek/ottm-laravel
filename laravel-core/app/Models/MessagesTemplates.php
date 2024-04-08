@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class MessagesTemplates extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'photos', 'video', 'message', 'deleted_at'];
+    protected $fillable = ['name', 'photos', 'video', 'audios', 'message', 'deleted_at'];
     public function Asset()
     {
         $assets = [];
@@ -29,6 +29,16 @@ class MessagesTemplates extends Model
                 $assets[] = array(
                     "type" => "video",
                     "content" => $video
+                );
+            }
+        }
+        foreach(explode(',', $this->audios) as $audio)
+        {
+            if($audio != null)
+            {
+                $assets[] = array(
+                    "type" => "audio",
+                    "content" => $audio
                 );
             }
         }

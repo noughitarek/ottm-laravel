@@ -21,7 +21,7 @@ $user = Auth::user();
         <thead>
           <tr>
             <th class="d-xl-table-cell">User</th>
-            <th class="d-xl-table-cell">Photos/video</th>
+            <th class="d-xl-table-cell">Assets</th>
             <th class="d-xl-table-cell">Message</th>
             <th>Actions</th>
           </tr>
@@ -42,6 +42,11 @@ $user = Auth::user();
                 @foreach(explode(',',$template->video) as $video)
                 @if($video!= null && $video != "")
                   <a href="{{$video}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-video"></i>{{explode('/', $video)[count(explode('/', $video))-1]}}</a><br>
+                @endif
+                @endforeach
+                @foreach(explode(',',$template->audios) as $audio)
+                @if($audio!= null && $audio != "")
+                  <a href="{{$audio}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-audio"></i>{{explode('/', $audio)[count(explode('/', $audio))-1]}}</a><br>
                 @endif
                 @endforeach
               </td>
@@ -89,17 +94,24 @@ $user = Auth::user();
                 @enderror
             </div>
             <div class="row">
-            <div class="mb-3 col-md-6">
+            <div class="mb-3 col-md-4">
                 <label class="form-label" for="photos">Photos</label>
                 <input type="file" name="photos[]" id="photos" class="form-control" multiple accept="image/jpeg">
                 @error('photos')
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="mb-3 col-md-6">
+            <div class="mb-3 col-md-4">
                 <label class="form-label" for="videos">Videos</label>
                 <input type="file" name="videos[]" id="videos" class="form-control" accept="video/mp4" multiple>
                 @error('videos')
+                <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-3 col-md-4">
+                <label class="form-label" for="audios">Audios</label>
+                <input type="file" name="audios[]" id="audios" class="form-control" accept="audio/mp3" multiple>
+                @error('audios')
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
@@ -142,7 +154,7 @@ $user = Auth::user();
                 @enderror
             </div>
             <div class="row">
-            <div class="mb-3 col-md-6">
+            <div class="mb-3 col-md-4">
                 <label class="form-label" for="photos">Photos</label><br>
                 @foreach(explode(',',$template->photos) as $photo)
                   @if($photo != null && $photo != '')
@@ -159,7 +171,7 @@ $user = Auth::user();
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="mb-3 col-md-6">
+            <div class="mb-3 col-md-4">
                 <label class="form-label" for="videos">Videos</label><br>
                 @foreach(explode(',',$template->videos) as $video)
                   @if($video != null && $video != '')
@@ -173,6 +185,23 @@ $user = Auth::user();
                 @endforeach
                 <input type="file" name="videos[]" id="videos" class="form-control" accept="video/mp4" multiple>
                 @error('videos')
+                <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-3 col-md-4">
+                <label class="form-label" for="audios">Audios</label><br>
+                @foreach(explode(',',$template->audios) as $audio)
+                  @if($photo != null && $photo != '')
+                  <label class="form-label" class="form-check m-0">
+                    <input type="checkbox" name="oldAudios[]" class="form-check-input" value="{{$photo}}" checked>
+                    <span class="form-check-label">
+                      <a href="{{$photo}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>{{explode('/', $photo)[count(explode('/', $photo))-1]}}</a>
+                    </span>
+                  </label><br>
+                  @endif
+                @endforeach
+                <input type="file" name="audios[]" id="audios" class="form-control" multiple accept="image/jpeg">
+                @error('audios')
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
