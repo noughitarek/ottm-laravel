@@ -18,4 +18,5 @@ class RemarketingMessages extends Model
     {
         return $this->Conversation()->Page();
     }
+    
 }

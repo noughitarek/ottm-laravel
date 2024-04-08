@@ -25,7 +25,7 @@ $user = Auth::user();
             <th class="d-xl-table-cell">Message</th>
             <th class="d-xl-table-cell">Algorithme</th>
             <th class="d-xl-table-cell">Photos/video</th>
-            <th class="d-xl-table-cell">Message</th>
+            <th class="d-xl-table-cell">Rates</th>
             <th class="d-xl-table-cell">Action</th>
           </tr>
         </thead>
@@ -77,9 +77,14 @@ $user = Auth::user();
             @endif
             @endforeach
             @endif
+            @if($remarketing->message!="")
+            <i class="align-middle me-2 fas fa-fw fa-file-text"></i>{{$remarketing->message}}
+            @endif
           </td>
           <td class="single-line">
-            {{$remarketing->message}}
+            Total: <span class="text-danger">{{$remarketing->Total()}} (100%)</span><br>
+            Responses: <span class="text-primary">{{$remarketing->ResponseRate()[1]}} ({{$remarketing->ResponseRate()[0]}}%)</span> <br>
+            Orders: <span class="text-success">{{$remarketing->OrderRate()[1]}} ({{$remarketing->OrderRate()[0]}}%)</span>
           </td>
           <td>
             @if($user->Has_Permission('remarketing_edit'))

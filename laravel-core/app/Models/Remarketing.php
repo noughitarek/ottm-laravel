@@ -147,4 +147,38 @@ class Remarketing extends Model
     {
         return RemarketingMessages::where('remarketing', $this->id)->paginate(20)->onEachSide(2);
     }
+    public function Total()
+    {
+        return RemarketingMessages::where('remarketing', $this->id)->count();
+    }
+    public function ResponseRate()
+    {
+        $id = $this->id;
+        $total = count(DB::select("select facebook_conversation_id from remarketing_messages where remarketing = $id group by facebook_conversation_id"));
+
+        $conversations = count(DB::select("SELECT FM.conversation
+        FROM remarketing_messages RM, facebook_messages FM, remarketings RS
+        WHERE RS.id = $id
+        AND RM.remarketing = $id
+        AND FM.sented_from = 'user'
+        AND RM.facebook_conversation_id = FM.conversation
+        AND RM.last_use < FM.created_at
+        GROUP BY FM.conversation
+        "));
+        return [(int)(($total != 0) ? ($conversations / $total)*100 : 0), $conversations];
+    }
+    public function OrderRate()
+    {
+        $id = $this->id;
+        $total = count(DB::select("select facebook_conversation_id from remarketing_messages where remarketing = $id group by facebook_conversation_id"));
+        $orders = count(DB::select("SELECT OD.conversation
+        FROM remarketing_messages RM, orders OD, remarketings RS
+        WHERE RS.id = $id
+        AND RM.remarketing = $id
+        AND RM.facebook_conversation_id = OD.conversation
+        AND RM.last_use < OD.created_at
+        GROUP BY OD.conversation;
+        "));
+        return [(int)(($total != 0) ? ($orders / $total)*100 : 0), $orders];
+    }
 }

@@ -4,6 +4,7 @@
 @php
 $user = Auth::user();
 @endphp
+
 <div class="col-12 col-lg-12 col-xxl-12 d-flex">
   <div class="card flex-fill">
     <div class="card-header d-flex justify-content-between align-items-center">
@@ -22,7 +23,7 @@ $user = Auth::user();
           <tr>
             <th class="d-xl-table-cell">User</th>
             <th class="d-xl-table-cell">Assets</th>
-            <th class="d-xl-table-cell">Message</th>
+            <th class="d-xl-table-cell">Rates</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -49,9 +50,14 @@ $user = Auth::user();
                   <a href="{{$audio}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-audio"></i>{{explode('/', $audio)[count(explode('/', $audio))-1]}}</a><br>
                 @endif
                 @endforeach
+                @if($template->message!="")
+                  <i class="align-middle me-2 fas fa-fw fa-file-text"></i>{{$template->message}}
+                @endif
               </td>
               <td class="single-line">
-                <p id="message{{$template->id}}">{{$template->message}}</p>
+                Total: <span class="text-danger">{{$template->Total()}} (100%)</span><br>
+                Responses: <span class="text-primary">{{$template->ResponseRate()[1]}} ({{$template->ResponseRate()[0]}}%)</span> <br>
+                Orders: <span class="text-success">{{$template->OrderRate()[1]}} ({{$template->OrderRate()[0]}}%)</span>
               </td>
               <td>
                   <button onclick="copyText('message{{$template->id}}')" class="btn btn-success" >

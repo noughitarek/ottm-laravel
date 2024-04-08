@@ -51,4 +51,41 @@ class MessagesTemplates extends Model
         }
         return $assets;
     }
+    public function Remarketings()
+    {
+        return Remarketing::where('template', $this->id)->get();
+    }
+    public function ResponseRate()
+    {
+        $rate = 0;
+        $pourcentage = 0;
+        foreach($this->Remarketings() as $remarketing)
+        {
+            $rate += $remarketing->ResponseRate()[1];
+            $pourcentage += $remarketing->ResponseRate()[0];
+        }
+        $pourcentage /= count($this->Remarketings());
+        return [$pourcentage, $rate];
+    }
+    public function OrderRate()
+    {
+        $rate = 0;
+        $pourcentage = 0;
+        foreach($this->Remarketings() as $remarketing)
+        {
+            $rate += $remarketing->OrderRate()[1];
+            $pourcentage += $remarketing->OrderRate()[0];
+        }
+        $pourcentage /= count($this->Remarketings());
+        return [$pourcentage, $rate];
+    }
+    public function Total()
+    {
+        $total = 0;
+        foreach($this->Remarketings() as $remarketing)
+        {
+            $total += $remarketing->Total();
+        }
+        return $total;
+    }
 }
