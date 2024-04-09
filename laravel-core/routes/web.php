@@ -17,6 +17,7 @@ use App\Http\Controllers\FacebookPageController;
 use App\Http\Controllers\ConversationsController;
 use App\Http\Controllers\MessagesTemplatesController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\RemarketingIntervalController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 Route::middleware(['auth', 'access_token'])->group(function () {
@@ -91,6 +92,18 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::get('{remarketing}/edit', "edit")->middleware('permission:remarketing_edit')->name('remarketing_edit');
         Route::put('{remarketing}/edit', "update")->middleware('permission:remarketing_edit');
         Route::delete('{remarketing}/delete', "destroy")->middleware('permission:remarketing_delete')->name('remarketing_delete');
+    });
+    Route::middleware('permission:remarketing_interval_consult')->prefix("remarketing_interval")->controller(RemarketingIntervalController::class)->group(function(){
+        Route::get('', "index")->name('remarketing_interval');
+        Route::get('{remarketing}/history', "history")->name('remarketing_interval_history');
+        Route::get('create', "create")->middleware('permission:remarketing_interval_create')->name('remarketing_interval_create');
+        Route::post('create', "store")->middleware('permission:remarketing_interval_create');
+        Route::get('{remarketing}/activate', "activate")->middleware('permission:remarketing_interval_edit')->name('remarketing_interval_activate');
+        Route::put('{remarketing}/activate', "activate_store")->middleware('permission:remarketing_interval_edit');
+        Route::put('{remarketing}/deactivate', "deactivate_store")->middleware('permission:remarketing_interval_edit')->name('remarketing_interval_deactivate');
+        Route::get('{remarketing}/edit', "edit")->middleware('permission:remarketing_interval_edit')->name('remarketing_interval_edit');
+        Route::put('{remarketing}/edit', "update")->middleware('permission:remarketing_interval_edit');
+        Route::delete('{remarketing}/delete', "destroy")->middleware('permission:remarketing_interval_delete')->name('remarketing_interval_delete');
     });
     Route::middleware('permission:tracking_consult')->prefix("tracking")->controller(TrackingController::class)->group(function(){
         Route::get('', "index")->name('tracking');

@@ -14,7 +14,7 @@ $conversations = $conversations[0];
 @foreach ($errors->all() as $title=>$error)
   <li>{{ $title.'-'.$error }}</li>
 @endforeach
-<form method="POST" action="{{route('remarketing_activate', $remarketing->id)}}" enctype="multipart/form-data">
+<form method="POST" action="{{route('remarketing_interval_activate', $remarketing->id)}}" enctype="multipart/form-data">
   @csrf
   @method('PUT')
   <div class="row">

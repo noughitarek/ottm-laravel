@@ -122,12 +122,26 @@ return array(
         "icon" => array("type" => "feather", "content" => "compass"),
     ),
     array(
-        "type" => "link",
+        "type" => "group",
         "content" => "RTM",
         "permissions" => "remarketing_consult",
         "section" => "remarketing",
         "route" => "remarketing",
         "icon" => array("type" => "feather", "content" => "volume-2"),
+        "sub-links" => array(
+            array(
+                "type" => "link",
+                "content" => "Timeout",
+                "permissions" => "remarketing_consult",
+                "route" => "remarketing",
+            ),
+            array(
+                "type" => "link",
+                "content" => "Interval",
+                "permissions" => "remarketing_interval_consult",
+                "route" => "remarketing_interval",
+            ),
+        ),
     ),
     array("type" => "text", "content"=> "Administration", "permissions" => ["users_consult", "settings_consult"]),
     array(

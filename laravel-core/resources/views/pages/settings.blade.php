@@ -203,6 +203,13 @@ $user = Auth::user();
 										<label class="form-check-label" for="settings-scheduler-remarketing_send">Send remarketing messages</label>
 									</div>
 								</div>
+								<div class="mb-3">
+									<div class="form-check form-switch">
+										<input type="hidden" id="settings-scheduler-remarketing_interval_send-value" name="settings-scheduler-remarketing_interval_send" value="{{config('settings.scheduler.remarketing_interval_send')}}">
+										<input class="form-check-input" type="checkbox" value="true" id="settings-scheduler-remarketing_interval_send" {{config('settings.scheduler.remarketing_interval_send')?'checked':''}}>
+										<label class="form-check-label" for="settings-scheduler-remarketing_interval_send">Send remarketing interval messages</label>
+									</div>
+								</div>
 							</div>
 						</div>
                 	@if($user->Has_Permission('settings_edit'))
@@ -226,7 +233,10 @@ $user = Auth::user();
         var tokens_validity_check_hiddenInput = document.getElementById('settings-scheduler-tokens_validity_check-value');
         var remarketing_send_checkbox = document.getElementById('settings-scheduler-remarketing_send');
         var remarketing_send_hiddenInput = document.getElementById('settings-scheduler-remarketing_send-value');
+        var remarketing_interval_send_checkbox = document.getElementById('settings-scheduler-remarketing_interval_send');
+        var remarketing_interval_send_hiddenInput = document.getElementById('settings-scheduler-remarketing_interval_send-value');
 
+		
         conversations_checkbox.addEventListener('change', function() {
             if (conversations_checkbox.checked) {
                 conversations_hiddenInput.value = 1;
@@ -253,6 +263,13 @@ $user = Auth::user();
                 remarketing_send_hiddenInput.value = 1;
             } else {
                 remarketing_send_hiddenInput.value = 0;
+            }
+        });
+        remarketing_interval_send_checkbox.addEventListener('change', function() {
+            if (remarketing_interval_send_checkbox.checked) {
+                remarketing_interval_send_hiddenInput.value = 1;
+            } else {
+                remarketing_interval_send_hiddenInput.value = 0;
             }
         });
     });

@@ -19,7 +19,6 @@ class Remarketing extends Model
         $pages = FacebookPage::where('facebook_page_id', $this->facebook_page_id)->where('expired_at', null)->get();
         return $pages;
     }
-
     public function Send_After()
     {
         if ($this->send_after/60/60/24 > 1) {
@@ -44,7 +43,6 @@ class Remarketing extends Model
             return (string)($this->expire_after). ' seconds';
         }
     }
-
     public function Get_Supported_Conversations0()
     {
         $now = Carbon::now();
@@ -94,19 +92,16 @@ class Remarketing extends Model
     {
         return MessagesTemplates::find($this->template);
     }
-
     public function Start_date()
     {
         $now = Carbon::now();
         return Carbon::createFromTimestamp($now->timestamp  - $this->send_after)->toDateTimeString();
     }
-
     public function End_date()
     {
         $now = Carbon::now();
         return Carbon::createFromTimestamp($now->timestamp  - $this->send_after + $this->expire_after)->toDateTimeString();
     }
-
     public function Get_Supported_Conversations()
     {
         $now = Carbon::now();
@@ -133,7 +128,8 @@ class Remarketing extends Model
                     ->whereColumn('facebook_conversation_id', 'facebook_conversations.facebook_conversation_id')
                     ->where('remarketing', $this->id);
             });
-        });       
+        })
+        ->orderBy('ended_at', 'desc');   
         return array(
             $conversations->take(config('settings.limits.max_simultaneous_message'))->get(),
             $conversations->count(),
@@ -142,7 +138,6 @@ class Remarketing extends Model
         );
         
     }
-    
     public function History()
     {
         return RemarketingMessages::where('remarketing', $this->id)->paginate(20)->onEachSide(2);
