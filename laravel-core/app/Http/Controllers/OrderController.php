@@ -24,9 +24,9 @@ class OrderController extends Controller
     {
         $user = Auth::user();
         if($user->Has_Permission('orders_consult')){
-            $orders = Order::Pending()->get();
+            $orders = Order::Pending()->paginate(20)->oneachside(2);
         }else{
-            $orders = Order::Pending()->where('created_by', $user->id)->get();
+            $orders = Order::Pending()->where('created_by', $user->id)->paginate(20)->oneachside(2);
         }
         return view('pages.orders.table')->with('title', "Pending orders")->with('orders', $orders);
     }
@@ -105,7 +105,7 @@ class OrderController extends Controller
      */
     public function create()
     {
-        $conversations = FacebookUser::Get_Conversations();
+        $conversations = FacebookConversation::orderBy('ended_at', 'desc')->take(config('settings.limits.order_conversations_count'))->get();
         $products = Product::where('deleted_at', null)->get();
         $wilayas = Wilaya::where('desk', "!=", null)->get();
         return view('pages.orders.create')->with('products', $products)->with('wilayas', $wilayas)->with('conversations', $conversations);
@@ -116,7 +116,7 @@ class OrderController extends Controller
      */
     public function create_from_product(Product $product)
     {
-        $conversations = FacebookUser::Get_Conversations();
+        $conversations = FacebookConversation::orderBy('ended_at', 'desc')->take(config('settings.limits.order_conversations_count'))->get();
         $wilayas = Wilaya::where('desk', "!=", null)->get();
         return view('pages.orders.create')->with('product', $product)->with('wilayas', $wilayas)->with('conversations', $conversations);
     }

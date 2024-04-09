@@ -64,7 +64,7 @@ class MessagesTemplates extends Model
             $rate += $remarketing->ResponseRate()[1];
             $pourcentage += $remarketing->ResponseRate()[0];
         }
-        $pourcentage /= count($this->Remarketings());
+        if(count($this->Remarketings())>0)$pourcentage /= count($this->Remarketings());
         return [$pourcentage, $rate];
     }
     public function OrderRate()
@@ -76,7 +76,7 @@ class MessagesTemplates extends Model
             $rate += $remarketing->OrderRate()[1];
             $pourcentage += $remarketing->OrderRate()[0];
         }
-        $pourcentage /= count($this->Remarketings());
+        if(count($this->Remarketings())>0)$pourcentage /= count($this->Remarketings());
         return [$pourcentage, $rate];
     }
     public function Total()

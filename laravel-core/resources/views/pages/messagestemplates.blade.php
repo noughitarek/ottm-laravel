@@ -51,7 +51,7 @@ $user = Auth::user();
                 @endif
                 @endforeach
                 @if($template->message!="")
-                  <i class="align-middle me-2 fas fa-fw fa-file-text"></i>{{$template->message}}
+                  <i class="align-middle me-2 fas fa-fw fa-file-text"></i><p id="message{{$template->id}}">{{$template->message}}</p>
                 @endif
               </td>
               <td class="single-line">

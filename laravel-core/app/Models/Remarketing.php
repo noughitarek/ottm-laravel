@@ -163,6 +163,12 @@ class Remarketing extends Model
         AND FM.sented_from = 'user'
         AND RM.facebook_conversation_id = FM.conversation
         AND RM.last_use < FM.created_at
+        AND RM.last_use = (
+            SELECT MAX(last_use)
+            FROM remarketing_messages
+            WHERE remarketing = $id
+            AND RM.facebook_conversation_id = facebook_conversation_id
+        )
         GROUP BY FM.conversation
         "));
         return [(int)(($total != 0) ? ($conversations / $total)*100 : 0), $conversations];
@@ -177,6 +183,12 @@ class Remarketing extends Model
         AND RM.remarketing = $id
         AND RM.facebook_conversation_id = OD.conversation
         AND RM.last_use < OD.created_at
+        AND RM.last_use = (
+            SELECT MAX(last_use)
+            FROM remarketing_messages
+            WHERE remarketing = $id
+            AND RM.facebook_conversation_id = facebook_conversation_id
+        )
         GROUP BY OD.conversation;
         "));
         return [(int)(($total != 0) ? ($orders / $total)*100 : 0), $orders];

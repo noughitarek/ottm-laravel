@@ -73,6 +73,9 @@ $user = Auth::user();
                 <i class="align-middle me-2 fas fa-fw fa-tv"></i> {{$order->Desk()->name}}
               </p>
             </td>
+            <td>
+              <a href=""class="btn btn-success">Validate</a>
+            </td>
           </tr>
           @endforeach
         </tbody>

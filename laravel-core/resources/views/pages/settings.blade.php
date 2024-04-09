@@ -70,6 +70,10 @@ $user = Auth::user();
 									<label class="form-label" for="title">Max simultaneous message</label>
 									<input type="text" class="form-control" name="settings-limits-max_simultaneous_message" id="settings-limits-max_simultaneous_message" value="{{config('settings.limits.max_simultaneous_message')}}">
 								</div>
+								<div class="mb-3">
+									<label class="form-label" for="title">Order conversations count</label>
+									<input type="text" class="form-control" name="settings-limits-order_conversations_count" id="settings-limits-order_conversations_count" value="{{config('settings.limits.order_conversations_count')}}">
+								</div>
 							</div>
 						</div>
                         @if($user->Has_Permission('settings_edit'))
