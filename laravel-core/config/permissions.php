@@ -12,8 +12,10 @@ return [
     'messagestemplates' => ['consult', 'create', 'edit', 'delete'],
     'stock' => ['consult', 'create', 'edit', 'delete'],
 
+    'remarketing_categories' => ['consult', 'create', 'edit', 'delete'],
     'remarketing' => ['consult', 'create', 'edit', 'delete'],
     'remarketing_interval' => ['consult', 'create', 'edit', 'delete'],
+    
     'tracking' => ['consult', 'edit'],
 
     'users' => ['consult', 'create', 'edit', 'delete'],

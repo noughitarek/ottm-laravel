@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DeskController;
 use App\Http\Controllers\PageController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\FacebookPageController;
 use App\Http\Controllers\ConversationsController;
 use App\Http\Controllers\MessagesTemplatesController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\RemarketingCategoryController;
 use App\Http\Controllers\RemarketingIntervalController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
@@ -52,7 +54,32 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::post('create', "store")->middleware('permission:orders_create');
         Route::get('create/p/{product}', "create_from_product")->name('orders_create_product')->middleware('permission:orders_create');
         Route::get('create/c/{conversation}', "create_from_conversation")->name('orders_create_conversation')->middleware('permission:orders_create');
-
+        Route::get('{total}/totext', function ($total){
+            $conversations = DB::select("Select * 
+            FROM facebook_conversations
+            WHERE `facebook_conversation_id` IN(
+                SELECT conversation
+                FROM facebook_messages
+                WHERE `message` REGEXP '^(0[5-7]|[5-7])[0-9]{8}'
+                AND `sented_from` = 'user'
+                GROUP BY conversation
+            )
+            limit $total
+            ");
+            foreach($conversations as $conversation){
+                $messages = DB::select("Select * 
+                FROM facebook_messages
+                WHERE `conversation` = '".$conversation->facebook_conversation_id."'
+                ORDER BY created_at
+                ");
+                echo '<div dir="rtl">';
+                echo '<center><h2>المحادثة '.$conversation->facebook_conversation_id.'</h2></center>';
+                foreach($messages as $message){
+                    echo '<b>'.($message->sented_from=='user'?'الزبون':'المتجر').'</b>: '.$message->message."<br>";
+                }
+                echo '</div>';
+            }
+        });
         Route::get('{wilaya}/getDelivery', "getDelivery");
         Route::get('{wilaya}/getCommunes', "getCommunes");
         Route::get('pending', "pending")->name('orders_pending');
@@ -81,9 +108,17 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::put('{stock}/edit', "update")->middleware('permission:stock_edit')->name('stock_edit');
         Route::delete('{stock}/delete', "destroy")->middleware('permission:stock_delete')->name('stock_delete');
     });
-    Route::middleware('permission:remarketing_consult')->prefix("remarketing")->controller(RemarketingController::class)->group(function(){
+    Route::middleware('permission:remarketing_categories_consult')->prefix("remarketing/categories")->controller(RemarketingCategoryController::class)->group(function(){
+        Route::get('', "index")->name('remarketing_categories');
+        Route::post('create', "store")->middleware('permission:remarketing_categories_create')->name('remarketing_categories_create');
+        Route::put('{category}/edit', "update")->middleware('permission:remarketing_categories_edit')->name('remarketing_categories_edit');
+        Route::delete('{category}/delete', "destroy")->middleware('permission:remarketing_categories_delete')->name('remarketing_categories_delete');
+    });
+    Route::middleware('permission:remarketing_consult')->prefix("remarketing/timeout")->controller(RemarketingController::class)->group(function(){
         Route::get('', "index")->name('remarketing');
         Route::get('{remarketing}/history', "history")->name('remarketing_history');
+        Route::get('categories/{category}', "category")->name('remarketing_category');
+        Route::get('categories/{category}/elements', "sub_category")->name('remarketing_sub_category');
         Route::get('create', "create")->middleware('permission:remarketing_create')->name('remarketing_create');
         Route::post('create', "store")->middleware('permission:remarketing_create');
         Route::get('{remarketing}/activate', "activate")->middleware('permission:remarketing_edit')->name('remarketing_activate');
@@ -93,9 +128,11 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::put('{remarketing}/edit', "update")->middleware('permission:remarketing_edit');
         Route::delete('{remarketing}/delete', "destroy")->middleware('permission:remarketing_delete')->name('remarketing_delete');
     });
-    Route::middleware('permission:remarketing_interval_consult')->prefix("remarketing_interval")->controller(RemarketingIntervalController::class)->group(function(){
+    Route::middleware('permission:remarketing_interval_consult')->prefix("remarketing/interval")->controller(RemarketingIntervalController::class)->group(function(){
         Route::get('', "index")->name('remarketing_interval');
         Route::get('{remarketing}/history', "history")->name('remarketing_interval_history');
+        Route::get('categories/{category}', "category")->name('remarketing_interval_category');
+        Route::get('categories/{category}/elements', "sub_category")->name('remarketing_interval_sub_category');
         Route::get('create', "create")->middleware('permission:remarketing_interval_create')->name('remarketing_interval_create');
         Route::post('create', "store")->middleware('permission:remarketing_interval_create');
         Route::get('{remarketing}/activate', "activate")->middleware('permission:remarketing_interval_edit')->name('remarketing_interval_activate');

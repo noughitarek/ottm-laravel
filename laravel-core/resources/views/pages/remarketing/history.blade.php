@@ -8,7 +8,7 @@ $user = Auth::user();
   <div class="card flex-fill">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="card-title mb-0">RTM history</h5>
-      <a href="{{route('remarketing_interval')}}" class="btn btn-secondary">Back</a>
+      <a href="{{route('remarketing')}}" class="btn btn-secondary">Back</a>
     </div>
   </div>
 </div>

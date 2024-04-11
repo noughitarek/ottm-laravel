@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class RemarketingInterval extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'facebook_page_id', 'start_after', 'send_after_each', 'devide_by', 'template', 'template', 'is_active', 'deleted_at'];
+    protected $fillable = ['name', 'facebook_page_id', 'start_after', 'category', 'send_after_each', 'devide_by', 'template', 'template', 'is_active', 'deleted_at'];
 
     public function Pages()
     {
@@ -39,16 +39,17 @@ class RemarketingInterval extends Model
                     ->from('remarketing_interval_messages')
                     ->whereColumn('facebook_conversation_id', 'facebook_conversations.facebook_conversation_id')
                     ->where('remarketing', $this->id)
-                    ->where('last_use', '<=',  $sendOn->toDateTimeString());
+                    ->where('deleted_at', null)
+                    ->where('last_use', '>=',  $sendOn->toDateTimeString());
             });
         })
         ->orderBy('ended_at', 'desc');
-        return array(
-            $conversations->paginate(20)->onEachSide(2),
-            $conversations->count(),
-            $start_after->toDateTimeString(),
-            $sendOn->toDateTimeString()
-        );
+    return array(
+        $conversations->paginate(20)->oneachside(2),
+        $conversations->count(),
+        $start_after->toDateTimeString(),
+        $sendOn->toDateTimeString()
+    );
         
     }
     public function History()

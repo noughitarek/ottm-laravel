@@ -36,6 +36,7 @@ class StoreRemarketingRequest extends FormRequest
             'template' => 'required|exists:messages_templates,id',
             #'start_time' => 'nullable|regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/',
             #'end_time' => 'nullable|regex:/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/',
+            "category" => "nullable|exists:remarketing_categories,id",
         ];
     }
 }

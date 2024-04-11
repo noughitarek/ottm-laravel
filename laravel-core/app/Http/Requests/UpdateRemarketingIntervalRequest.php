@@ -32,6 +32,7 @@ class UpdateRemarketingIntervalRequest extends FormRequest
             "time_unit" => "required|integer|in:1,60,3600,86400",
             "devide_by" => "required|integer",
             'template' => 'required|exists:messages_templates,id',
+            "category" => "nullable|exists:remarketing_categories,id",
         ];
     }
 }

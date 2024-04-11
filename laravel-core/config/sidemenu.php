@@ -131,6 +131,12 @@ return array(
         "sub-links" => array(
             array(
                 "type" => "link",
+                "content" => "Categories",
+                "permissions" => "remarketing_categories_consult",
+                "route" => "remarketing_categories",
+            ),
+            array(
+                "type" => "link",
                 "content" => "Timeout",
                 "permissions" => "remarketing_consult",
                 "route" => "remarketing",

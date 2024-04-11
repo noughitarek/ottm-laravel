@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Remarketing extends Model
 {
     use HasFactory;
-    protected $fillable = ["name", "facebook_page_id", "send_after", "last_message_from", "make_order", "since", "photos", "video", "template", "message", "deleted_at", "expire_after", "is_active", "start_time", "end_time"];
+    protected $fillable = ["name", "facebook_page_id", 'category', "send_after", "last_message_from", "make_order", "since", "photos", "video", "template", "message", "deleted_at", "expire_after", "is_active", "start_time", "end_time"];
 
     public function Pages()
     {
@@ -172,6 +172,23 @@ class Remarketing extends Model
     {
         $id = $this->id;
         $total = count(DB::select("select facebook_conversation_id from remarketing_messages where remarketing = $id group by facebook_conversation_id"));
+        $orders = count(DB::select("SELECT FM.conversation
+        FROM remarketing_messages RM, facebook_messages FM, remarketings RS
+        WHERE FM.`message` REGEXP '^(0[5-7]|[5-7])[0-9]{8}'
+        AND RS.id = $id
+        AND RM.remarketing = $id
+        AND RM.facebook_conversation_id = FM.conversation
+        AND RM.last_use < FM.created_at
+        AND RM.last_use = (
+            SELECT MAX(last_use)
+            FROM remarketing_messages
+            WHERE remarketing = $id
+            AND RM.facebook_conversation_id = facebook_conversation_id
+        )
+        GROUP BY FM.conversation;
+        "));
+        return [(int)(($total != 0) ? ($orders / $total)*100 : 0), $orders];
+
         $orders = count(DB::select("SELECT OD.conversation
         FROM remarketing_messages RM, orders OD, remarketings RS
         WHERE RS.id = $id

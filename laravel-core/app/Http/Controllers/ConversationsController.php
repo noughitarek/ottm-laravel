@@ -29,7 +29,7 @@ class ConversationsController extends Controller
         if(!$facebook_page){
             return abort(404);
         }
-        $conversations = FacebookUser::Get_Conversations();
+        $conversations = FacebookUser::Get_Conversations($facebook_page->facebook_page_id);
         return view('pages.conversations.conversations')->with('conversations' , $conversations)->with('facebook_page', $facebook_page);
     }
 

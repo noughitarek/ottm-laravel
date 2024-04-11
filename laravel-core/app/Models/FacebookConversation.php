@@ -6,6 +6,7 @@ use App\Models\FacebookPage;
 use App\Models\FacebookUser;
 use App\Models\FacebookMessage;
 use Illuminate\Support\Facades\DB;
+use App\Models\RemarketingInterval;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -38,7 +39,7 @@ class FacebookConversation extends Model
         return $this->Page()->Send_Message($this->user, $message);
     }
 
-    public function Remarketing(Remarketing $remarketing)
+    public function Remarketing(Remarketing|RemarketingInterval $remarketing)
     {
         return $this->Page()->Remarketing($this->user, $remarketing);
     }

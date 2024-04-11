@@ -40,6 +40,18 @@ $user = Auth::user();
               <div class="text-danger">{{ $message }}</div>
             @enderror
           </div>
+          <div class="mb-3">
+            <label class="form-label" for="category">Category <span class="text-danger">*</span></label>
+            <select name="category" id="category" class="form-control" required>
+                <option value selected>No category</option>
+                @foreach($categories as $category)
+                <option value="{{$category->id}}">{{$category->name}}</option>
+                @endforeach
+            </select>
+            @error('category')
+              <div class="text-danger">{{ $message }}</div>
+            @enderror
+          </div>
         </div>
       </div>
     </div>

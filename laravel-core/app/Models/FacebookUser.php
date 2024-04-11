@@ -19,6 +19,9 @@ class FacebookUser extends Model
 
     public static function Get_Conversations($page = null)
     {
-        return FacebookConversation::orderBy('ended_at', 'desc')->paginate(20)->onEachSide(2);
+        if($page != null)
+            return FacebookConversation::orderBy('ended_at', 'desc')->where('page', $page)->paginate(20)->onEachSide(2);
+        else
+            return FacebookConversation::orderBy('ended_at', 'desc')->paginate(20)->onEachSide(2);
     }
 }

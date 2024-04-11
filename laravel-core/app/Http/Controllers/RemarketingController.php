@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Remarketing;
 use App\Models\FacebookPage;
 use App\Models\MessagesTemplates;
+use App\Models\RemarketingCategory;
 use App\Models\RemarketingMessages;
 use App\Models\FacebookConversation;
 use App\Http\Requests\StoreRemarketingRequest;
@@ -17,7 +18,28 @@ class RemarketingController extends Controller
      */
     public function index()
     {
-        $remarketings = Remarketing::where('deleted_at', null)->get(); 
+        $categories = RemarketingCategory::where('deleted_at', null)->where('parent', null)->get();
+        return view('pages.remarketing.categories')->with('categories', $categories);
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function category(RemarketingCategory $category)
+    {
+        $categories = RemarketingCategory::where('deleted_at', null)
+        ->whereIn('id', Remarketing::where('deleted_at', null)
+        ->pluck('category'))
+        ->get();
+        return view('pages.remarketing.sub_categories')->with('categories', $categories);
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function sub_category(RemarketingCategory $category)
+    {
+        $remarketings = Remarketing::where('deleted_at', null)->where('category', $category->id)->get(); 
         return view('pages.remarketing.remarketing')->with('remarketings', $remarketings);
     }
 
@@ -28,7 +50,8 @@ class RemarketingController extends Controller
     {
         $pages = FacebookPage::where('expired_at', null)->where('type', 'business')->get();
         $templates = MessagesTemplates::where('deleted_at', null)->get();
-        return view('pages.remarketing.create')->with('pages', $pages)->with('templates', $templates);
+        $categories = RemarketingCategory::where('deleted_at', null)->get();
+        return view('pages.remarketing.create')->with('pages', $pages)->with('templates', $templates)->with('categories', $categories);
     }
 
     /**
@@ -69,6 +92,7 @@ class RemarketingController extends Controller
                 'start_time'=> $request->input('start_time'),
                 'end_time'=> $request->input('end_time'),
                 'template' => $request->input('template'),
+                'category' => $request->input('category'),
             ]);
         }
         return back()->with('success', "Remarketing message has been created");
@@ -123,7 +147,8 @@ class RemarketingController extends Controller
     {
         $pages = FacebookPage::where('expired_at', null)->where('type', 'business')->get();
         $templates = MessagesTemplates::where('deleted_at', null)->get();
-        return view('pages.remarketing.edit')->with('remarketing', $remarketing)->with('pages', $pages)->with('templates', $templates);
+        $categories = RemarketingCategory::where('deleted_at', null)->get();
+        return view('pages.remarketing.edit')->with('remarketing', $remarketing)->with('pages', $pages)->with('templates', $templates)->with('categories', $categories);
     }
 
     /**
@@ -176,6 +201,7 @@ class RemarketingController extends Controller
                     'start_time'=> $request->input('start_time'),
                     'end_time'=> $request->input('end_time'),
                     'template' => $request->input('template'),
+                    'category' => $request->input('category'),
                 ]);
             }
             else
@@ -194,6 +220,7 @@ class RemarketingController extends Controller
                     'start_time'=> $request->input('start_time'),
                     'end_time'=> $request->input('end_time'),
                     'template' => $request->input('template'),
+                    'category' => $request->input('category'),
                 ]);
             }
         }
