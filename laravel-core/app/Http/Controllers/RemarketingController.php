@@ -27,9 +27,10 @@ class RemarketingController extends Controller
      */
     public function category(RemarketingCategory $category)
     {
+        
         $categories = RemarketingCategory::where('deleted_at', null)
-        ->whereIn('id', Remarketing::where('deleted_at', null)
-        ->pluck('category'))
+        ->where('parent', $category->id)
+        ->whereIn('id', Remarketing::where('deleted_at', null)->pluck('category'))
         ->get();
         return view('pages.remarketing.sub_categories')->with('categories', $categories);
     }
@@ -39,7 +40,7 @@ class RemarketingController extends Controller
      */
     public function sub_category(RemarketingCategory $category)
     {
-        $remarketings = Remarketing::where('deleted_at', null)->where('category', $category->id)->get(); 
+        $remarketings = Remarketing::where('deleted_at', null)->where('category', $category->id)->get();
         return view('pages.remarketing.remarketing')->with('remarketings', $remarketings);
     }
 
@@ -50,7 +51,7 @@ class RemarketingController extends Controller
     {
         $pages = FacebookPage::where('expired_at', null)->where('type', 'business')->get();
         $templates = MessagesTemplates::where('deleted_at', null)->get();
-        $categories = RemarketingCategory::where('deleted_at', null)->get();
+        $categories = RemarketingCategory::where('deleted_at', null)->where('parent', '!=', null)->get();
         return view('pages.remarketing.create')->with('pages', $pages)->with('templates', $templates)->with('categories', $categories);
     }
 
@@ -105,6 +106,7 @@ class RemarketingController extends Controller
     {
         if($remarketing->is_active)
         {
+            return redirect()->route('remarketing_sub_category', $remarketing->category)->with('success', session('success'))->with('error', session('error'));
             return redirect()->route('remarketing')->with('success', session('success'))->with('error', session('error'));
         }
         return view('pages.remarketing.activate')->with('remarketing', $remarketing);
@@ -147,7 +149,7 @@ class RemarketingController extends Controller
     {
         $pages = FacebookPage::where('expired_at', null)->where('type', 'business')->get();
         $templates = MessagesTemplates::where('deleted_at', null)->get();
-        $categories = RemarketingCategory::where('deleted_at', null)->get();
+        $categories = RemarketingCategory::where('deleted_at', null)->where('parent', '!=', null)->get();
         return view('pages.remarketing.edit')->with('remarketing', $remarketing)->with('pages', $pages)->with('templates', $templates)->with('categories', $categories);
     }
 

@@ -26,7 +26,7 @@ class RemarketingInterval extends Model
     {
         return RemarketingIntervalMessages::where('remarketing', $this->id)->count();
     }
-    public function Get_Supported_Conversations()
+    public function Get_Supported_Conversations0()
     {
         $now = Carbon::now();
         $start_after = Carbon::createFromTimestamp($now->timestamp - $this->start_after);
@@ -44,13 +44,96 @@ class RemarketingInterval extends Model
             });
         })
         ->orderBy('ended_at', 'desc');
-    return array(
-        $conversations->paginate(20)->oneachside(2),
-        $conversations->count(),
-        $start_after->toDateTimeString(),
-        $sendOn->toDateTimeString()
-    );
-        
+        return array(
+            $conversations->paginate(20)->oneachside(2),
+            $conversations->count(),
+            $start_after->toDateTimeString(),
+            $sendOn->toDateTimeString()
+        );
+    }
+    public function All_Supported_Conversations()
+    {
+        $now = Carbon::now();
+        $start_after = Carbon::createFromTimestamp($now->timestamp - $this->start_after);
+        $sendOn = Carbon::createFromTimestamp($now->timestamp - $this->send_after_each);
+        $conversations = FacebookConversation::where('page', $this->facebook_page_id)
+        ->where('started_at', '<', $start_after->toDateTimeString())
+        ->where(function ($query) use ($sendOn) {
+            $query->whereNotExists(function ($subquery )use ($sendOn) {
+                $subquery->select(DB::raw(1))
+                    ->from('remarketing_interval_messages')
+                    ->whereColumn('facebook_conversation_id', 'facebook_conversations.facebook_conversation_id')
+                    ->where('remarketing', $this->id)
+                    ->where('deleted_at', null)
+                    ->where('last_use', '>=',  $sendOn->toDateTimeString());
+            });
+        })
+        ->orderBy('ended_at', 'desc');
+        echo $conversations->count()."\n";
+        return $conversations->count();
+    }
+    public function Check_Interval()
+    {
+        $now = Carbon::now();
+        $message = RemarketingIntervalMessages::where('remarketing', $this->id)
+            ->where('deleted_at', null)
+            ->orderBy('last_use', 'desc')
+            ->first();
+        if ($message) {
+            $sendOn = Carbon::parse($message->last_use)->addSeconds($this->send_after_each);
+            if ($now <= $sendOn) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public function Get_Supported_Conversations()
+    {
+        $now = Carbon::now();
+        $start_after = Carbon::createFromTimestamp($now->timestamp - $this->start_after);
+        $sendOn = Carbon::createFromTimestamp($now->timestamp - $this->send_after_each);
+        if($this->Check_Interval())
+        {
+            return array(
+                FacebookConversation::limit(0),
+                0,
+                $start_after->toDateTimeString(),
+                $sendOn->toDateTimeString()
+            );
+        }
+        $conversations = FacebookConversation::where('page', $this->facebook_page_id)
+        ->where('started_at', '<', $start_after->toDateTimeString())
+        ->where(function ($query) use ($sendOn) {
+            $query->whereNotExists(function ($subquery)use ($sendOn) {
+                $subquery->select(DB::raw(1))
+                    ->from('remarketing_interval_messages')
+                    ->whereColumn('facebook_conversation_id', 'facebook_conversations.facebook_conversation_id')
+                    ->where('remarketing', $this->id)
+                    ->where('deleted_at', null)
+                    ->where('last_use', '>=',  $sendOn->toDateTimeString());
+            });
+        })
+        ->whereNotIn('facebook_conversation_id', function ($query) {
+            $query->select('facebook_conversation_id')
+                ->from('remarketing_interval_messages')
+                ->where('remarketing', $this->id)
+                ->where('deleted_at', null);
+        })
+        ->limit($this->devide_by)
+        ->orderBy('ended_at', 'desc')
+        ->get();
+        if($conversations->count() == 0)
+        {
+            RemarketingIntervalMessages::where('remarketing', $this->id)->update(['deleted_at'=> now()]);
+            $this->Get_Supported_Conversations();
+        }
+
+        return array(
+            $conversations,
+            $conversations->count(),
+            $start_after->toDateTimeString(),
+            $sendOn->toDateTimeString()
+        );
     }
     public function History()
     {

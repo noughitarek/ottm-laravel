@@ -39,6 +39,7 @@ $user = Auth::user();
                   @endforeach
                 </td>
                 <td>
+                @if($category->slug != "undefined" && $category->slug != "sub-undefined")
                   @if($user->Has_Permission('remarketing_categories_edit'))
                     <button data-bs-toggle="modal" data-bs-target="#editCategory{{$category->id}}" class="btn btn-warning" >
                       Edit
@@ -49,6 +50,7 @@ $user = Auth::user();
                     Delete
                   </button>
                   @endif
+                @endif
                 </td>
             </tr>
             @endforeach
@@ -97,6 +99,7 @@ $user = Auth::user();
 @endif
 @if($user->Has_Permission('remarketing_categories_edit'))
 @foreach($all_categories as $category)
+@if($category->slug != "undefined" && $category->slug != "sub-undefined")
 <div class="modal fade" id="editCategory{{$category->id}}" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -134,9 +137,11 @@ $user = Auth::user();
     </div>
   </div>
 </div>
+@endif
 @endforeach
 @endif
 @if($user->Has_Permission('remarketing_categories_delete'))
+@if($category->slug != "undefined" && $category->slug != "sub-undefined")
 @foreach($all_categories as $category)
 <div class="modal fade" id="deleteCategory{{$category->id}}" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -157,5 +162,6 @@ $user = Auth::user();
   </div>
 </div>
 @endforeach
+@endif
 @endif
 @endsection

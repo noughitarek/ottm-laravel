@@ -15,8 +15,8 @@ return [
     'remarketing_categories' => ['consult', 'create', 'edit', 'delete'],
     'remarketing' => ['consult', 'create', 'edit', 'delete'],
     'remarketing_interval' => ['consult', 'create', 'edit', 'delete'],
-    
     'tracking' => ['consult', 'edit'],
+    'responder' => ['consult', 'edit'],
 
     'users' => ['consult', 'create', 'edit', 'delete'],
     'settings' => ['consult', 'edit'],

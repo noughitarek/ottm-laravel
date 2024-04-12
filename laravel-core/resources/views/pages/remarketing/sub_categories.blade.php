@@ -44,6 +44,7 @@ $user = Auth::user();
                   @endforeach
                 </td>
                 <td>
+                @if($category->slug != "undefined" && $category->slug != "sub-undefined")
                   @if($user->Has_Permission('remarketing_categories_edit'))
                     <button data-bs-toggle="modal" data-bs-target="#editCategory{{$category->id}}" class="btn btn-warning" >
                       Edit
@@ -54,6 +55,7 @@ $user = Auth::user();
                     Delete
                   </button>
                   @endif
+                @endif
                 </td>
             </tr>
             @endforeach

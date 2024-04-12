@@ -54,6 +54,12 @@ class RemarketingCategoryController extends Controller
             'slug' => $category->slug."deleted",
             'parent' => null
         ]);
+        RemarketingCategory::where('parent', $category->id)
+        ->update(['parent' => RemarketingCategory::where('slug', 'undefined')->first()->id]);
+        Remarketing::where('category', $category->id)
+        ->update(['category' => RemarketingCategory::where('slug', 'sub-undefined')->first()->id]);
+        RemarketingInterval::where('category', $category->id)
+        ->update(['category' => RemarketingCategory::where('slug', 'sub-undefined')->first()->id]);
         return back()->with('success', 'category has been deleted successfully');
     }
 }

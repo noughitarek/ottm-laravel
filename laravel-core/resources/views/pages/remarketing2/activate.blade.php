@@ -75,7 +75,6 @@ $conversations = $conversations[0];
         </tbody>
       </table>
     </div>
-  {{ $conversations->links('components.pagination') }}
   </div>
 </div>
 @endsection

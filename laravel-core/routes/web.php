@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ResponderController;
 use App\Http\Controllers\RemarketingController;
 use App\Http\Controllers\FacebookPageController;
 use App\Http\Controllers\ConversationsController;
@@ -22,7 +23,7 @@ use App\Http\Controllers\RemarketingCategoryController;
 use App\Http\Controllers\RemarketingIntervalController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-Route::middleware(['auth', 'access_token'])->group(function () {
+Route::middleware(['auth', 'access_token'])->prefix('dashboard')->group(function () {
     Route::middleware('permission:dashboard_consult')->controller(DashboardController::class)->group(function(){
         Route::get('', "index")->name('dashboard');
     });
@@ -146,6 +147,10 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::get('', "index")->name('tracking');
         Route::post('edit', "edit")->middleware('permission:tracking_edit')->name('tracking_edit');
     });
+    Route::middleware('permission:responder_consult')->prefix("responder")->controller(ResponderController::class)->group(function(){
+        Route::get('', "index")->name('responder');
+        Route::post('edit', "edit")->middleware('permission:responder_edit')->name('responder_edit');
+    });
     Route::middleware('permission:settings_consult')->prefix("settings")->controller(SettingsController::class)->group(function(){
         Route::get('', "index")->name('settings');
         Route::post('edit', "edit")->name('settings_edit');
@@ -169,4 +174,8 @@ Route::middleware('guest')->group(function () {
     Route::post('register', [RegisteredUserController::class, 'store']);
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
+});
+
+Route::controller(PageController::class)->group(function (){
+    Route::get('', 'index');
 });

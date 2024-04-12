@@ -149,6 +149,14 @@ return array(
             ),
         ),
     ),
+    array(
+        "type" => "link",
+        "content" => "ARM",
+        "permissions" => "responder_consult",
+        "section" => "responder",
+        "route" => "responder",
+        "icon" => array("type" => "feather", "content" => "upload-cloud"),
+    ),
     array("type" => "text", "content"=> "Administration", "permissions" => ["users_consult", "settings_consult"]),
     array(
         "type" => "link",

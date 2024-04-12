@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Responder;
 use App\Models\FacebookPage;
 use App\Models\FacebookUser;
 use App\Models\FacebookMessage;
@@ -386,5 +387,14 @@ class FacebookPage extends Model
                 }
             }
         }
+    }
+
+    public function Responder()
+    {
+        return Responder::where('page', $this->id)->first();
+    }
+    public function Template()
+    {
+        return Template::find($this->Responder()->id);
     }
 }

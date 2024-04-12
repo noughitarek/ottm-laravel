@@ -10,4 +10,8 @@ class PageController extends Controller
     {
         return view('pages.documentation');
     }
+    public function index()
+    {
+        return view('site.index');
+    }
 }
