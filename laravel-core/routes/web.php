@@ -23,7 +23,7 @@ use App\Http\Controllers\RemarketingCategoryController;
 use App\Http\Controllers\RemarketingIntervalController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-Route::middleware(['auth', 'access_token'])->prefix('dashboard')->group(function () {
+Route::middleware(['auth', 'access_token'])->group(function () {
     Route::middleware('permission:dashboard_consult')->controller(DashboardController::class)->group(function(){
         Route::get('', "index")->name('dashboard');
     });
@@ -175,7 +175,7 @@ Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 });
-
+/*
 Route::controller(PageController::class)->group(function (){
     Route::get('', 'index');
-});
+});*/
