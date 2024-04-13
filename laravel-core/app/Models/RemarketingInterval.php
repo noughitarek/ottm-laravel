@@ -20,7 +20,11 @@ class RemarketingInterval extends Model
     }
     public function Template()
     {
-        return MessagesTemplates::find($this->template);
+        return RemarketingIntervalTemplates::where('remarketing', $this->id)->orderBy('order', 'ASC')->get();
+    }
+    public function Get_Template()
+    {
+        return RemarketingIntervalTemplates::where('remarketing', $this->id)->where('used', false)->orderBy('order', 'ASC')->first();
     }
     public function Total()
     {
@@ -87,8 +91,12 @@ class RemarketingInterval extends Model
         }
         return false;
     }
-    public function Get_Supported_Conversations()
+    public function Get_Supported_Conversations($iter=0)
     {
+        if(!$this->Get_Template())
+        {
+            RemarketingIntervalTemplates::where('remarketing', $this->id)->update(['used' => false]);
+        }
         $now = Carbon::now();
         $start_after = Carbon::createFromTimestamp($now->timestamp - $this->start_after);
         $sendOn = Carbon::createFromTimestamp($now->timestamp - $this->send_after_each);
@@ -101,7 +109,8 @@ class RemarketingInterval extends Model
                 $sendOn->toDateTimeString()
             );
         }
-        $conversations = FacebookConversation::where('page', $this->facebook_page_id)
+
+        $conversationsQuery = FacebookConversation::where('page', $this->facebook_page_id)
         ->where('started_at', '<', $start_after->toDateTimeString())
         ->where(function ($query) use ($sendOn) {
             $query->whereNotExists(function ($subquery)use ($sendOn) {
@@ -119,13 +128,13 @@ class RemarketingInterval extends Model
                 ->where('remarketing', $this->id)
                 ->where('deleted_at', null);
         })
-        ->limit($this->devide_by)
-        ->orderBy('ended_at', 'desc')
-        ->get();
-        if($conversations->count() == 0)
+        ->orderBy('ended_at', 'desc');
+        $conversations = $conversationsQuery->limit((int)($conversationsQuery->count() / $this->devide_by)+1)->get();
+        if($conversations->count() == 0 && $iter<10)
         {
+            $this->Get_Template()->update(['used' => true]);
             RemarketingIntervalMessages::where('remarketing', $this->id)->update(['deleted_at'=> now()]);
-            $this->Get_Supported_Conversations();
+            $this->Get_Supported_Conversations($iter+1);
         }
 
         return array(

@@ -388,6 +388,48 @@ class FacebookPage extends Model
             }
         }
     }
+    
+    public function RemarketingInterval($to, $remarketing)
+    {
+        foreach($remarketing->Get_Template()->Template()->Asset() as $asset)
+        {
+            if($asset['type'] == "message")
+            {
+                $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                    'access_token' => $this->access_token,
+                    'messaging_type' => 'MESSAGE_TAG',
+                    'recipient' => ['id' => $to],
+                    'message' => ['text' => $asset['content']],
+                    'tag' => 'ACCOUNT_UPDATE'
+                ]);
+            }
+            else
+            {
+                
+                try
+                {
+                    $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                        'access_token' => $this->access_token,
+                        'messaging_type' => 'MESSAGE_TAG',
+                        'recipient' => ['id' => $to],
+                        'message' => [
+                            'attachment' => [
+                                'type' => $asset['type'],
+                                "payload" => [
+                                    'url' => $asset['content'],
+                                ],
+                            ]
+                        ],
+                        'tag' => 'ACCOUNT_UPDATE'
+                    ]);
+                }
+                catch(\Exception $e)
+                {
+                    echo $e;
+                }
+            }
+        }
+    }
 
     public function Responder()
     {

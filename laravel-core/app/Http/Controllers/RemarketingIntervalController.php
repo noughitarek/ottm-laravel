@@ -6,6 +6,7 @@ use App\Models\FacebookPage;
 use App\Models\MessagesTemplates;
 use App\Models\RemarketingCategory;
 use App\Models\RemarketingInterval;
+use App\Models\RemarketingIntervalTemplates;
 use App\Http\Requests\StoreRemarketingIntervalRequest;
 use App\Http\Requests\UpdateRemarketingIntervalRequest;
 
@@ -64,9 +65,20 @@ class RemarketingIntervalController extends Controller
                 "start_after" => $request->input('start_after')*$request->input('start_time_unit'),
                 "send_after_each" => $request->input('send_after_each')*$request->input('time_unit'),
                 "devide_by" => $request->input('devide_by'),
-                'template' => $request->input('template'),
+                #'template' => $request->input('template'),
                 'category' => $request->input('category'),
             ]);
+            foreach($request->input('template') as $order=>$template)
+            {
+                if($template != null)
+                {
+                    RemarketingIntervalTemplates::create([
+                        'remarketing' => $remarketing->id,
+                        'template' => $template,
+                        'order' => $order
+                    ]);
+                }
+            }
         }
         return back()->with('success', "Remarketing message has been created");
     }
@@ -132,6 +144,7 @@ class RemarketingIntervalController extends Controller
     public function update(UpdateRemarketingIntervalRequest $request, RemarketingInterval $remarketing)
     {
         foreach($request->pages as $page){
+            RemarketingIntervalTemplates::where('remarketing', $remarketing->id)->delete();
             if($page == $remarketing->facebook_page_id)
             {
                 $remarketing->update([
@@ -140,7 +153,7 @@ class RemarketingIntervalController extends Controller
                     "start_after" => $request->input('start_after')*$request->input('start_time_unit'),
                     "send_after_each" => $request->input('send_after_each')*$request->input('time_unit'),
                     "devide_by" => $request->input('devide_by'),
-                    'template' => $request->input('template'),
+                    #'template' => $request->input('template'),
                     'category' => $request->input('category'),
                 ]);
             }
@@ -152,9 +165,20 @@ class RemarketingIntervalController extends Controller
                     "start_after" => $request->input('start_after')*$request->input('start_time_unit'),
                     "send_after_each" => $request->input('send_after_each')*$request->input('time_unit'),
                     "devide_by" => $request->input('devide_by'),
-                    'template' => $request->input('template'),
+                    #'template' => $request->input('template'),
                     'category' => $request->input('category'),
                 ]);
+            }
+            foreach($request->input('template') as $order=>$template)
+            {
+                if($template != null)
+                {
+                    RemarketingIntervalTemplates::create([
+                        'remarketing' => $remarketing->id,
+                        'template' => $template,
+                        'order' => $order
+                    ]);
+                }
             }
         }
         return back()->with('success', "Remarketing message has been updated");

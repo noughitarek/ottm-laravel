@@ -39,7 +39,7 @@ class RemarketingIntervalSendCommand extends Command
                     'facebook_conversation_id' => $conversation->facebook_conversation_id,
                     'last_use' => now(),
                 ]);
-                $conversation->Remarketing($remarketing);
+                $conversation->RemarketingInterval($remarketing);
             }
         }
         

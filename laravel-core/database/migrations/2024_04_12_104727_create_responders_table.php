@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('page');
             $table->foreign('page')->references('id')->on('facebook_pages');
             $table->unsignedBigInteger('template');
-            $table->foreign('template')->references('id')->on('templates');
+            $table->foreign('template')->references('id')->on('messages_templates');
             $table->timestamps();
         });
     }

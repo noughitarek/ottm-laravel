@@ -3,6 +3,7 @@
 @section('content')
 @php
 $user = Auth::user();
+$i = 0;
 @endphp
 @foreach ($errors->all() as $title=>$error)
   <li>{{ $title.'-'.$error }}</li>
@@ -117,6 +118,55 @@ $user = Auth::user();
     </div>
     <div class="col-12 col-lg-12 col-xxl-12 d-flex">
       <div class="card flex-fill">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title">Message</h5>
+          <button type="button" id="moreTemplates" class="btn btn-primary">More templates</button>
+        </div>
+        <div class="card-body">
+          <div class="templates">
+          @foreach($remarketing->Template() as $template)
+          <div class="mb-3 template">
+            <label class="form-label" for="template">Template {{$i+1}}</label>
+            <select name="template[{{$i+1}}]" id="template" class="form-control">
+                <option value selected>Select the template</option>
+                @foreach($templates as $stemplate)
+                <option value="{{$stemplate->id}}" {{$stemplate->id==$template->template?'selected':''}}>{{$stemplate->name}}</option>
+                @endforeach
+            </select>
+          </div>
+          @php
+          $i++;
+          @endphp
+          @endforeach
+
+          @error('template')
+            <div class="text-danger">{{ $message }}</div>
+          @enderror
+
+          @for($i=$i;$i<10;$i++)
+          <div class="mb-3 template {{$i==0?'':'d-none'}}">
+            <label class="form-label" for="template">Template {{$i+1}} {!!$i==0?'<span class="text-danger">*</span>':''!!}</label>
+            <select name="template[{{$i+1}}]" id="template" class="form-control" {{$i==0?'required':''}}>
+                <option value selected>Select the template</option>
+                @foreach($templates as $template)
+                <option value="{{$template->id}}">{{$template->name}}</option>
+                @endforeach
+            </select>
+            @error('template')
+              <div class="text-danger">{{ $message }}</div>
+            @enderror
+          </div>
+          @endfor
+            </div>
+          <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{--
+    <div class="col-12 col-lg-12 col-xxl-12 d-flex">
+      <div class="card flex-fill">
         <div class="card-header">
           <h5 class="card-title">Message</h5>
         </div>
@@ -140,6 +190,15 @@ $user = Auth::user();
       </div>
     </div>
   </div>
+  --}}
 </form>
 
+@endsection
+@section("script")
+<script>
+  document.getElementById('moreTemplates').addEventListener('click', function() {
+      var toshowElem = document.querySelector('.template.d-none');
+      toshowElem != null && toshowElem.classList.remove('d-none')
+    });
+</script>
 @endsection

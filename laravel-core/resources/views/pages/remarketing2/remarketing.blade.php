@@ -41,7 +41,11 @@ $user = Auth::user();
             <i class="align-middle me-2 fas fa-fw fa-toggle-{{$remarketing->is_active?'on':'off'}}"></i>{{$remarketing->is_active?'Active':'Inactive'}}<br>
           </td>
           <td class="single-line">
-            @if($remarketing->template!=null)
+            @foreach($remarketing->Template() as $template)
+            <i class="align-middle me-2 fas fa-fw fa-file"></i> {{$template->Template()->name}}<br>
+            @endforeach
+            {{--
+            @if($remarketing->template!="")
             <i class="align-middle me-2 fas fa-fw fa-file"></i> {{$remarketing->Template()->name}}
             @else
             @foreach(explode(',',$remarketing->photos) as $photo)
@@ -58,6 +62,7 @@ $user = Auth::user();
             @if($remarketing->message!="")
             <i class="align-middle me-2 fas fa-fw fa-file-text"></i>{{$remarketing->message}}
             @endif
+            --}}
           </td>
           <td class="single-line">
             Total: <span class="text-danger">{{$remarketing->Total()}} (100%)</span><br>

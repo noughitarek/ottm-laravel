@@ -15,10 +15,10 @@ class RemarketingCategory extends Model
     }
     public function Remarketings()
     {
-        return Remarketing::where('category', $this->id)->get();
+        return Remarketing::where('category', $this->id)->where('deleted_at', null)->get();
     }
     public function Remarketings_Interval()
     {
-        return RemarketingInterval::where('category', $this->id)->get();
+        return RemarketingInterval::where('category', $this->id)->where('deleted_at', null)->get();
     }
 }
