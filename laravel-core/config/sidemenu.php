@@ -157,6 +157,14 @@ return array(
         "route" => "responder",
         "icon" => array("type" => "feather", "content" => "upload-cloud"),
     ),
+    array(
+        "type" => "link",
+        "content" => "AIB",
+        "permissions" => "invoicer_consult",
+        "section" => "invoicer",
+        "route" => "invoicer",
+        "icon" => array("type" => "feather", "content" => "award"),
+    ),
     array("type" => "text", "content"=> "Administration", "permissions" => ["users_consult", "settings_consult"]),
     array(
         "type" => "link",

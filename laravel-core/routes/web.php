@@ -22,6 +22,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\RemarketingCategoryController;
 use App\Http\Controllers\RemarketingIntervalController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\InvoicerController;
 
 Route::middleware(['auth', 'access_token'])->group(function () {
     Route::middleware('permission:dashboard_consult')->controller(DashboardController::class)->group(function(){
@@ -150,6 +151,10 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     Route::middleware('permission:responder_consult')->prefix("responder")->controller(ResponderController::class)->group(function(){
         Route::get('', "index")->name('responder');
         Route::post('edit', "edit")->middleware('permission:responder_edit')->name('responder_edit');
+    });
+    Route::middleware('permission:invoicer_consult')->prefix("invoicer")->controller(InvoicerController::class)->group(function(){
+        Route::get('', "index")->name('invoicer');
+        Route::post('upload', "upload")->middleware('permission:invoicer_upload')->name('invoicer_upload');
     });
     Route::middleware('permission:settings_consult')->prefix("settings")->controller(SettingsController::class)->group(function(){
         Route::get('', "index")->name('settings');

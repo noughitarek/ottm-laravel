@@ -37,9 +37,9 @@ class OrderController extends Controller
     {
         $user = Auth::user();
         if($user->Has_Permission('orders_consult')){
-            $orders = Order::ToWilaya()->get();
+            $orders = Order::ToWilaya()->paginate(20)->oneachside(2);
         }else{
-            $orders = Order::ToWilaya()->where('created_by', $user->id)->get();
+            $orders = Order::ToWilaya()->where('created_by', $user->id)->paginate(20)->oneachside(2);
         }
         return view('pages.orders.table')->with('title', "To Wilaya orders")->with('orders', $orders);
     }
@@ -51,9 +51,9 @@ class OrderController extends Controller
     {
         $user = Auth::user();
         if($user->Has_Permission('orders_consult')){
-            $orders = Order::Delivery()->get();
+            $orders = Order::Delivery()->paginate(20)->oneachside(2);
         }else{
-            $orders = Order::Delivery()->where('created_by', $user->id)->get();
+            $orders = Order::Delivery()->where('created_by', $user->id)->paginate(20)->oneachside(2);
         }
         return view('pages.orders.table')->with('title', "Delivery orders")->with('orders', $orders);
     }
@@ -65,9 +65,9 @@ class OrderController extends Controller
     {
         $user = Auth::user();
         if($user->Has_Permission('orders_consult')){
-            $orders = Order::Delivered()->get();
+            $orders = Order::Delivered()->paginate(20)->oneachside(2);
         }else{
-            $orders = Order::Delivered()->where('created_by', $user->id)->get();
+            $orders = Order::Delivered()->where('created_by', $user->id)->paginate(20)->oneachside(2);
         }
         return view('pages.orders.table')->with('title', "Delivered orders")->with('orders', $orders);
     }
@@ -79,9 +79,9 @@ class OrderController extends Controller
     {
         $user = Auth::user();
         if($user->Has_Permission('orders_consult')){
-            $orders = Order::Back()->get();
+            $orders = Order::Back()->paginate(20)->oneachside(2);
         }else{
-            $orders = Order::Back()->where('created_by', $user->id)->get();
+            $orders = Order::Back()->where('created_by', $user->id)->paginate(20)->oneachside(2);
         }
         return view('pages.orders.table')->with('title', "Back orders")->with('orders', $orders);
     }
@@ -93,9 +93,9 @@ class OrderController extends Controller
     {
         $user = Auth::user();
         if($user->Has_Permission('orders_consult')){
-            $orders = Order::Archived()->get();
+            $orders = Order::Archived()->paginate(20)->oneachside(2);
         }else{
-            $orders = Order::Archived()->where('created_by', $user->id)->get();
+            $orders = Order::Archived()->where('created_by', $user->id)->paginate(20)->oneachside(2);
         }
         return view('pages.orders.table')->with('title', "Archived orders")->with('orders', $orders);
     }
