@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Invoicer extends Model
+class InvoicerOrdersProducts extends Model
 {
     use HasFactory;
-    protected $fillable = ['total_amount', 'total_orders', 'desk'];
+    protected $fillable = ['order', 'product', 'quantity'];
 }

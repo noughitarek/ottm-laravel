@@ -17,7 +17,7 @@ return [
     'remarketing_interval' => ['consult', 'create', 'edit', 'delete'],
     'tracking' => ['consult', 'edit'],
     'responder' => ['consult', 'edit'],
-    'invoicer' => ['consult', 'upload'],
+    'invoicer' => ['consult', 'consult_product', 'create_product', 'edit_product', 'delete_product', 'upload'],
 
     'users' => ['consult', 'create', 'edit', 'delete'],
     'settings' => ['consult', 'edit'],

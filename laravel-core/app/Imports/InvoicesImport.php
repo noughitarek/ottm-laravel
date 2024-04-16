@@ -1,11 +1,18 @@
 <?php
 namespace App\Imports;
 
+use App\Models\Commune;
+use App\Models\Invoicer;
+use App\Models\InvoicerOrders;
+use App\Models\InvoicerProducts;
+use App\Models\InvoicerOrdersProducts;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
-use App\Models\Invoicer;
+
 class InvoicesImport implements ToModel, WithStartRow
 {
+    private $importedRows = [];
+
     /**
      * Specify the start row for the import.
      *
@@ -13,7 +20,7 @@ class InvoicesImport implements ToModel, WithStartRow
      */
     public function startRow(): int
     {
-        return 2; // Skip the first row (headers)
+        return 3; // Skip the first row (headers)
     }
 
     /**
@@ -24,38 +31,82 @@ class InvoicesImport implements ToModel, WithStartRow
      */
     public function model(array $row)
     {
-        print_r($row);
-        // Assuming the structure of the row matches the attributes of your Invoicer model
-        /*
-        return new Invoicer([
-            'total_amount' => sum([])
-        ]);
-        return new Invoicer([
-            'Tracking' => $row[0],
-            'Réference' => $row[1],
-            'déstinataire' => $row[2],
-            'Téléphone' => $row[3],
-            'Commune' => $row[4],
-            'Wilaya' => $row[5],
-            'Produits' => $row[6],
-            'Remarque' => $row[7],
-            'Poids' => $row[8],
-            'Livré le' => $row[9],
-            'Encaissé le' => $row[10],
-            'montant' => $row[11],
-            'Frais de livraison' => $row[12],
-            'Frais poids' => $row[13],
-            'Frais en extra' => $row[14],
-            'Frais SMS' => $row[15],
-            'Frais Stockage' => $row[16],
-            'Commission recouvrement' => $row[17],
-            'Total frais de service' => $row[18],
-            'Net recouvert' => $row[19],
-            'Type' => $row[20],
-            'Type de préstation' => $row[21],
-            'Crée le' => $row[22],
-            'undefined' => $row[23],
-            'Reçu le' => $row[24],
-        ]);*/
+        $exisitngInvoice = InvoicerOrders::where('tracking', $row[0])->first();
+        /*if($exisitngInvoice)
+        {*/
+            $invoice = new InvoicerOrders([
+                'name' => $row[2],
+                'phone' => explode('/', $row[3])[0],
+                'phone2' => explode('/', $row[3])[1]??null,
+                'address' => 'n/a',
+                'commune' => Commune::where('name', $row[4])->first()->id,
+                'total_price' => (int)$row[11],
+                'delivery_price' => (int)$row[18],
+                'clean_price' => ((int)$row[11]-(int)$row[18]),
+                'recovered' => (int)$row[19],
+                'tracking' => $row[0],
+                'stopdesk' => $row[21]=="Stop Desk",
+                'facebook_conversation_id' => "n",
+            ]);
+            $this->importedRows[] = $invoice;
+            $products = InvoicerProducts::whereNull('deleted_at')->get();
+            $orderProducts = explode('+', $row[6]);
+            foreach($products as $product)
+            {
+                foreach($product->Quantity_Prices() as $index=>$quantity)
+                {
+                    if(
+                        (in_array($quantity['title'].' '.$product->slug, $orderProducts)) ||
+                        (in_array($quantity['title'].$product->slug, $orderProducts)) ||
+                        (in_array($quantity['title'].' '.trim($product->slug), $orderProducts)) ||
+                        (in_array($quantity['title'].trim($product->slug), $orderProducts))
+                    )
+                    {
+                        if($quantity['title'] != null)
+                        {
+                            InvoicerOrdersProducts::create([
+                                'product' => $product->id,
+                                'quantity' => $index,
+                            ]);
+                        }
+                    }
+                }
+                if(
+                    (in_array($product->slug, $orderProducts)) ||
+                    (in_array(trim($product->slug), $orderProducts))
+                )
+                {
+                    InvoicerOrdersProducts::create([
+                        'product' => $product->id,
+                        'quantity' => 1,
+                    ]);
+
+                }
+            }
+                /*
+            $products = explode('+', $row[6]);
+            $realProducts = InvoicerProducts::where('deleted_at', false)->get();
+            foreach($products as $product)
+            {
+                if(strpos(trim(explode('/', $product)[0]), 'زوج') === 0)
+                {
+                    $quantity = '2';
+                }
+                else 
+                {
+                    $quantity = '1';
+                }
+                $product = isset(explode('/', $product)[1])?explode('/', $product)[1]:explode('/', $product)[0];
+                echo '<br>';
+            }*/
+
+            return $invoice;
+        #}
+    }
+    
+
+    public function getRows()
+    {
+        return $this->importedRows;
     }
 }
