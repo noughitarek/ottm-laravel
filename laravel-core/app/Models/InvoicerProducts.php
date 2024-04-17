@@ -8,10 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class InvoicerProducts extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'slug', 'min_price', 'max_price', 'quantity_prices', 'purchase_price', 'deleted_at'];
+    protected $fillable = ['name', 'slug', 'min_price', 'max_price',  'purchase_price', 'deleted_at', 'confirmed'];
 
-    public function Quantity_Prices()
-    {
-        return json_decode($this->quantity_prices, true);
-    }
 }

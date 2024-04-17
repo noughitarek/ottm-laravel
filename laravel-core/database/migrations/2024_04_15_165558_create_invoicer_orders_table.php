@@ -23,9 +23,15 @@ return new class extends Migration
             $table->integer('delivery_price');
             $table->integer('clean_price');
             $table->integer('recovered');
-            $table->string('tracking')->nullable();
+            $table->string('tracking')->unique()->nullable();
             $table->boolean('stopdesk')->default(0);
+            $table->unsignedBigInteger('invoice');
+            $table->foreign('invoice')->references('id')->on('invoicers');
             $table->string('facebook_conversation_id')->nullable();
+            $table->text('products')->nullable();
+            $table->text('reference')->nullable();
+            $table->integer('delivery_extra')->default(0);
+            $table->integer('desk_extra')->default(0);
             $table->timestamps();
         });
     }

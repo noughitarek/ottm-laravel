@@ -10,12 +10,11 @@ $user = Auth::user();
       <h5 class="card-title mb-0">AIB</h5>
         @if($user->Has_Permission("invoicer_consult_product"))
         <div>
-            <button data-bs-toggle="modal" data-bs-target="#listProducts" class="btn btn-secondary" > List products </button>
-            @if($user->Has_Permission("invoicer_create_product"))
-            <button data-bs-toggle="modal" data-bs-target="#createProduct" class="btn btn-primary" > Create a product </button>
-            @endif
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delivery_fees"><i class="align-middle" data-feather="map"></i></button>
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#settings"><i class="align-middle" data-feather="settings"></i></button>
+            <button data-bs-toggle="modal" data-bs-target="#listProducts" class="btn btn-secondary" > Products </button>
             @if($user->Has_Permission("invoicer_upload"))
-            <button id="uploadButton" type="button" class="btn btn-warning"> Upload an invoice </button>
+            <button id="uploadButton" type="button" class="btn btn-primary"> Invoice </button>
             @endif
         </div>
         @endif
@@ -73,34 +72,6 @@ $user = Auth::user();
             <input type="number" name="min_price" class="form-control" placeholder="Minimum price">
             <input type="number" name="max_price" class="form-control" placeholder="Maximum price">
           </div>
-          <div class="mb-3">
-            <label class="form-label">Product's prices:</label>
-            <div class="mb-1">
-                <label class="form-label">1 x</label>
-                <input type="text" name="quantity_prices[1][title]" class="form-control" placeholder="One/">
-                <input type="number" name="quantity_prices[1][price]" class="form-control" placeholder="2500">
-            </div>
-            <div class="mb-1">
-                <label class="form-label">2 x</label>
-                <input type="text" name="quantity_prices[2][title]" class="form-control" placeholder="Two/">
-                <input type="number" name="quantity_prices[2][price]" class="form-control" placeholder="2500">
-            </div>
-            <div class="mb-1">
-                <label class="form-label">3 x</label>
-                <input type="text" name="quantity_prices[3][title]" class="form-control" placeholder="Tree/">
-                <input type="number" name="quantity_prices[3][price]" class="form-control" placeholder="2500">
-            </div>
-            <div class="mb-1">
-                <label class="form-label">4 x</label>
-                <input type="text" name="quantity_prices[4][title]" class="form-control" placeholder="Tree/">
-                <input type="number" name="quantity_prices[4][price]" class="form-control" placeholder="2500">
-            </div>
-            <div class="mb-1">
-                <label class="form-label">5 x</label>
-                <input type="text" name="quantity_prices[5][title]" class="form-control" placeholder="Tree/">
-                <input type="number" name="quantity_prices[5][price]" class="form-control" placeholder="2500">
-            </div>
-          </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -117,7 +88,12 @@ $user = Auth::user();
     <div class="modal-content">
       <div class="modal-header">
           <h5 class="modal-title">All products</h5>
+          <div>
+            @if($user->Has_Permission("invoicer_create_product"))
+            <button data-bs-toggle="modal" data-bs-target="#createProduct" class="btn btn-primary" > Create a product </button>
+            @endif
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
       </div>
       <div class="modal-body m-3">
       <table class="table">
@@ -125,7 +101,6 @@ $user = Auth::user();
           <tr>
             <th>Product</th>
             <th>Prices</th>
-            <th>Quantity Prices</th>
             <th>Purchase Price</th>
             <th>Action</th>
           </tr>
@@ -135,13 +110,6 @@ $user = Auth::user();
           <tr>
             <td>{!!$product->name.'<br>'.$product->slug!!}</td>
             <td>{{$product->min_price.'-'.$product->max_price}}</td>
-            <td>
-            @foreach($product->Quantity_Prices() as $index=>$quantity)
-                @if(isset($quantity['title']) || isset($quantity['price']))
-                {{$index.': '.$quantity['title'].':'.$quantity['price']}}<br>
-                @endif
-            @endforeach
-          </td>
             <td>{{$product->purchase_price}}</td>
             <td>
               @if($user->Has_Permission('invoicer_edit_product'))
@@ -193,34 +161,6 @@ $user = Auth::user();
             <input type="number" name="min_price" class="form-control" value="{{$product->min_price}}" placeholder="Minimum price">
             <input type="number" name="max_price" class="form-control" value="{{$product->max_price}}" placeholder="Maximum price">
           </div>
-          <div class="mb-3">
-            <label class="form-label">Product's prices:</label>
-            <div class="mb-1">
-                <label class="form-label">1 x</label>
-                <input type="text" name="quantity_prices[1][title]" value="{{$product->Quantity_Prices()[1]['title']}}" class="form-control" placeholder="One/">
-                <input type="number" name="quantity_prices[1][price]" value="{{$product->Quantity_Prices()[1]['price']}}" class="form-control" placeholder="2500">
-            </div>
-            <div class="mb-1">
-                <label class="form-label">2 x</label>
-                <input type="text" name="quantity_prices[2][title]" value="{{$product->Quantity_Prices()[2]['title']}}" class="form-control" placeholder="Two/">
-                <input type="number" name="quantity_prices[2][price]" value="{{$product->Quantity_Prices()[2]['price']}}" class="form-control" placeholder="2500">
-            </div>
-            <div class="mb-1">
-                <label class="form-label">3 x</label>
-                <input type="text" name="quantity_prices[3][title]" value="{{$product->Quantity_Prices()[3]['title']}}" class="form-control" placeholder="Tree/">
-                <input type="number" name="quantity_prices[3][price]" value="{{$product->Quantity_Prices()[3]['price']}}" class="form-control" placeholder="2500">
-            </div>
-            <div class="mb-1">
-                <label class="form-label">4 x</label>
-                <input type="text" name="quantity_prices[4][title]" value="{{$product->Quantity_Prices()[4]['title']}}" class="form-control" placeholder="Tree/">
-                <input type="number" name="quantity_prices[4][price]" value="{{$product->Quantity_Prices()[4]['price']}}" class="form-control" placeholder="2500">
-            </div>
-            <div class="mb-1">
-                <label class="form-label">5 x</label>
-                <input type="text" name="quantity_prices[5][title]" value="{{$product->Quantity_Prices()[5]['title']}}" class="form-control" placeholder="Tree/">
-                <input type="number" name="quantity_prices[5][price]" value="{{$product->Quantity_Prices()[5]['price']}}" class="form-control" placeholder="2500">
-            </div>
-          </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#listProducts">Cancel</button>
@@ -254,6 +194,68 @@ $user = Auth::user();
 </div>
 @endforeach
 @endif
+<div class="modal fade" id="settings" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="{{route('settings_edit')}}" method="POST">
+        @csrf
+        <div class="modal-header">
+            <h5 class="modal-title">AIB Settings</h5>
+            <div>
+              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="modal-body m-3">
+          <div class="mb-3">
+            <label class="form-label">Product's prices:</label>
+            @for($i=1;$i<=100;$i++)
+            <div class="mb-1 row gx-1">
+              <label class="form-label col-auto">{{$i}} x</label>
+              <input type="text" name="settings-quantities-{{$i}}" class="form-control col" value="{{config('settings.quantities.'.$i)}}"  placeholder="..">
+          </div>
+            @endfor
+          </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="delivery_fees" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="{{route('settings_edit')}}" method="POST">
+        @csrf
+        <div class="modal-header">
+            <h5 class="modal-title">AIB Wilayas fees</h5>
+            <div>
+              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="modal-body m-3">
+          <div class="mb-3">
+            <label class="form-label">Product's prices:</label>
+            @foreach($wilayas as $wilaya)
+            <div class="mb-1 row gx-1">
+              <label class="form-label col-auto">{{$wilaya->name}}</label>
+              <input type="text" name="settings-delivery_fees-{{$wilaya->id}}" class="form-control col" value="{{config('settings.delivery_fees.'.$wilaya->id)??$wilaya->delivery_price}}"  placeholder="..">
+          </div>
+            @endforeach
+          </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 @endsection
 @section('script')
 <script>

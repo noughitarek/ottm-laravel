@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Wilaya;
 use App\Models\Invoicer;
 use Illuminate\Http\Request;
 use App\Imports\InvoicesImport;
 use App\Models\InvoicerProducts;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\InvoicerOrdersProducts;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreInvoicerRequest;
 use App\Http\Requests\UpdateInvoicerRequest;
@@ -19,7 +21,8 @@ class InvoicerController extends Controller
     public function index()
     {
         $products = InvoicerProducts::where('deleted_at', null)->get();
-        return view('pages.invoicer.index')->with('products', $products);
+        $wilayas = Wilaya::all();
+        return view('pages.invoicer.index')->with('products', $products)->with('wilayas', $wilayas);
         /*$filePath = 'storage/invoices/1713047650_ecotrack - Vendeur (1).xlsx';
         if (file_exists($filePath)) {
             $import = new InvoicesImport();
@@ -55,7 +58,6 @@ class InvoicerController extends Controller
             'slug' => 'required|string|unique:invoicer_products,slug',
             'min_price' => 'nullable|integer',
             'max_price' => 'nullable|integer',
-            'quantity_prices' => 'nullable|array',
             'purchase_price' => 'nullable|integer',
         ];
         $validator = Validator::make($request->all(), $rules);
@@ -67,12 +69,37 @@ class InvoicerController extends Controller
             'slug' => $request->slug,
             'min_price' => $request->min_price,
             'max_price' => $request->max_price,
-            'quantity_prices' => json_encode($request->quantity_prices),
             'purchase_price' => $request->purchase_price,
         ]);
         return back()->with("success", "product has been created successfully");
     }
+    public function products_store_all(Request $request)
+    {
+        foreach($request->input('products') as $product)
+        {
+            if($product['id']==$product['same_as'])
+            {
+                $existingProduct = InvoicerProducts::find($product['id']);
+                $existingProduct->update([
+                    'purchase_price' => $product['purchase_price'],
+                    'min_price' => $product['min_price'],
+                    'max_price' => $product['max_price'],
+                    'confirmed' => true
+                ]);
+            }
+            else
+            {
+                $existingProduct = InvoicerProducts::find($product['same_as']);
+                $existingProduct->update([
+                    'slug' => $existingProduct->slug.', '.$product['slug']
+                ]);
+                InvoicerOrdersProducts::where('product', $product['id'])->update(['product'=>$existingProduct->id]);
 
+            }
+        }
+        InvoicerProducts::where('confirmed', false)->delete();
+        return redirect()->route('invoicer_invoice', $request->input('invoice'));
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -83,47 +110,31 @@ class InvoicerController extends Controller
         $invoice->move(public_path('storage/invoices'), $filename);
         $filePath = 'storage/invoices/'.$filename;
 
-        $import = new InvoicesImport();
+        $invoice = Invoicer::create([]);
+        $import = new InvoicesImport($invoice->id);
         Excel::import($import, $filePath);
-        $amount = $orders = 0;
-        $total = $delivery = $clean = 0;
-        foreach($import->getRows() as $order){
-            $total += $order->total_price;
-            $delivery += $order->delivery_price;
-            $clean += $order->clean_price;
-            $amount += $order->recovered;
-            $orders += 1;
-        }
-        $invoice = Invoicer::create([
-            'total_amount' => $amount,
-            'total_orders' => $orders
-        ]);
-        return view('pages.invoicer.create')
-        ->with('orders', $import->getRows())
-        ->with('total', $total)
-        ->with('delivery', $delivery)
-        ->with('clean', $clean)
-        ->with('invoice', $invoice);
+        
 
-        exit;
-        if ($request->hasFile('file') && $request->file('file')->isValid()) {
-            $file = $request->file('file');
-            $path = $file->store('invoices');
-            $import = new InvoicesImport();
-            Excel::import($import, $file);
-            $data = $import->getData();
-            print_r($data);
-            return response()->json(['message' => 'File uploaded successfully', 'path' => $path]);
+        $products = InvoicerProducts::where('deleted_at', null)->where('confirmed', false)->get();
+
+        if($products->isEmpty())
+        {
+            return redirect()->route('invoicer_invoice', $invoice->id);
         }
-        return response()->json(['error' => 'File upload failed'], 500);
+        else
+        {
+            $all_products = InvoicerProducts::where('deleted_at', null)->get();
+            return view('pages.invoicer.create_products')
+            ->with('products', $products)->with('invoice', $invoice)->with('all_products', $all_products);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Invoicer $invoicer)
+    public function invoice(Invoicer $invoice)
     {
-        //
+        return view('pages.invoicer.invoice')->with('invoice', $invoice);
     }
 
     /**
@@ -144,7 +155,6 @@ class InvoicerController extends Controller
             'slug' => 'required|string|unique:invoicer_products,slug,' . $product->id,
             'min_price' => 'nullable|integer',
             'max_price' => 'nullable|integer',
-            'quantity_prices' => 'nullable|array',
             'purchase_price' => 'nullable|integer',
         ];
         $validator = Validator::make($request->all(), $rules);
@@ -156,7 +166,6 @@ class InvoicerController extends Controller
             'slug' => $request->slug,
             'min_price' => $request->min_price,
             'max_price' => $request->max_price,
-            'quantity_prices' => json_encode($request->quantity_prices),
             'purchase_price' => $request->purchase_price,
         ]);
         return back()->with("success", "product has been updated successfully");
@@ -183,7 +192,7 @@ class InvoicerController extends Controller
      */
     public function products_destroy(Request $request, InvoicerProducts $product)
     {
-        $product->update(['deleted_at' => now()]);
+        $product->update(['slug'=>null, 'deleted_at' => now()]);
         return back()->with("success", "product has been deleted successfully");
     }
 }

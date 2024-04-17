@@ -47,25 +47,30 @@ class Order extends Model
     public function Add_To_Ecotrack()
     {
         $products = "";
+        $quantites = "";
+        $reference = "";
         foreach($this->Product() as $i=>$product)
         {
-            $products .= ($i!=0?" + ":"").config('settings.quantities')[$product->quantity].$product->Product()->name;
+            $products .= $product->Product()->slug.",";
+            $quantites .= $product->quantity.",";
+            $reference .= ($i!=0?" + ":"").config('settings.quantities')[$product->quantity].'/'.$product->Product()->name;
         }
         $data = array(
-            'reference' => $products,
+            'reference' => $reference,
             'nom_client' => $this->name,
             'telephone' => preg_replace("/[^0-9]/", "", $this->phone),
             'telephone_2' => preg_replace("/[^0-9]/", "", $this->phone2),
             'adresse' => $this->address,
             'produit' => $products,
+            'quantite' => $quantites,
             'fragile' => $this->fragile,
-            'quantity' => $this->quantity,
             'code_wilaya' => $this->Commune()->Wilaya()->id,
             'commune' =>  $this->Commune()->name,
             'stop_desk' => $this->stopdesk,
             'montant' => $this->total_price,
             'remarque' => $this->description,
             'type' => 1,
+            'stock' => 1,
             'api_token' => $this->Desk()->ecotrack_token
         );
         $apiUrl = $this->Desk()->ecotrack_link."api/v1/create/order";

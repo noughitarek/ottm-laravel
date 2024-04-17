@@ -12,6 +12,12 @@ use Maatwebsite\Excel\Concerns\WithStartRow;
 class InvoicesImport implements ToModel, WithStartRow
 {
     private $importedRows = [];
+    private $invoiceId;
+
+    public function __construct($invoiceId)
+    {
+        $this->invoiceId = $invoiceId;
+    }
 
     /**
      * Specify the start row for the import.
@@ -31,10 +37,10 @@ class InvoicesImport implements ToModel, WithStartRow
      */
     public function model(array $row)
     {
-        $exisitngInvoice = InvoicerOrders::where('tracking', $row[0])->first();
-        /*if($exisitngInvoice)
-        {*/
-            $invoice = new InvoicerOrders([
+        $exisitngInvoice = InvoicerOrders::where('tracking', $row[0]."s")->first();
+        if(!$exisitngInvoice)
+        {
+            $order = new InvoicerOrders([
                 'name' => $row[2],
                 'phone' => explode('/', $row[3])[0],
                 'phone2' => explode('/', $row[3])[1]??null,
@@ -44,64 +50,85 @@ class InvoicesImport implements ToModel, WithStartRow
                 'delivery_price' => (int)$row[18],
                 'clean_price' => ((int)$row[11]-(int)$row[18]),
                 'recovered' => (int)$row[19],
-                'tracking' => $row[0],
+                #'tracking' => $row[0],
                 'stopdesk' => $row[21]=="Stop Desk",
                 'facebook_conversation_id' => "n",
+                'invoice' => $this->invoiceId,
+                'reference' => $row[1],
+                'products' => $row[6]
             ]);
-            $this->importedRows[] = $invoice;
-            $products = InvoicerProducts::whereNull('deleted_at')->get();
-            $orderProducts = explode('+', $row[6]);
+            $order->save();
+            $this->importedRows[] = $order;
+            $order->desk_extra = config('settings.delivery_fees.'.$order->Commune()->Wilaya()->id)-(int)$row[18]; 
+            $order->save();
+            if(strpos($row[1], "+") !== false)
+            {
+                $products = explode('+', $row[1]);
+            }
+            elseif(strpos($row[1], ".") !== false)
+            {
+                $products = explode('.', $row[1]);
+            }
+            elseif(strpos($row[1], " و ") !== false)
+            {
+                $products = explode(' و ', $row[1]);
+            }
+            else
+            {
+                $products= [$row[1]];
+            }
+            $charactersToRemove = array("-", "/", "\\");
+            $delivery_extra = ((int)$row[11]-(int)$row[18]);
             foreach($products as $product)
             {
-                foreach($product->Quantity_Prices() as $index=>$quantity)
+                $product = trim(str_replace($charactersToRemove, "", $product));
+                $productQuantity = 1;
+                $productRow = null;
+                foreach(config('settings.quantities') as $quantity=>$label)
                 {
-                    if(
-                        (in_array($quantity['title'].' '.$product->slug, $orderProducts)) ||
-                        (in_array($quantity['title'].$product->slug, $orderProducts)) ||
-                        (in_array($quantity['title'].' '.trim($product->slug), $orderProducts)) ||
-                        (in_array($quantity['title'].trim($product->slug), $orderProducts))
-                    )
+                    if($label != null)
                     {
-                        if($quantity['title'] != null)
+                        if(strpos($product, $label) === 0)
                         {
-                            InvoicerOrdersProducts::create([
-                                'product' => $product->id,
-                                'quantity' => $index,
-                            ]);
+                            $productQuantity = $quantity;
+                            $productSlug = trim(explode($label, $product)[1]);
+                            $productRow = InvoicerProducts::where('slug', 'like', '%'.$productSlug.'%')->first();
+                            if(!$productRow)
+                            {
+                                $productRow = InvoicerProducts::create([
+                                    'name' => $productSlug,
+                                    'slug' => $productSlug,
+                                    'confirmed' => false,
+                                ]);
+                            }
+                            break;
                         }
                     }
                 }
-                if(
-                    (in_array($product->slug, $orderProducts)) ||
-                    (in_array(trim($product->slug), $orderProducts))
-                )
+                if(!$productRow)
                 {
-                    InvoicerOrdersProducts::create([
-                        'product' => $product->id,
-                        'quantity' => 1,
-                    ]);
-
+                    $productSlug = $product;
+                    $productRow = InvoicerProducts::where('slug', 'like', '%'.$productSlug.'%')->first();
+                    if(!$productRow)
+                    {
+                        $productRow = InvoicerProducts::create([
+                            'name' => $productSlug,
+                            'slug' => $productSlug,
+                            'confirmed' => false,
+                        ]);
+                    }
                 }
+                $delivery_extra -= $productQuantity*$productRow->min_price;
+                InvoicerOrdersProducts::create([
+                    'order' =>  $order->id,
+                    'product' => $productRow->id,
+                    'quantity' => $productQuantity,
+                ]);
             }
-                /*
-            $products = explode('+', $row[6]);
-            $realProducts = InvoicerProducts::where('deleted_at', false)->get();
-            foreach($products as $product)
-            {
-                if(strpos(trim(explode('/', $product)[0]), 'زوج') === 0)
-                {
-                    $quantity = '2';
-                }
-                else 
-                {
-                    $quantity = '1';
-                }
-                $product = isset(explode('/', $product)[1])?explode('/', $product)[1]:explode('/', $product)[0];
-                echo '<br>';
-            }*/
-
-            return $invoice;
-        #}
+            $order->delivery_extra = $delivery_extra;
+            $order->save();
+            return $order;
+        }
     }
     
 

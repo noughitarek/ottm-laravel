@@ -9,4 +9,8 @@ class InvoicerOrdersProducts extends Model
 {
     use HasFactory;
     protected $fillable = ['order', 'product', 'quantity'];
+    public function Product()
+    {
+        return InvoicerProducts::find($this->product);
+    }
 }

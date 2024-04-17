@@ -22,6 +22,69 @@ $user = Auth::user();
       <table class="table table-hover my-0" id="datatables-orders">
         <thead>
           <tr>
+            <th class="d-xl-table-cell">Product</th>
+            <th class="d-xl-table-cell">Unit price</th>
+            <th class="d-xl-table-cell">Quantity</th>
+            <th class="d-xl-table-cell">Capital</th>
+            <th class="d-xl-table-cell">Total</th>
+            <th class="d-xl-table-cell">Benefits</th>
+            <th class="d-xl-table-cell">Delivery extra</th>
+            <th class="d-xl-table-cell">Desk extra</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach($invoice->Products() as $product)
+          <tr>
+            <td>{{$product->name}}</td>
+            <td>{{$product->purchase_price}} DZD</td>
+            <td>{{$product->total_quantity}}</td>
+            <td>{{$product->capital}} DZD</td>
+            <td>{{$product->clean}} DZD</td>
+            <td><b class="text-success">{{$product->benefits}} DZD</b></td>
+            <td>{{$product->delivery_extra}} DZD</td>
+            <td>{{$product->desk_extra}} DZD</td>
+          </tr>
+          @endforeach
+          <tr></tr>
+          <tr>
+            <td colspan="1"></td>
+            <td>Total:</td>
+            <td>{{$invoice->Total_orders()}}</td>
+            <td>{{$invoice->Total_capital()}} DZD</td>
+            <td>{{$invoice->Total_clean()}} DZD</td>
+            <td><b class="text-success">{{$invoice->Total_benefits()}} DZD</b></td>
+            <td>{{$invoice->Total_delivery_extra()}} DZD</td>
+            <td>{{$invoice->Total_desk_extra()}} DZD</td>
+          </tr>
+          <tr>
+            <td colspan="5"><h1>Amount:</h1></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td colspan="2"><h1>Total:</h1></td>
+            <td colspan="2"><h1><b>{{$invoice->Total()}} DZD</b></h1></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td colspan="2"><h1>Delivery fees:</h1></td>
+            <td colspan="2"><h1><b>{{$invoice->Delivery()}} DZD</b></h1></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td colspan="2"><h1>Clean amount:</h1></td>
+            <td colspan="2"><h1><b>{{$invoice->Clean()}} DZD</b></h1></td>
+          </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+<div class="col-12 col-lg-12 col-xxl-12 d-flex">
+  <div class="card flex-fill">
+    <div class="table-responsive">
+      <table class="table table-hover my-0" id="datatables-orders">
+        <thead>
+          <tr>
             <th class="d-xl-table-cell">Order</th>
             <th class="d-xl-table-cell">Customer</th>
             <th class="d-xl-table-cell">Address</th>
@@ -30,26 +93,7 @@ $user = Auth::user();
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td colspan="2"><h1>Total:</h1></td>
-            <td colspan="3"><h1><b>{{$invoice->total_orders}}</b></h1></td>
-          </tr>
-          <tr>
-            <td colspan="5"><h1>Amount:</h1></td>
-          </tr>
-          <tr>
-            <td colspan="2"><h1>Total:</h1></td>
-            <td colspan="3"><h1><b>{{$total}} DZD</b></h1></td>
-          </tr>
-          <tr>
-            <td colspan="2"><h1>Delivery fees:</h1></td>
-            <td colspan="3"><h1><b>{{$delivery}} DZD</b></h1></td>
-          </tr>
-          <tr>
-            <td colspan="2"><h1>Clean amount:</h1></td>
-            <td colspan="3"><h1><b>{{$clean}} DZD</b></h1></td>
-          </tr>
-          @foreach($orders as $order)
+          @foreach($invoice->Orders() as $order)
           <tr>
             <td class="d-xl-table-cell single-line">
               <p>
@@ -78,9 +122,8 @@ $user = Auth::user();
                 @foreach($order->Product() as $product)
                 <i class="align-middle me-2 fas fa-fw fa-box"></i> {{$product->quantity.' X '.$product->Product()->name}}<br>  
                 @endforeach
-                <i class="align-middle me-2 fas fa-fw fa-pallet"></i>
-                <span class="badge bg-success">
-                </span>  
+                <i class="align-middle me-2 fas fa-fw fa-map"></i> {{$order->delivery_extra}} DZD<br>
+                <i class="align-middle me-2 fas fa-fw fa-building"></i> {{$order->desk_extra}} DZD<br>
               </p>
             </td>
             <td class="d-xl-table-cell single-line">

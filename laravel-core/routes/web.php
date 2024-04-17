@@ -154,10 +154,12 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     });
     Route::middleware('permission:invoicer_consult')->prefix("invoicer")->controller(InvoicerController::class)->group(function(){
         Route::post('products/store', "products_store")->middleware('permission:invoicer_create_product')->name('invoicer_products_create');
+        Route::post('products/store/all', "products_store_all")->middleware('permission:invoicer_upload')->name('invoicer_products_create_all');
         Route::put('products/{product}/edit', "products_update")->middleware('permission:invoicer_edit_product')->name('invoicer_products_edit');
         Route::delete('products/{product}/delete', "products_destroy")->middleware('permission:invoicer_delete_product')->name('invoicer_products_delete');
         
         Route::get('', "index")->name('invoicer');
+        Route::get('{invoice}', "invoice")->name('invoicer_invoice');
         Route::post('upload', "upload")->middleware('permission:invoicer_upload')->name('invoicer_upload');
     });
     Route::middleware('permission:settings_consult')->prefix("settings")->controller(SettingsController::class)->group(function(){

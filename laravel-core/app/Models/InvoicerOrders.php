@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class InvoicerOrders extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'phone', 'phone2', 'address', 'commune', 'total_price', 'delivery_price', 'clean_price', 'recovered', 'tracking', 'stopdesk', 'facebook_conversation_id'];
+    protected $fillable = ['name', 'phone', 'phone2', 'address', 'commune', 'total_price', 'delivery_price', 'clean_price', 'recovered', 'tracking', 'stopdesk', 'facebook_conversation_id', 'invoice', 'products', 'reference'];
     public function Commune()
     {
         return Commune::find($this->commune);
@@ -22,6 +22,10 @@ class InvoicerOrders extends Model
     public function Product()
     {
         return InvoicerOrdersProducts::where('order', $this->id)->get();
+    }
+    public function Products()
+    {
+        return InvoicerOrdersProducts::where('order', $this->id)->groupBy('product')->get();
     }
 
     public function Desk()
