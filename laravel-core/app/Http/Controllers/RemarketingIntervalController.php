@@ -27,6 +27,7 @@ class RemarketingIntervalController extends Controller
     public function category(RemarketingCategory $category)
     {
         $categories = RemarketingCategory::where('deleted_at', null)
+        ->where('parent', $category->id)
         ->whereIn('id', RemarketingInterval::where('deleted_at', null)
         ->pluck('category'))
         ->get();

@@ -160,6 +160,7 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         
         Route::get('', "index")->name('invoicer');
         Route::get('{invoice}', "invoice")->name('invoicer_invoice');
+        Route::put('{invoice}/edit', "update")->name('invoicer_edit');
         Route::post('upload', "upload")->middleware('permission:invoicer_upload')->name('invoicer_upload');
     });
     Route::middleware('permission:settings_consult')->prefix("settings")->controller(SettingsController::class)->group(function(){

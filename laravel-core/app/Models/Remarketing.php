@@ -174,7 +174,7 @@ class Remarketing extends Model
         $total = count(DB::select("select facebook_conversation_id from remarketing_messages where remarketing = $id group by facebook_conversation_id"));
         $orders = count(DB::select("SELECT FM.conversation
         FROM remarketing_messages RM, facebook_messages FM, remarketings RS
-        WHERE FM.`message` REGEXP '^(0[5-7]|[5-7])[0-9]{8}'
+        WHERE FM.`message` LIKE  '%سجلت الطلبية تاعك خلي برك الهاتف مفتوح باه يعيطلك الليفرور و ما تنساش الطلبية على خاطر رانا نخلصو عليها جزاك الله%'
         AND RS.id = $id
         AND RM.remarketing = $id
         AND RM.facebook_conversation_id = FM.conversation
@@ -186,22 +186,6 @@ class Remarketing extends Model
             AND RM.facebook_conversation_id = facebook_conversation_id
         )
         GROUP BY FM.conversation;
-        "));
-        return [(int)(($total != 0) ? ($orders / $total)*100 : 0), $orders];
-
-        $orders = count(DB::select("SELECT OD.conversation
-        FROM remarketing_messages RM, orders OD, remarketings RS
-        WHERE RS.id = $id
-        AND RM.remarketing = $id
-        AND RM.facebook_conversation_id = OD.conversation
-        AND RM.last_use < OD.created_at
-        AND RM.last_use = (
-            SELECT MAX(last_use)
-            FROM remarketing_messages
-            WHERE remarketing = $id
-            AND RM.facebook_conversation_id = facebook_conversation_id
-        )
-        GROUP BY OD.conversation;
         "));
         return [(int)(($total != 0) ? ($orders / $total)*100 : 0), $orders];
     }

@@ -28,6 +28,10 @@ class Invoicer extends Model
         ->get();
         return $products;
     }
+    public function Desk()
+    {
+        return Desk::find($this->desk)?? new Desk(['name'=>'n/a']);
+    }
     public function Total_orders()
     {
         return InvoicerOrders::where('invoice', $this->id)->count();

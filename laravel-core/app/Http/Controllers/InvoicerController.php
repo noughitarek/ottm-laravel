@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Desk;
 use App\Models\Wilaya;
 use App\Models\Invoicer;
 use Illuminate\Http\Request;
+use App\Models\InvoicerOrders;
 use App\Imports\InvoicesImport;
 use App\Models\InvoicerProducts;
 use Maatwebsite\Excel\Facades\Excel;
@@ -20,32 +22,10 @@ class InvoicerController extends Controller
      */
     public function index()
     {
-        $products = InvoicerProducts::where('deleted_at', null)->get();
+        $products = InvoicerProducts::where('deleted_at', null)->where('confirmed', true)->get();
+        $invoices = Invoicer::orderBy('created_at', 'desc')->get();
         $wilayas = Wilaya::all();
-        return view('pages.invoicer.index')->with('products', $products)->with('wilayas', $wilayas);
-        /*$filePath = 'storage/invoices/1713047650_ecotrack - Vendeur (1).xlsx';
-        if (file_exists($filePath)) {
-            $import = new InvoicesImport();
-            Excel::import($import, $filePath);
-            #$data = $import->getData();
-            #print_r($data);
-        } else {
-            return 'File does not exist.';
-        }*/
-        $csrfToken = csrf_field();
-        return '<form method="POST" action="'.route('invoicer_upload').'" enctype="multipart/form-data">
-        '.$csrfToken.'
-            <input type="file" name="file">
-            <button type="submit">Upload</button>
-        </form>';
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return view('pages.invoicer.index')->with('products', $products)->with('wilayas', $wilayas)->with('invoices', $invoices);
     }
 
     /**
@@ -79,7 +59,8 @@ class InvoicerController extends Controller
         {
             if($product['id']==$product['same_as'])
             {
-                $existingProduct = InvoicerProducts::find($product['id']);
+                #$existingProduct = InvoicerProducts::find($product['id']);
+                $existingProduct = InvoicerProducts::where('deleted_at', null)->where('id', $product['id'])->first();
                 $existingProduct->update([
                     'purchase_price' => $product['purchase_price'],
                     'min_price' => $product['min_price'],
@@ -89,7 +70,7 @@ class InvoicerController extends Controller
             }
             else
             {
-                $existingProduct = InvoicerProducts::find($product['same_as']);
+                $existingProduct = InvoicerProducts::where('deleted_at', null)->where('id', $product['same_as'])->first();
                 $existingProduct->update([
                     'slug' => $existingProduct->slug.', '.$product['slug']
                 ]);
@@ -97,7 +78,7 @@ class InvoicerController extends Controller
 
             }
         }
-        InvoicerProducts::where('confirmed', false)->delete();
+        InvoicerProducts::where('confirmed', false)->where('deleted_at', null)->delete();
         return redirect()->route('invoicer_invoice', $request->input('invoice'));
     }
     /**
@@ -110,22 +91,31 @@ class InvoicerController extends Controller
         $invoice->move(public_path('storage/invoices'), $filename);
         $filePath = 'storage/invoices/'.$filename;
 
-        $invoice = Invoicer::create([]);
-        $import = new InvoicesImport($invoice->id);
-        Excel::import($import, $filePath);
-        
-
-        $products = InvoicerProducts::where('deleted_at', null)->where('confirmed', false)->get();
-
-        if($products->isEmpty())
+        $tracking = Excel::toArray([], $filePath)[0][2][0];
+        $existingInvoice = InvoicerOrders::where('tracking', $tracking)->first();
+        if(!$existingInvoice)
         {
-            return redirect()->route('invoicer_invoice', $invoice->id);
+            $invoice = Invoicer::create([]);
+            $import = new InvoicesImport($invoice->id);
+            Excel::import($import, $filePath);
+            
+
+            $products = InvoicerProducts::where('deleted_at', null)->where('confirmed', false)->get();
+
+            if($products->isEmpty())
+            {
+                return redirect()->route('invoicer_invoice', $invoice->id);
+            }
+            else
+            {
+                $all_products = InvoicerProducts::where('deleted_at', null)->get();
+                return view('pages.invoicer.create_products')
+                ->with('products', $products)->with('invoice', $invoice)->with('all_products', $all_products);
+            }
         }
         else
         {
-            $all_products = InvoicerProducts::where('deleted_at', null)->get();
-            return view('pages.invoicer.create_products')
-            ->with('products', $products)->with('invoice', $invoice)->with('all_products', $all_products);
+            return redirect()->route('invoicer_invoice', $existingInvoice->invoice);
         }
     }
 
@@ -134,15 +124,8 @@ class InvoicerController extends Controller
      */
     public function invoice(Invoicer $invoice)
     {
-        return view('pages.invoicer.invoice')->with('invoice', $invoice);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Invoicer $invoicer)
-    {
-        //
+        $desks = Desk::where('deleted_at', null)->get();
+        return view('pages.invoicer.invoice')->with('invoice', $invoice)->with('desks', $desks);
     }
 
     /**
@@ -174,9 +157,14 @@ class InvoicerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateInvoicerRequest $request, Invoicer $invoicer)
+    public function update(UpdateInvoicerRequest $request, Invoicer $invoice)
     {
-        //
+        $invoice->update([
+            'total_amount' => $invoice->Clean(),
+            'total_orders' => $invoice->Total_orders(),
+            'desk' => $request->input('desk')??null,
+        ]);
+        return back()->with("success", "Invoice has been updated successfully");
     }
 
     /**

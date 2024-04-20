@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('subtitle', "Create invoice")
+@section('subtitle', "Invoice")
 @section('content')
 @php
 $user = Auth::user();
@@ -7,10 +7,10 @@ $user = Auth::user();
 <div class="col-12 col-lg-12 col-xxl-12 d-flex">
   <div class="card flex-fill">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="card-title mb-0">Create invoice</h5>
+      <h5 class="card-title mb-0">Invoice</h5>
         <div>
             @if($user->Has_Permission("invoicer_create_product"))
-            <button data-bs-toggle="modal" data-bs-target="#createProduct" class="btn btn-primary" > Save </button>
+            <button onclick="document.getElementById('invoicer_edit').submit()" class="btn btn-primary" > Save </button>
             @endif
         </div>
     </div>
@@ -18,6 +18,17 @@ $user = Auth::user();
 </div>
 <div class="col-12 col-lg-12 col-xxl-12 d-flex">
   <div class="card flex-fill">
+    <form id="invoicer_edit" action="{{route('invoicer_edit', $invoice->id)}}" method="POST" class="m-4">
+      @csrf
+      @method('put')
+      <label class="form-label">Desk: </label>
+      <select name="desk" class="form-control">
+        <option >Select the desk</option>
+        @foreach($desks as $desk)
+        <option value="{{$desk->id}}" {{$invoice->desk == $desk->id?'selected':''}}>{{$desk->name}}</option>
+        @endforeach
+      </select>
+    </form>
     <div class="table-responsive">
       <table class="table table-hover my-0" id="datatables-orders">
         <thead>

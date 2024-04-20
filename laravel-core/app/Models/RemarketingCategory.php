@@ -11,7 +11,7 @@ class RemarketingCategory extends Model
     protected $fillable = ['name', 'slug', 'parent', 'deleted_at'];
     public function Sub_Categories()
     {
-        return RemarketingCategory::where('parent', $this->id)->get();
+        return RemarketingCategory::where('deleted_at')->where('parent', $this->id)->get();
     }
     public function Remarketings()
     {

@@ -39,6 +39,25 @@ $user = Auth::user();
           </tr>
         </thead>
         <tbody>
+          @foreach($invoices as $invoice)
+          <tr>
+            <td>
+                <i class="align-middle me-2 fas fa-fw fa-hashtag"></i><a href="{{route('invoicer_invoice', $invoice->id)}}" >{{$invoice->id}}</a><br>
+                <i class="align-middle me-2 fas fa-fw fa-calendar"></i>{{$invoice->created_at}}<br>
+                <i class="align-middle me-2 fas fa-fw fa-tv" ></i>{{$invoice->Desk()->name}}<br>
+            </td>
+            <td>
+              <i class="align-middle me-2 fas fa-fw fa-box"></i>{{$invoice->Total_orders()}} ({{$invoice->Products()->count()}})<br>
+              <i class="align-middle me-2 fas fa-fw fa-box"></i>{{$invoice->Total_benefits()}} DZD<br>
+            </td>
+            <td>
+            <i class="align-middle me-2 fas fa-fw fa-dolly-flatbed"></i>{{$invoice->Total()}} DZD<br>
+            <i class="align-middle me-2 fas fa-fw fa-dolly"></i>{{$invoice->Delivery()}} DZD<br>
+            <i class="align-middle me-2 fas fa-fw fa-dollar-sign" ></i>{{$invoice->Clean()}} DZD<br>
+            </td>
+            <td>
+          </tr>
+          @endforeach
         </tbody>
       </table>
     </div>

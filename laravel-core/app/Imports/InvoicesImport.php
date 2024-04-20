@@ -37,8 +37,8 @@ class InvoicesImport implements ToModel, WithStartRow
      */
     public function model(array $row)
     {
-        $exisitngInvoice = InvoicerOrders::where('tracking', $row[0]."s")->first();
-        if(!$exisitngInvoice)
+        $existingInvoice = InvoicerOrders::where('tracking', $row[0])->first();
+        if(!$existingInvoice)
         {
             $order = new InvoicerOrders([
                 'name' => $row[2],
@@ -50,7 +50,7 @@ class InvoicesImport implements ToModel, WithStartRow
                 'delivery_price' => (int)$row[18],
                 'clean_price' => ((int)$row[11]-(int)$row[18]),
                 'recovered' => (int)$row[19],
-                #'tracking' => $row[0],
+                'tracking' => $row[0],
                 'stopdesk' => $row[21]=="Stop Desk",
                 'facebook_conversation_id' => "n",
                 'invoice' => $this->invoiceId,
@@ -92,7 +92,7 @@ class InvoicesImport implements ToModel, WithStartRow
                         {
                             $productQuantity = $quantity;
                             $productSlug = trim(explode($label, $product)[1]);
-                            $productRow = InvoicerProducts::where('slug', 'like', '%'.$productSlug.'%')->first();
+                            $productRow = InvoicerProducts::where('slug', 'like', '%'.$productSlug.'%')->where('deleted_at', null)->first();
                             if(!$productRow)
                             {
                                 $productRow = InvoicerProducts::create([
@@ -108,7 +108,7 @@ class InvoicesImport implements ToModel, WithStartRow
                 if(!$productRow)
                 {
                     $productSlug = $product;
-                    $productRow = InvoicerProducts::where('slug', 'like', '%'.$productSlug.'%')->first();
+                    $productRow = InvoicerProducts::where('slug', 'like', '%'.$productSlug.'%')->where('deleted_at', null)->first();
                     if(!$productRow)
                     {
                         $productRow = InvoicerProducts::create([
@@ -128,6 +128,10 @@ class InvoicesImport implements ToModel, WithStartRow
             $order->delivery_extra = $delivery_extra;
             $order->save();
             return $order;
+        }
+        else
+        {
+            return redirect()->route('invoicer_invoice', $existingInvoice->invoice);
         }
     }
     
