@@ -28,7 +28,7 @@ class MessagesTemplatesController extends Controller
         if($request->hasFile('photos'))
         {
             foreach($request->file('photos') as $photo){
-                $filename = time() . '_' . $photo->getClientOriginalName();
+                $filename = time().$this->generateRandomUniqueName(12). '.' .$photo->getClientOriginalExtension();
                 $photo->move(public_path('storage/remarketing'), $filename);
                 $photos[] = asset('storage/remarketing/' . $filename);
             }
@@ -36,7 +36,7 @@ class MessagesTemplatesController extends Controller
         if($request->hasFile('videos'))
         {
             foreach($request->file('videos') as $video){
-                $filename = time() . '_' . $video->getClientOriginalName();
+                $filename = time().$this->generateRandomUniqueName(12).'.'.$video->getClientOriginalExtension();
                 $video->move(public_path('storage/remarketing'), $filename);
                 $videos[] = asset('storage/remarketing/' . $filename);
             }
@@ -44,11 +44,36 @@ class MessagesTemplatesController extends Controller
         if($request->hasFile('audios'))
         {
             foreach($request->file('audios') as $audio){
-                $filename = time() . '_' . $audio->getClientOriginalName();
+                $filename = time().$this->generateRandomUniqueName(12).'.'.$audio->getClientOriginalExtension();
                 $audio->move(public_path('storage/remarketing'), $filename);
                 $audios[] = asset('storage/remarketing/' . $filename);
             }
         }
+        /*
+        if($request->hasFile('photos'))
+        {
+            foreach($request->file('photos') as $photo){
+                $filename = str_replace(',', '', time() . '_' . $photo->getClientOriginalName());
+                $photo->move(public_path('storage/remarketing'), $filename);
+                $photos[] = asset('storage/remarketing/' . $filename);
+            }
+        }
+        if($request->hasFile('videos'))
+        {
+            foreach($request->file('videos') as $video){
+                $filename = str_replace(',', '', time() . '_' . $video->getClientOriginalName());
+                $video->move(public_path('storage/remarketing'), $filename);
+                $videos[] = asset('storage/remarketing/' . $filename);
+            }
+        }
+        if($request->hasFile('audios'))
+        {
+            foreach($request->file('audios') as $audio){
+                $filename = str_replace(',', '', time() . '_' . $audio->getClientOriginalName());
+                $audio->move(public_path('storage/remarketing'), $filename);
+                $audios[] = asset('storage/remarketing/' . $filename);
+            }
+        }*/
         MessagesTemplates::create([
             'name' => $request->input('name'),
             'photos' => implode(',', $photos),
@@ -58,7 +83,14 @@ class MessagesTemplatesController extends Controller
         ]);
         return back()->with("success", "template has been created successfully");
     } 
-
+    private function generateRandomUniqueName($length = 8) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $randomName = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomName .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        return $randomName;
+    }
     /**
      * Update the specified resource in storage.
      */
@@ -70,7 +102,7 @@ class MessagesTemplatesController extends Controller
         if($request->hasFile('photos'))
         {
             foreach($request->file('photos') as $photo){
-                $filename = time() . '_' . $photo->getClientOriginalName();
+                $filename = time().$this->generateRandomUniqueName(12).'.'.$photo->getClientOriginalExtension();
                 $photo->move(public_path('storage/remarketing'), $filename);
                 $photos[] = asset('storage/remarketing/' . $filename);
             }
@@ -83,7 +115,7 @@ class MessagesTemplatesController extends Controller
         if($request->hasFile('videos'))
         {
             foreach($request->file('videos') as $video){
-                $filename = time() . '_' . $video->getClientOriginalName();
+                $filename = time().$this->generateRandomUniqueName(12).'.'.$video->getClientOriginalExtension();
                 $video->move(public_path('storage/remarketing'), $filename);
                 $videos[] = asset('storage/remarketing/' . $filename);
             }
@@ -96,7 +128,7 @@ class MessagesTemplatesController extends Controller
         if($request->hasFile('audios'))
         {
             foreach($request->file('audios') as $audio){
-                $filename = time() . '_' . $audio->getClientOriginalName();
+                $filename = time().$this->generateRandomUniqueName(12).'.'.$audio->getClientOriginalExtension();
                 $audio->move(public_path('storage/remarketing'), $filename);
                 $audios[] = asset('storage/remarketing/' . $filename);
             }

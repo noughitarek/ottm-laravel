@@ -199,9 +199,9 @@ $user = Auth::user();
                 @foreach(explode(',',$template->audios) as $audio)
                   @if($photo != null && $photo != '')
                   <label class="form-label" class="form-check m-0">
-                    <input type="checkbox" name="oldAudios[]" class="form-check-input" value="{{$photo}}" checked>
+                    <input type="checkbox" name="oldAudios[]" class="form-check-input" value="{{$audio}}" checked>
                     <span class="form-check-label">
-                      <a href="{{$photo}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>{{explode('/', $photo)[count(explode('/', $photo))-1]}}</a>
+                      <a href="{{$photo}}" target="_blank"><i class="align-middle me-2 fas fa-fw fa-file-image"></i>{{explode('/', $audio)[count(explode('/', $audio))-1]}}</a>
                     </span>
                   </label><br>
                   @endif
