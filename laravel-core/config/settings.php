@@ -27,7 +27,8 @@ return [
         "orders_states_check" => false,
         "tokens_validity_check" => false,
         "remarketing_send" => false,
-        "remarketing_interval_send" => false
+        "remarketing_interval_send" => false,
+        "responder_send" => false
     ],
 
     "limits" => [

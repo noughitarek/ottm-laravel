@@ -210,6 +210,13 @@ $user = Auth::user();
 										<label class="form-check-label" for="settings-scheduler-remarketing_interval_send">Send remarketing interval messages</label>
 									</div>
 								</div>
+								<div class="mb-3">
+									<div class="form-check form-switch">
+										<input type="hidden" id="settings-scheduler-responder_send-value" name="settings-scheduler-responder_send" value="{{config('settings.scheduler.responder_send')}}">
+										<input class="form-check-input" type="checkbox" value="true" id="settings-scheduler-responder_send" {{config('settings.scheduler.responder_send')?'checked':''}}>
+										<label class="form-check-label" for="settings-scheduler-responder_send">Send auto-response messages</label>
+									</div>
+								</div>
 							</div>
 						</div>
                 	@if($user->Has_Permission('settings_edit'))
@@ -235,7 +242,10 @@ $user = Auth::user();
         var remarketing_send_hiddenInput = document.getElementById('settings-scheduler-remarketing_send-value');
         var remarketing_interval_send_checkbox = document.getElementById('settings-scheduler-remarketing_interval_send');
         var remarketing_interval_send_hiddenInput = document.getElementById('settings-scheduler-remarketing_interval_send-value');
+        var responder_send_checkbox = document.getElementById('settings-scheduler-responder_send');
+        var responder_send_hiddenInput = document.getElementById('settings-scheduler-responder_send-value');
 
+		
 		
         conversations_checkbox.addEventListener('change', function() {
             if (conversations_checkbox.checked) {
@@ -270,6 +280,13 @@ $user = Auth::user();
                 remarketing_interval_send_hiddenInput.value = 1;
             } else {
                 remarketing_interval_send_hiddenInput.value = 0;
+            }
+        });
+        responder_send_checkbox.addEventListener('change', function() {
+            if (responder_send_checkbox.checked) {
+                responder_send_hiddenInput.value = 1;
+            } else {
+                responder_send_hiddenInput.value = 0;
             }
         });
     });

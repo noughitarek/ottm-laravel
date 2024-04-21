@@ -9,4 +9,6 @@ class FacebookMessage extends Model
 {
     use HasFactory;
     protected $fillable = ['facebook_message_id', 'sented_from', 'message', 'conversation', 'created_at'];
+    
+    
 }

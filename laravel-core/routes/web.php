@@ -150,7 +150,14 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     });
     Route::middleware('permission:responder_consult')->prefix("responder")->controller(ResponderController::class)->group(function(){
         Route::get('', "index")->name('responder');
-        Route::post('edit', "edit")->middleware('permission:responder_edit')->name('responder_edit');
+        Route::put('{responder}/activate', "activate")->middleware('permission:responder_edit')->name('responder_activate');
+        Route::put('{responder}/deactivate', "deactivate")->middleware('permission:responder_edit')->name('responder_deactivate');
+        Route::get('{responder}/history', "history")->name('responder_history');
+        Route::get('create', "create")->middleware('permission:responder_create')->name('responder_create');
+        Route::post('create', "store")->middleware('permission:responder_create');
+        Route::get('{responder}/edit', "edit")->middleware('permission:responder_edit')->name('responder_edit');
+        Route::put('{responder}/edit', "update")->middleware('permission:responder_edit');
+        Route::delete('{responder}/delete', "destroy")->middleware('permission:responder_delete')->name('responder_delete');
     });
     Route::middleware('permission:invoicer_consult')->prefix("invoicer")->controller(InvoicerController::class)->group(function(){
         Route::post('products/store', "products_store")->middleware('permission:invoicer_create_product')->name('invoicer_products_create');

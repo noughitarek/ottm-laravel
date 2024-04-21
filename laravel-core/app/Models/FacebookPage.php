@@ -6,6 +6,8 @@ use App\Models\Responder;
 use App\Models\FacebookPage;
 use App\Models\FacebookUser;
 use App\Models\FacebookMessage;
+use App\Models\MessagesTemplates;
+use App\Models\ResponderTemplate;
 use Illuminate\Support\Facades\DB;
 use App\Models\FacebookConversation;
 use Illuminate\Support\Facades\Http;
@@ -430,13 +432,68 @@ class FacebookPage extends Model
             }
         }
     }
-
-    public function Responder()
-    {
-        return Responder::where('page', $this->id)->first();
-    }
     public function Template()
     {
         return Template::find($this->Responder()->id);
+    }
+    public function Responder($to, $responder)
+    {
+        $template = ResponderTemplate::where('responder', $responder->id)
+        ->whereNotIn('template', function ($query) {
+            $query->select('template')
+                ->from('responder_messages')
+                ->where('responder', '=', DB::raw('responder_templates.responder'));
+        })->first()
+        ??
+        ResponderMessage::where('responder', $responder->id)
+        ->selectRaw('template, COUNT(template) AS count_template')
+        ->groupBy('template')
+        ->orderByRaw('count_template ASC, MIN(created_at) ASC')
+        ->first();
+        $template = MessagesTemplates::find($template->template);
+        foreach($template->Asset() as $asset)
+        {
+            if($asset['type'] == "message")
+            {
+                $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                    'access_token' => $this->access_token,
+                    'messaging_type' => 'MESSAGE_TAG',
+                    'recipient' => ['id' => $to],
+                    'message' => ['text' => $asset['content']],
+                    'tag' => 'ACCOUNT_UPDATE'
+                ]);
+            }
+            else
+            {
+                
+                try
+                {
+                    $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                        'access_token' => $this->access_token,
+                        'messaging_type' => 'MESSAGE_TAG',
+                        'recipient' => ['id' => $to],
+                        'message' => [
+                            'attachment' => [
+                                'type' => $asset['type'],
+                                "payload" => [
+                                    'url' => $asset['content'],
+                                ],
+                            ]
+                        ],
+                        'tag' => 'ACCOUNT_UPDATE'
+                    ]);
+                }
+                catch(\Exception $e)
+                {
+                    echo $e;
+                }
+            }
+        }
+        ResponderMessage::create([
+            'responder' => $responder->id,
+            'facebook_conversation_id' => FacebookConversation::where('user', $to)->first()->facebook_conversation_id,
+            'last_use' => now(),
+            'template' => $template->id
+        ]);
     }
 }

@@ -13,7 +13,7 @@ class MessagesTemplatesController extends Controller
      */
     public function index()
     {
-        $template = MessagesTemplates::where('deleted_at', null)->get(); 
+        $template = MessagesTemplates::where('deleted_at', null)->orderBy('created_at', 'desc')->paginate(10)->onEachSide(2); 
         return view('pages.messagestemplates')->with('messagestemplates', $template);
     }
 

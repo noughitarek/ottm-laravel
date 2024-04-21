@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Responder;
 use App\Models\FacebookPage;
 use App\Models\FacebookUser;
 use App\Models\FacebookMessage;
@@ -46,5 +47,10 @@ class FacebookConversation extends Model
     public function RemarketingInterval(RemarketingInterval $remarketing)
     {
         return $this->Page()->RemarketingInterval($this->user, $remarketing);
+    }
+    public function Responder(Responder $responder)
+    {
+        return $this->Page()->Responder($this->user, $responder);
+        
     }
 }

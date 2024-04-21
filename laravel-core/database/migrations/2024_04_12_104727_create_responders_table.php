@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('responders', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->unsignedBigInteger('page');
-            $table->foreign('page')->references('id')->on('facebook_pages');
-            $table->unsignedBigInteger('template');
-            $table->foreign('template')->references('id')->on('messages_templates');
+            $table->boolean('is_active')->default(false);
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }
