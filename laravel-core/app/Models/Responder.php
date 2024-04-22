@@ -54,16 +54,66 @@ class Responder extends Model
         ->whereNull('FM.conversation')
         ->groupBy('facebook_conversations.id')
         ->select('facebook_conversation_id', DB::raw('COUNT(FM.id) AS total'), 'facebook_conversations.*');*/
-        $conversations = DB::select("SELECT *
+        /*$conversations = DB::select("SELECT FC.facebook_conversation_id
         FROM `facebook_messages` FM
         JOIN `facebook_conversations` FC ON FC.facebook_conversation_id = FM.conversation
         WHERE FC.page = $this->page
-        AND FM.sented_from = 'page'
         AND (
-            (SELECT COUNT(*) FROM `facebook_messages` WHERE conversation = FM.conversation) = 1
-            OR
-            FM.created_at = (SELECT MIN(created_at) FROM `facebook_messages` WHERE conversation = FM.conversation)
-        );
+            (
+                SELECT COUNT(*)
+                FROM `facebook_messages` 
+                WHERE conversation = FM.conversation
+                AND sented_from = 'page'
+            ) = 0
+            OR (
+                (
+                    SELECT COUNT(*) 
+                    FROM `facebook_messages` 
+                    WHERE conversation = FM.conversation
+                    AND sented_from = 'page'
+                ) = 1
+                AND (
+                    SELECT MIN(created_at) 
+                    FROM `facebook_messages` 
+                    WHERE conversation = FM.conversation
+                ) = FM.created_at
+            )
+        )
+        GROUP BY FC.facebook_conversation_id;
+        
+        ");*/
+        $conversations = DB::select("SELECT FC.facebook_conversation_id
+        FROM `facebook_conversations` FC
+        JOIN `facebook_messages` FM ON FC.facebook_conversation_id = FM.conversation
+        WHERE FC.page = $this->page
+        AND (
+            (
+                SELECT COUNT(*)
+                FROM `facebook_messages` 
+                WHERE conversation = FC.facebook_conversation_id
+                AND sented_from = 'page'
+            ) = 0
+            OR (
+                (
+                    SELECT COUNT(*) 
+                    FROM `facebook_messages` 
+                    WHERE conversation = FC.facebook_conversation_id
+                    AND sented_from = 'page'
+                ) = 1
+                AND (
+                    SELECT MIN(created_at) 
+                    FROM `facebook_messages` 
+                    WHERE conversation = FC.facebook_conversation_id
+                ) = (
+                    SELECT MIN(created_at) 
+                    FROM `facebook_messages` 
+                    WHERE conversation = FC.facebook_conversation_id
+                    AND sented_from = 'page'
+                )
+            )
+        )
+        GROUP BY FC.facebook_conversation_id;
+        
         ");
         return $conversations;
     }

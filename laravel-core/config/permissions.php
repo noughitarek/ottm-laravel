@@ -19,6 +19,11 @@ return [
     'responder' => ['consult', 'create', 'edit', 'delete'],
     'invoicer' => ['consult', 'consult_product', 'create_product', 'edit_product', 'delete_product', 'upload'],
 
+    'accounts' => ['consult', 'create', 'edit', 'delete'],
+    'group_joiner' => ['consult', 'create', 'edit', 'delete'],
+    'group_poster' => ['consult', 'create', 'edit', 'delete'],
+
+
     'users' => ['consult', 'create', 'edit', 'delete'],
     'settings' => ['consult', 'edit'],
 

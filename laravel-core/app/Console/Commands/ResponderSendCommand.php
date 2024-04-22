@@ -37,6 +37,7 @@ class ResponderSendCommand extends Command
             $conversations = $responder->Get_Supported_Conversations();
             foreach($conversations as $conversation)
             {
+                echo $conversation->facebook_conversation_id."\n";
                 $conversation = FacebookConversation::where('facebook_conversation_id', $conversation->facebook_conversation_id)->first();
                 $conversation->Responder($responder);
             }

@@ -165,6 +165,48 @@ return array(
         "route" => "invoicer",
         "icon" => array("type" => "feather", "content" => "award"),
     ),
+    array("type" => "text", "content"=> "Facebook bots", "permissions" => ["accounts_consult", "group_joiner_consult", "group_poster_consult"]),
+    array(
+        "type" => "link",
+        "content" => "Accounts",
+        "permissions" => "accounts_consult",
+        "section" => "accounts",
+        "route" => "accounts",
+        "icon" => array("type" => "font-awesome", "content" => "users"),
+    ),
+    
+    array(
+        "type" => "group",
+        "content" => "FGMT",
+        "permissions" => "remarketing_consult",
+        "section" => "FGMT",
+        "route" => "remarketing",
+        "icon" => array("type" => "icons", "content" => "sliders-h"),
+        "sub-links" => array(
+            array(
+                "type" => "link",
+                "content" => "Analytics",
+                "permissions" => "users_consult",
+                "section" => "settings",
+                "route" => "settings",
+            ),
+            array(
+                "type" => "link",
+                "content" => "Joiner",
+                "permissions" => "users_consult",
+                "section" => "settings",
+                "route" => "settings",
+            ),
+            array(
+                "type" => "link",
+                "content" => "Poster",
+                "permissions" => "users_consult",
+                "section" => "settings",
+                "route" => "settings",
+            ),
+        ),
+    ),
+    
     array("type" => "text", "content"=> "Administration", "permissions" => ["users_consult", "settings_consult"]),
     array(
         "type" => "link",
