@@ -28,20 +28,21 @@ $user = Auth::user();
           </tr>
         </thead>
         <tbody>
-            @foreach($accounts as $account)
+            @foreach($categories as $category)
             <tr>
                 <td class="d-xl-table-cell">
-                    <i class="align-middle me-2 fas fa-fw fa-hashtag"></i> {{$account->id}}<br>
-                    <i class="align-middle me-2 fas fa-fw fa-box"></i> {{$account->name}}<br>
+                    <a href="{{route('accounts_category', $category->id)}}"><i class="align-middle me-2 fas fa-fw fa-hashtag"></i> {{$category->id}}</a><br>
+                    <i class="align-middle me-2 fas fa-fw fa-box"></i> {{$category->name}}<br>
+                    <i class="align-middle me-2 fas fa-fw fa-calendar"></i> {{$category->created_at}}<br>
                 </td>
                 <td>
-                  @if($user->Has_Permission('accounts_edit'))
-                  <button data-bs-toggle="modal" data-bs-target="#editaccount{{$account->id}}" class="btn btn-warning" >
+                  @if($user->Has_Permission('accounts_create'))
+                  <button data-bs-toggle="modal" data-bs-target="#editCategory{{$category->id}}" class="btn btn-warning" >
                     Edit
                   </button>
                   @endif
-                  @if($user->Has_Permission('accounts_delete'))
-                  <button data-bs-toggle="modal" data-bs-target="#deleteaccount{{$account->id}}" class="btn btn-danger" >
+                  @if($user->Has_Permission('accounts_create'))
+                  <button data-bs-toggle="modal" data-bs-target="#deleteCategory{{$category->id}}" class="btn btn-danger" >
                     Delete
                   </button>
                   @endif
@@ -51,7 +52,7 @@ $user = Auth::user();
         </tbody>
       </table>
     </div>
-    {{ $accounts->links('components.pagination') }}
+    {{ $categories->links('components.pagination') }}
   </div>
 </div>
 @if($user->Has_Permission('accounts_create'))
@@ -78,31 +79,71 @@ $user = Auth::user();
     </div>
   </div>
 </div>
-@endif
-@if($user->Has_Permission('accounts_edit'))
-@foreach($accounts as $account)
-<div class="modal fade" id="editAccount{{$account->id}}" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="createAccount" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form action="{{route('accounts_edit', $account->id)}}" method="POST">
+      <form action="{{route('accounts_create')}}" method="POST">
+        @csrf
+        <div class="modal-header">
+            <h5 class="modal-title">Create an account</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body m-3">
+          <div class="mb-3">
+            <label class="form-label">ID: </label>
+            <input type="text" name="id" class="form-control" placeholder="Ex: 10005465456421">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Name: </label>
+            <input type="text" name="name" class="form-control" placeholder="Ex: Hamza">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Category: <span class="text-danger">*</span></label>
+            <select name="category" class="form-control">
+              <option value>Select category</option>
+              @foreach($all_categories as $category)
+              <option value="{{$category->id}}">{{$category->name}}</option>
+              @endforeach
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Username: <span class="text-danger">*</span></label>
+            <input type="text" name="username" class="form-control" placeholder="Ex: hamza@proton.me">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password: <span class="text-danger">*</span></label>
+            <input type="password" name="pwd" class="form-control" placeholder="Ex: ********">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email's password:</label>
+            <input type="password" name="email_pwd" class="form-control" placeholder="Ex: ********">
+          </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+@endif
+@if($user->Has_Permission('accounts_edit'))
+@foreach($categories as $category)
+<div class="modal fade" id="editCategory{{$category->id}}" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="{{route('accounts_category_edit', $category->id)}}" method="POST">
         @csrf
         @method('put')
         <div class="modal-header">
-            <h5 class="modal-title">Edit account {{$account->name}}</h5>
+            <h5 class="modal-title">Edit account {{$category->name}}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body m-3">
           <div class="mb-3">
             <label class="form-label">Name: </label>
-            <input type="text" name="name" value="{{$account->name}}" class="form-control" placeholder="Ex: rb-livraison">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Ecotrack link: </label>
-            <input type="text" name="ecotrack_link" value="{{$account->ecotrack_link}}" class="form-control" placeholder="Ex: rblivraison.ecotrack.dz">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Ecotrack token: </label>
-            <input type="text" name="ecotrack_token" value="{{$account->ecotrack_token}}" class="form-control" placeholder="Ex: 5et45ssdg135rd1gv23df">
+            <input type="text" name="name" value="{{$category->name}}" class="form-control" placeholder="Ex: rb-livraison">
           </div>
         </div>
         <div class="modal-footer">
@@ -116,15 +157,15 @@ $user = Auth::user();
 @endforeach
 @endif
 @if($user->Has_Permission('accounts_delete'))
-@foreach($accounts as $account)
-<div class="modal fade" id="deleteAccount{{$account->id}}" tabindex="-1" role="dialog" aria-hidden="true">
+@foreach($categories as $category)
+<div class="modal fade" id="deleteCategory{{$category->id}}" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form action="{{route('accounts_delete', $account->id)}}" method="POST">
+      <form action="{{route('accounts_category_delete', $category->id)}}" method="POST">
         @csrf
         @method('delete')
         <div class="modal-header">
-            <h5 class="modal-title">Delete account {{$account->name}} ?</h5>
+            <h5 class="modal-title">Delete account {{$category->name}} ?</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-footer">

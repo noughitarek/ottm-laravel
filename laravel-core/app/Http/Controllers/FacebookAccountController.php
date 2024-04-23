@@ -15,16 +15,19 @@ class FacebookAccountController extends Controller
      */
     public function index()
     {
-        $categories = FacebookCategories::where('deleted_at', null)->paginate(20)->oneachside(2);
-        return view('pages.facebook_categories')->with('accounts', $categories);
+        $categories = FacebookCategories::where('deleted_at', null)->orderBy('created_at', 'desc')->paginate(20)->oneachside(2);
+        $all_categories = FacebookCategories::where('deleted_at', null)->orderBy('created_at', 'desc')->get();
+        return view('pages.facebook_categories')->with('categories', $categories)->with('all_categories', $all_categories);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of the resource.
      */
-    public function create()
+    public function category(FacebookCategories $category)
     {
-        //
+        $all_categories = FacebookCategories::where('deleted_at', null)->orderBy('created_at', 'desc')->get();
+        $accounts = FacebookAccount::where('deleted_at', null)->where('category', $category->id)->orderBy('created_at', 'desc')->paginate(20)->oneachside(2);
+        return view('pages.accounts')->with('all_categories', $all_categories)->with('accounts', $accounts);
     }
 
     /**
@@ -32,7 +35,16 @@ class FacebookAccountController extends Controller
      */
     public function store(StoreFacebookAccountRequest $request)
     {
-        //
+        $account = FacebookAccount::create([
+            'account_id' => $request->input('id'),        
+            'name' => $request->input('name'),
+            'category' => $request->input('category'),
+            'username' => $request->input('username'),
+            'pwd' => $request->input('pwd'),
+            'email_pwd' => $request->input('email_pwd')
+        ]);
+        return back()->with('success', 'account has been created successfully');
+
     }
 
     /**
@@ -47,34 +59,51 @@ class FacebookAccountController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Update the specified resource in storage.
      */
-    public function show(FacebookAccount $facebookAccount)
+    public function update(UpdateFacebookAccountRequest $request, FacebookAccount $account)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(FacebookAccount $facebookAccount)
-    {
-        //
+        $account->update([
+            'account_id' => $request->input('id'),        
+            'name' => $request->input('name'),
+            'category' => $request->input('category'),
+            'username' => $request->input('username'),
+            'pwd' => $request->input('pwd'),
+            'email_pwd' => $request->input('email_pwd')
+        ]);
+        return back()->with('success', 'account has been edited successfully');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFacebookAccountRequest $request, FacebookAccount $facebookAccount)
+    public function update_category(Request $request, FacebookCategories $category)
     {
-        //
+        $category->update([
+            'name' => $request->input('name')
+        ]);
+        return back()->with('success', 'category has been deleted successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(FacebookAccount $facebookAccount)
+    public function destroy(FacebookAccount $account)
     {
-        //
+        $account->update([
+            'deleted_at' => now()
+        ]);
+        return back()->with('success', 'account has been deleted successfully');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy_category(FacebookCategories $category)
+    {
+        $category->update([
+            'deleted_at' => now()
+        ]);
+        return back()->with('success', 'category has been deleted successfully');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateFacebookAccountRequest extends FormRequest
@@ -11,7 +12,7 @@ class UpdateFacebookAccountRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::user()->Has_permission('accounts_edit');
     }
 
     /**
@@ -22,7 +23,9 @@ class UpdateFacebookAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'category' => 'required|exists:facebook_categories,id',
+            'username' => 'required',
+            'pwd' => 'required',
         ];
     }
 }

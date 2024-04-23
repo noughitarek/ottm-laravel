@@ -174,9 +174,13 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     Route::middleware('permission:accounts_consult')->prefix("accounts")->controller(FacebookAccountController::class)->group(function(){
         Route::get('', "index")->name('accounts');
         Route::post('create', "store")->middleware('permission:accounts_create')->name('accounts_create');
-        Route::post('create', "store_category")->middleware('permission:accounts_create')->name('accounts_category_create');
         Route::put('{account}/edit', "update")->middleware('permission:accounts_edit')->name('accounts_edit');
         Route::delete('{account}/delete', "destroy")->middleware('permission:accounts_delete')->name('accounts_delete');
+
+        Route::get('categories/{category}', "category")->middleware('permission:accounts_create')->name('accounts_category');
+        Route::post('categories/create', "store_category")->middleware('permission:accounts_create')->name('accounts_category_create');
+        Route::put('categories/{category}/edit', "update_category")->middleware('permission:accounts_create')->name('accounts_category_edit');
+        Route::delete('categories/{category}/delete', "destroy_category")->middleware('permission:accounts_create')->name('accounts_category_delete');
     });
     Route::middleware('permission:settings_consult')->prefix("settings")->controller(SettingsController::class)->group(function(){
         Route::get('', "index")->name('settings');

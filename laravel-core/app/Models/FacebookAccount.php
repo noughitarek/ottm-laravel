@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class FacebookAccount extends Model
 {
     use HasFactory;
-    protected $fillable = ['account_id', 'name', 'username', 'email_pwd', 'pwd', 'marketplace_at', 'deleted_at'];
+    protected $fillable = ['account_id', 'name', 'category', 'username', 'email_pwd', 'pwd', 'marketplace_at', 'deleted_at'];
 }
