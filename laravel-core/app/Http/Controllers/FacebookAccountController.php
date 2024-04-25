@@ -101,6 +101,7 @@ class FacebookAccountController extends Controller
      */
     public function destroy_category(FacebookCategories $category)
     {
+        $accounts::where('deleted_at', null)->where('category', $category->id)->update(['category'=>null]);
         $category->update([
             'deleted_at' => now()
         ]);

@@ -11,6 +11,13 @@
     @yield('head')
 </head>
 <body>
+	{{--
+	@if(App\Models\FacebookMessage::count()>1000000)
+    <div class="banner">
+		Congratulations! We've reached {{App\Models\FacebookMessage::count()/1000000}}M facebook messages on our website!
+    </div>
+	@endif
+	--}}
     @yield('body')
 </body>
 </html>

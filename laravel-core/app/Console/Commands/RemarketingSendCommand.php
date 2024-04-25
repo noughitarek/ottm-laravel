@@ -36,11 +36,6 @@ class RemarketingSendCommand extends Command
         foreach ($remarketings as $remarketing) {
             $conversations = $remarketing->Get_Supported_Conversations();
             foreach($conversations[0] as $conversation){
-                RemarketingMessages::create([
-                    'remarketing' => $remarketing->id,
-                    'facebook_conversation_id' => $conversation->facebook_conversation_id,
-                    'last_use' => now(),
-                ]);
                 $conversation->Remarketing($remarketing);
             }
         }

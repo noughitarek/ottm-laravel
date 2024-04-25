@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\FacebookConversation;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\RemarketingIntervalMessages;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class FacebookPage extends Model
@@ -389,6 +390,11 @@ class FacebookPage extends Model
                 }
             }
         }
+        RemarketingMessages::create([
+            'remarketing' => $remarketing->id,
+            'facebook_conversation_id' => FacebookConversation::where('user', $to)->first()->facebook_conversation_id,
+            'last_use' => now(),
+        ]);
     }
     
     public function RemarketingInterval($to, $remarketing)
@@ -431,6 +437,11 @@ class FacebookPage extends Model
                 }
             }
         }
+        RemarketingIntervalMessages::create([
+            'remarketing' => $remarketing->id,
+            'facebook_conversation_id' => FacebookConversation::where('user', $to)->first()->facebook_conversation_id,
+            'last_use' => now(),
+        ]);
     }
     public function Template()
     {
