@@ -113,7 +113,6 @@ class Responder extends Model
             )
         )
         GROUP BY FC.facebook_conversation_id;
-        
         ");
         return $conversations;
     }

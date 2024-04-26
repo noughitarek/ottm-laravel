@@ -34,6 +34,11 @@ class RemarketingIntervalSendCommand extends Command
         foreach ($remarketings as $remarketing) {
             $conversations = $remarketing->Get_Supported_Conversations();
             foreach($conversations[0] as $conversation){
+                RemarketingIntervalMessages::create([
+                    'remarketing' => $remarketing->id,
+                    'facebook_conversation_id' => $conversation->facebook_conversation_id,
+                    'last_use' => now(),
+                ]);
                 $conversation->RemarketingInterval($remarketing);
             }
         }

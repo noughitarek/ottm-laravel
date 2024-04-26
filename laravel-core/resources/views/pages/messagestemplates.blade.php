@@ -79,6 +79,7 @@ $user = Auth::user();
         </tbody>
       </table>
     </div>
+    {{ $messagestemplates->links('components.pagination') }}
   </div>
 </div>
 @if($user->Has_Permission('messagestemplates_create'))

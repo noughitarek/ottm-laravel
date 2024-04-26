@@ -390,11 +390,6 @@ class FacebookPage extends Model
                 }
             }
         }
-        RemarketingMessages::create([
-            'remarketing' => $remarketing->id,
-            'facebook_conversation_id' => FacebookConversation::where('user', $to)->first()->facebook_conversation_id,
-            'last_use' => now(),
-        ]);
     }
     
     public function RemarketingInterval($to, $remarketing)
@@ -437,11 +432,6 @@ class FacebookPage extends Model
                 }
             }
         }
-        RemarketingIntervalMessages::create([
-            'remarketing' => $remarketing->id,
-            'facebook_conversation_id' => FacebookConversation::where('user', $to)->first()->facebook_conversation_id,
-            'last_use' => now(),
-        ]);
     }
     public function Template()
     {
@@ -500,11 +490,10 @@ class FacebookPage extends Model
                 }
             }
         }
-        ResponderMessage::create([
-            'responder' => $responder->id,
-            'facebook_conversation_id' => FacebookConversation::where('user', $to)->first()->facebook_conversation_id,
-            'last_use' => now(),
-            'template' => $template->id
-        ]);
+        ResponderMessage::where('responder', $responder->id)
+        ->where('facebook_conversation_id',
+            FacebookConversation::where('user', $to)->first()->facebook_conversation_id
+        )
+        ->update(['template' => $template->id]);
     }
 }

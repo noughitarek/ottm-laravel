@@ -15,6 +15,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ResponderController;
+use App\Http\Controllers\GroupJoinerController;
 use App\Http\Controllers\RemarketingController;
 use App\Http\Controllers\FacebookPageController;
 use App\Http\Controllers\ConversationsController;
@@ -182,6 +183,26 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::put('categories/{category}/edit', "update_category")->middleware('permission:accounts_create')->name('accounts_category_edit');
         Route::delete('categories/{category}/delete', "destroy_category")->middleware('permission:accounts_create')->name('accounts_category_delete');
     });
+    Route::prefix('FGMT')->group(function(){
+        Route::middleware('permission:group_joiner_consult')->prefix("joiner")->controller(GroupJoinerController::class)->group(function(){
+            Route::get('', "index")->name('group_joiner');
+            Route::get('create', "create")->middleware('permission:group_joiner_create')->name('group_joiner_create');
+            Route::post('create', "store")->middleware('permission:group_joiner_create');
+            Route::get('{joiner}/edit', "edit")->middleware('permission:group_joiner_edit')->name('group_joiner_edit');
+            Route::put('{joiner}/edit', "update")->middleware('permission:group_joiner_edit');
+            Route::delete('{joiner}/delete', "destroy")->middleware('permission:group_joiner_delete')->name('group_joiner_delete');
+        });
+    
+        Route::middleware('permission:group_poster_consult')->prefix("poster")->controller(FacebookAccountController::class)->group(function(){
+            Route::get('', "index")->name('group_poster');
+            Route::get('create', "create")->middleware('permission:group_poster_create')->name('group_poster_create');
+            Route::post('create', "store")->middleware('permission:group_poster_create');
+            Route::get('{poster}/edit', "edit")->middleware('permission:group_poster_edit')->name('group_poster_edit');
+            Route::put('{poster}/edit', "update")->middleware('permission:group_poster_edit');
+            Route::delete('{poster}/delete', "destroy")->middleware('permission:group_poster_delete')->name('group_poster_delete');
+        });
+    });
+
     Route::middleware('permission:settings_consult')->prefix("settings")->controller(SettingsController::class)->group(function(){
         Route::get('', "index")->name('settings');
         Route::post('edit', "edit")->name('settings_edit');

@@ -15,13 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('keywords');
-            $table->unsignedBigInteger('category');
-            $table->foreign('category')->references('id')->on('facebook_categories');
             $table->integer('max_join')->nullable();
             $table->integer('join');
             $table->integer('each');
-            $talbe->integer('start_at');
-            $talbe->integer('end_at');
+            $table->string('start_at')->nullable();
+            $table->string('end_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }
