@@ -37,6 +37,6 @@ class Investor extends Authenticatable
     }
     public function Fundings()
     {
-        return Funding::where('investor', $this->id)->get();
+        return Funding::where('investor', $this->id)->whereNull('deleted_at')->get();
     }
 }

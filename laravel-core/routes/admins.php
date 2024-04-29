@@ -198,6 +198,10 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::middleware('permission:accounting_fundings_consult')->prefix("investors/{investor}/fundings")->controller(FundingController::class)->group(function(){
             Route::get('', "index")->name('fundings');
             Route::get('create', "create")->middleware('permission:accounting_fundings_create')->name('fundings_create');
+            Route::post('create', "store")->middleware('permission:accounting_fundings_create');
+            Route::get('{funding}/edit', "edit")->middleware('permission:accounting_fundings_edit')->name('fundings_edit');
+            Route::put('{funding}/edit', "update")->middleware('permission:accounting_fundings_edit');
+            Route::delete('{funding}/delete', "destroy")->middleware('permission:accounting_fundings_delete')->name('fundings_delete');
         });
     
     });

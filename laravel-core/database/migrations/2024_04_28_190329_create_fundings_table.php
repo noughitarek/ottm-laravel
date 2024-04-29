@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('total_amount');
-            $table->integer('type');
+            $table->string('type');
             $table->unsignedTinyInteger('investor_pourcentage')->default(50);
             $table->unsignedBigInteger('investor');
             $table->foreign('investor')->references('id')->on('investors');
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }

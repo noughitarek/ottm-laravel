@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreFundingRequest extends FormRequest
@@ -11,7 +12,7 @@ class StoreFundingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::user()->Has_permission('accounting_fundings_create');
     }
 
     /**
@@ -22,7 +23,10 @@ class StoreFundingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|min:5',
+            'total_amount' => 'required|integer',
+            'type' => 'required|string|in:products,tests',
+            'investor_pourcentage' => 'required|integer|lt:100|gt:0',
         ];
     }
 }

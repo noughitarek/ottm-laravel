@@ -4,8 +4,9 @@
 @php
 $user = Auth::user();
 @endphp
-<form action="{{route('accountingfundings_create', $investor->id)}}" method="POST">
+<form action="{{route('accountingfundings_edit', [$investor->id, $funding->id])}}" method="POST">
 @csrf
+@method('put')
     <div class="col-12 col-lg-12 col-xxl-12 d-flex">
         <div class="card flex-fill">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -28,14 +29,14 @@ $user = Auth::user();
                 <div class="card-body">
                     <div class="mb-3">
                         <label class="form-label">Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Ex: Tarek" value="{{ old('name') }}" required>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Ex: Tarek" value="{{ old('name')??$funding->name }}" required>
                         @error('name')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Amount <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" id="total_amount" name="total_amount" placeholder="Ex: 50000" value="{{ old('total_amount') }}" required>
+                        <input type="number" class="form-control" id="total_amount" name="total_amount" placeholder="Ex: 50000" value="{{ old('total_amount')??$funding->total_amount }}" required>
                         @error('total_amount')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
@@ -44,14 +45,14 @@ $user = Auth::user();
                         <label class="form-label">Type <span class="text-danger">*</span></label>
                         <select class="form-control" id="type" name="type">
                             <option value>Select the type</option>
-                            <option value="tests">Tests investement</option>
-                            <option value="products">Products investement</option>
+                            <option value="tests" {{$funding->type=="tests"?'selected':''}}>Tests investement</option>
+                            <option value="products" {{$funding->type=="products"?'selected':''}}>Products investement</option>
                         </select>
                         @error('type')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="mb-3 d-none" id="ProductsSelect">
+                    <div class="mb-3 {{$funding->type=="products"?'':'d-none'}}" id="ProductsSelect">
                         <label class="form-label">Products <span class="text-danger">*</span></label>
                         <select class="form-control" id="products" name="products">
                             <option value>Select the type</option>
@@ -65,7 +66,7 @@ $user = Auth::user();
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Investor pourcentage <span class="text-danger">*</span></label>
-                        <input type="number" min="1" max="100" class="form-control" id="investor_pourcentage" name="investor_pourcentage" placeholder="Ex: 50" value="{{ old('investor_pourcentage') }}" required>
+                        <input type="number" min="1" max="100" class="form-control" id="investor_pourcentage" name="investor_pourcentage" placeholder="Ex: 50" value="{{ old('investor_pourcentage')??$funding->investor_pourcentage }}" required>
                         @error('investor_pourcentage')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror

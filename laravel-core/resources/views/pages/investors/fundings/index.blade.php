@@ -38,13 +38,13 @@ $user = Auth::user();
                 <i class="align-middle me-2 fas fa-fw fa-calendar"></i>{{$funding->created_at}}<br>
             </td>
             <td>
-                0 DZD
+                {{$funding->total_amount}} DZD
             </td>
             <td>
             </td>
             <td>
               @if($user->Has_Permission('accounting_fundings_edit'))
-              <a href="{{route('accountingfundings_edit', $funding->id)}}" class="btn btn-warning">Edit</a>
+              <a href="{{route('accountingfundings_edit', [$investor->id, $funding->id])}}" class="btn btn-warning">Edit</a>
               @endif
               @if($user->Has_Permission('accounting_fundings_delete'))
               <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFunding{{$funding->id}}">Delete</button>
@@ -62,7 +62,7 @@ $user = Auth::user();
 <div class="modal fade" id="deleteFunding{{$funding->id}}" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form action="{{route('accountingfundings_delete', $funding->id)}}" method="POST">
+      <form action="{{route('accountingfundings_delete', [$investor->id, $funding->id])}}" method="POST">
         @csrf
         @method('delete')
         <div class="modal-header">
