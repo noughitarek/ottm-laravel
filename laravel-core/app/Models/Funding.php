@@ -9,4 +9,17 @@ class Funding extends Model
 {
     use HasFactory;
     protected $fillable = ["name", "total_amount", "type", "investor_pourcentage", "investor", "deleted_at"];
+    public function Funder()
+    {
+        if($this->investor != null)
+        {
+            return Investor::find($this->investor);
+        }
+        else
+        {
+            return new Investor([
+                'name' => 'n/a',
+            ]);
+        }
+    }
 }

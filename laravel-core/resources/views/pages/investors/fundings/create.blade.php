@@ -51,18 +51,6 @@ $user = Auth::user();
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="mb-3 d-none" id="ProductsSelect">
-                        <label class="form-label">Products <span class="text-danger">*</span></label>
-                        <select class="form-control" id="products" name="products">
-                            <option value>Select the type</option>
-                            @foreach($products as $product)
-                            <option value="{{$product->id}}">{{$product->name}}</option>
-                            @endforeach
-                        </select>
-                        @error('type')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
                     <div class="mb-3">
                         <label class="form-label">Investor pourcentage <span class="text-danger">*</span></label>
                         <input type="number" min="1" max="100" class="form-control" id="investor_pourcentage" name="investor_pourcentage" placeholder="Ex: 50" value="{{ old('investor_pourcentage') }}" required>
@@ -80,16 +68,4 @@ $user = Auth::user();
         </div>
     </div>
 </form>
-@endsection
-@section('script')
-<script>
-    document.getElementById('type').addEventListener('change', function(){
-        if(this.value == 'products'){
-            document.getElementById('ProductsSelect').classList.remove('d-none')            
-        }
-        else{
-            document.getElementById('ProductsSelect').classList.add('d-none')     
-        }
-    })
-</script>
 @endsection

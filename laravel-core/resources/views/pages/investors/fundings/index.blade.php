@@ -24,7 +24,7 @@ $user = Auth::user();
         <thead>
           <tr>
             <th class="d-xl-table-cell">Investor</th>
-            <th class="d-xl-table-cell">API</th>
+            <th class="d-xl-table-cell">Amount</th>
             <th class="d-xl-table-cell">Orders</th>
             <th>Action</th>
           </tr>

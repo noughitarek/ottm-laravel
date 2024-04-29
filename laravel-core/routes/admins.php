@@ -13,6 +13,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InvestorController;
 use App\Http\Controllers\InvoicerController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\DashboardController;
@@ -202,6 +203,15 @@ Route::middleware(['auth', 'access_token'])->group(function () {
             Route::get('{funding}/edit', "edit")->middleware('permission:accounting_fundings_edit')->name('fundings_edit');
             Route::put('{funding}/edit', "update")->middleware('permission:accounting_fundings_edit');
             Route::delete('{funding}/delete', "destroy")->middleware('permission:accounting_fundings_delete')->name('fundings_delete');
+        });
+        
+        Route::middleware('permission:accounting_purchases_consult')->prefix("purchases")->controller(PurchaseController::class)->group(function(){
+            Route::get('', "index")->name('purchases');
+            Route::get('create', "create")->middleware('permission:accounting_purchases_create')->name('purchases_create');
+            Route::post('create', "store")->middleware('permission:accounting_purchases_create');
+            Route::get('{purchase}/edit', "edit")->middleware('permission:accounting_purchases_edit')->name('purchases_edit');
+            Route::put('{purchase}/edit', "update")->middleware('permission:accounting_purchases_edit');
+            Route::delete('{purchase}/delete', "destroy")->middleware('permission:accounting_purchases_delete')->name('purchases_delete');
         });
     
     });

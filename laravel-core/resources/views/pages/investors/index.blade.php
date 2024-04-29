@@ -23,7 +23,7 @@ $user = Auth::user();
         <thead>
           <tr>
             <th class="d-xl-table-cell">Investor</th>
-            <th class="d-xl-table-cell">API</th>
+            <th class="d-xl-table-cell">Amount</th>
             <th class="d-xl-table-cell">Orders</th>
             <th>Action</th>
           </tr>
@@ -61,7 +61,7 @@ $user = Auth::user();
     </div>
   </div>
 </div>
-@if($user->Has_Permission('invoicer_delete_product'))
+@if($user->Has_Permission('accounting_investors_delete'))
 @foreach($investors as $investor)
 <div class="modal fade" id="deleteInvestor{{$investor->id}}" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
