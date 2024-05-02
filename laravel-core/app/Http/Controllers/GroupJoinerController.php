@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GroupJoin;
 use App\Models\GroupJoiner;
 use App\Models\FacebookCategories;
 use App\Models\GroupJoinersCategory;
@@ -93,5 +94,14 @@ class GroupJoinerController extends Controller
     {
         $joiner->update(['deleted_at'=>now()]);
         return back()->with('success', 'joiner has been deleted successfully');
+    }
+
+    /**
+     * Show the history of a resource.
+     */
+    public function history(GroupJoiner $joiner)
+    {
+        $joins = GroupJoin::where('joiner', $joiner->id)->orderBy('created_at', 'desc')->paginate(20)->onEachSide(2);
+        return view('pages.groupjoiner.history')->with('joins', $joins);
     }
 }

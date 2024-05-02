@@ -18,6 +18,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ResponderController;
+use App\Http\Controllers\BotsEngineController;
 use App\Http\Controllers\GroupJoinerController;
 use App\Http\Controllers\RemarketingController;
 use App\Http\Controllers\FacebookPageController;
@@ -175,17 +176,6 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::put('{invoice}/edit', "update")->name('invoicer_edit');
         Route::post('upload', "upload")->middleware('permission:invoicer_upload')->name('invoicer_upload');
     });
-    Route::middleware('permission:accounts_consult')->prefix("accounts")->controller(FacebookAccountController::class)->group(function(){
-        Route::get('', "index")->name('accounts');
-        Route::post('create', "store")->middleware('permission:accounts_create')->name('accounts_create');
-        Route::put('{account}/edit', "update")->middleware('permission:accounts_edit')->name('accounts_edit');
-        Route::delete('{account}/delete', "destroy")->middleware('permission:accounts_delete')->name('accounts_delete');
-
-        Route::get('categories/{category}', "category")->middleware('permission:accounts_create')->name('accounts_category');
-        Route::post('categories/create', "store_category")->middleware('permission:accounts_create')->name('accounts_category_create');
-        Route::put('categories/{category}/edit', "update_category")->middleware('permission:accounts_create')->name('accounts_category_edit');
-        Route::delete('categories/{category}/delete', "destroy_category")->middleware('permission:accounts_create')->name('accounts_category_delete');
-    });
     Route::prefix('accounting')->name("accounting")->group(function(){
         Route::middleware('permission:accounting_investors_consult')->prefix("investors")->controller(InvestorController::class)->group(function(){
             Route::get('', "index")->name('investors');
@@ -195,7 +185,6 @@ Route::middleware(['auth', 'access_token'])->group(function () {
             Route::put('{investor}/edit', "update")->middleware('permission:accounting_investors_edit');
             Route::delete('{investor}/delete', "destroy")->middleware('permission:accounting_investors_delete')->name('investors_delete');
         });
-        
         Route::middleware('permission:accounting_fundings_consult')->prefix("investors/{investor}/fundings")->controller(FundingController::class)->group(function(){
             Route::get('', "index")->name('fundings');
             Route::get('create', "create")->middleware('permission:accounting_fundings_create')->name('fundings_create');
@@ -204,7 +193,6 @@ Route::middleware(['auth', 'access_token'])->group(function () {
             Route::put('{funding}/edit', "update")->middleware('permission:accounting_fundings_edit');
             Route::delete('{funding}/delete', "destroy")->middleware('permission:accounting_fundings_delete')->name('fundings_delete');
         });
-        
         Route::middleware('permission:accounting_purchases_consult')->prefix("purchases")->controller(PurchaseController::class)->group(function(){
             Route::get('', "index")->name('purchases');
             Route::get('create', "create")->middleware('permission:accounting_purchases_create')->name('purchases_create');
@@ -213,28 +201,52 @@ Route::middleware(['auth', 'access_token'])->group(function () {
             Route::put('{purchase}/edit', "update")->middleware('permission:accounting_purchases_edit');
             Route::delete('{purchase}/delete', "destroy")->middleware('permission:accounting_purchases_delete')->name('purchases_delete');
         });
-    
-    });
-    Route::prefix('FGMT')->group(function(){
-        Route::middleware('permission:group_joiner_consult')->prefix("joiner")->controller(GroupJoinerController::class)->group(function(){
-            Route::get('', "index")->name('group_joiner');
-            Route::get('create', "create")->middleware('permission:group_joiner_create')->name('group_joiner_create');
-            Route::post('create', "store")->middleware('permission:group_joiner_create');
-            Route::get('{joiner}/edit', "edit")->middleware('permission:group_joiner_edit')->name('group_joiner_edit');
-            Route::put('{joiner}/edit', "update")->middleware('permission:group_joiner_edit');
-            Route::delete('{joiner}/delete', "destroy")->middleware('permission:group_joiner_delete')->name('group_joiner_delete');
+        Route::middleware('permission:accounting_sales_consult')->prefix("sales")->controller(PurchaseController::class)->group(function(){
+            Route::get('', "index")->name('sales');
+            Route::get('create', "create")->middleware('permission:accounting_sales_create')->name('sales_create');
+            Route::post('create', "store")->middleware('permission:accounting_sales_create');
+            Route::get('{sale}/edit', "edit")->middleware('permission:accounting_sales_edit')->name('sales_edit');
+            Route::put('{sale}/edit', "update")->middleware('permission:accounting_sales_edit');
+            Route::delete('{sale}/delete', "destroy")->middleware('permission:accounting_sales_delete')->name('sales_delete');
         });
     
-        Route::middleware('permission:group_poster_consult')->prefix("poster")->controller(FacebookAccountController::class)->group(function(){
-            Route::get('', "index")->name('group_poster');
-            Route::get('create', "create")->middleware('permission:group_poster_create')->name('group_poster_create');
-            Route::post('create', "store")->middleware('permission:group_poster_create');
-            Route::get('{poster}/edit', "edit")->middleware('permission:group_poster_edit')->name('group_poster_edit');
-            Route::put('{poster}/edit', "update")->middleware('permission:group_poster_edit');
-            Route::delete('{poster}/delete', "destroy")->middleware('permission:group_poster_delete')->name('group_poster_delete');
-        });
     });
+    Route::prefix('bots')->group(function(){
+        Route::middleware('permission:accounts_consult')->prefix("accounts")->controller(FacebookAccountController::class)->group(function(){
+            Route::get('', "index")->name('accounts');
+            Route::post('create', "store")->middleware('permission:accounts_create')->name('accounts_create');
+            Route::put('{account}/edit', "update")->middleware('permission:accounts_edit')->name('accounts_edit');
+            Route::delete('{account}/delete', "destroy")->middleware('permission:accounts_delete')->name('accounts_delete');
 
+            Route::get('categories/{category}', "category")->middleware('permission:accounts_create')->name('accounts_category');
+            Route::post('categories/create', "store_category")->middleware('permission:accounts_create')->name('accounts_category_create');
+            Route::put('categories/{category}/edit', "update_category")->middleware('permission:accounts_create')->name('accounts_category_edit');
+            Route::delete('categories/{category}/delete', "destroy_category")->middleware('permission:accounts_create')->name('accounts_category_delete');
+        });
+        Route::middleware('permission:botsengine_consult')->prefix("engine")->controller(BotsEngineController::class)->group(function(){
+            Route::get('', "botsengine")->name('botsengine');
+        });
+        Route::prefix('FGMT')->group(function(){
+            Route::middleware('permission:group_joiner_consult')->prefix("joiner")->controller(GroupJoinerController::class)->group(function(){
+                Route::get('', "index")->name('group_joiner');
+                Route::get('create', "create")->middleware('permission:group_joiner_create')->name('group_joiner_create');
+                Route::post('create', "store")->middleware('permission:group_joiner_create');
+                Route::get('{joiner}/history', "history")->middleware('permission:group_joiner_history')->name('group_joiner_history');
+                Route::get('{joiner}/edit', "edit")->middleware('permission:group_joiner_edit')->name('group_joiner_edit');
+                Route::put('{joiner}/edit', "update")->middleware('permission:group_joiner_edit');
+                Route::delete('{joiner}/delete', "destroy")->middleware('permission:group_joiner_delete')->name('group_joiner_delete');
+            });
+        
+            Route::middleware('permission:group_poster_consult')->prefix("poster")->controller(FacebookAccountController::class)->group(function(){
+                Route::get('', "index")->name('group_poster');
+                Route::get('create', "create")->middleware('permission:group_poster_create')->name('group_poster_create');
+                Route::post('create', "store")->middleware('permission:group_poster_create');
+                Route::get('{poster}/edit', "edit")->middleware('permission:group_poster_edit')->name('group_poster_edit');
+                Route::put('{poster}/edit', "update")->middleware('permission:group_poster_edit');
+                Route::delete('{poster}/delete', "destroy")->middleware('permission:group_poster_delete')->name('group_poster_delete');
+            });
+        });
+    });
     Route::middleware('permission:settings_consult')->prefix("settings")->controller(SettingsController::class)->group(function(){
         Route::get('', "index")->name('settings');
         Route::post('edit', "edit")->name('settings_edit');

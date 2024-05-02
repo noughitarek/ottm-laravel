@@ -13,6 +13,7 @@ return [
     'stock' => ['consult', 'create', 'edit', 'delete'],
 
     'accounting_dashboard' => ['consult'],
+    'botsengine' => ['consult'],
     'accounting_investors' => ['consult', 'create', 'edit', 'delete'],
     
     'accounting_fundings' => ['consult', 'create', 'edit', 'delete'],
@@ -31,7 +32,7 @@ return [
     'invoicer' => ['consult', 'consult_product', 'create_product', 'edit_product', 'delete_product', 'upload'],
 
     'accounts' => ['consult', 'create', 'edit', 'delete'],
-    'group_joiner' => ['consult', 'create', 'edit', 'delete'],
+    'group_joiner' => ['consult', 'history', 'create', 'edit', 'delete'],
     'group_poster' => ['consult', 'create', 'edit', 'delete'],
     
 

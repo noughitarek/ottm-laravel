@@ -150,8 +150,8 @@ return array(
         "type" => "link",
         "content" => "Sales",
         "permissions" => "accounting_sales_consult",
-        "section" => "accounting_sales",
-        "route" => "accounting_sales",
+        "section" => "accountingsales",
+        "route" => "accountingsales",
         "icon" => array("type" => "font-awesome", "content" => "sign-out-alt"),
     ),
     array(
@@ -223,7 +223,15 @@ return array(
         "route" => "invoicer",
         "icon" => array("type" => "feather", "content" => "award"),
     ),
-    array("type" => "text", "content"=> "Facebook bots", "permissions" => ["accounts_consult", "group_joiner_consult", "group_poster_consult"]),
+    array("type" => "text", "content"=> "Facebook bots", "permissions" => ["botsengine_consult", "accounts_consult", "group_joiner_consult", "group_poster_consult"]),
+    array(
+        "type" => "link",
+        "content" => "Engine log",
+        "permissions" => "botsengine_consult",
+        "section" => "botsengine",
+        "route" => "botsengine",
+        "icon" => array("type" => "font-awesome", "content" => "microchip"),
+    ),
     array(
         "type" => "link",
         "content" => "Accounts",

@@ -204,6 +204,16 @@ $user = Auth::user();
       <div class="card-header">
         <h5 class="card-title">Confirmation</h5>
         <div class="mb-3">
+          <label class="form-label">Desk</label>
+
+          <select class="form-control" name="desk" id="desk_select" required>
+            <option disabled value selected>Select the desk</option>
+            @foreach($desks as $desk)
+            <option value="{{$desk->id}}">{{$desk->name}}</option>
+            @endforeach
+          </select>
+        </div>
+        <div class="mb-3">
           <label class="form-label">Created by</label>
           <input type="text" value="{{$user->name}}" class="form-control" disabled>
         </div>
@@ -295,11 +305,13 @@ $user = Auth::user();
     {
         var selectedWilayaId = document.getElementById('wilaya').value;
         var delivery_price = document.getElementById('delivery_price');
+        var desk_select = document.getElementById('desk_select');
         //var delivery_price_show = document.getElementById('delivery_price_show');
         fetch('/orders/'+selectedWilayaId+'/getDelivery')
             .then(response => response.json())
             .then(data => {
                 delivery_price.value = data.delivery_price
+                desk_select.value = data.desk
                 //delivery_price_show.value = data.delivery_price
             })
             .catch(error => {

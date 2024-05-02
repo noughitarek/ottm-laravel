@@ -47,6 +47,11 @@ $user = Auth::user();
                   @endforeach
                 </td>
                 <td>
+                  @if($user->Has_Permission('group_joiner_history'))
+                  <a href="{{route('group_joiner_history', $group_joiner->id)}}" class="btn btn-success" >
+                    History
+                  </a>
+                  @endif
                   @if($user->Has_Permission('group_joiner_edit'))
                   <a href="{{route('group_joiner_edit', $group_joiner->id)}}" class="btn btn-warning" >
                     Edit

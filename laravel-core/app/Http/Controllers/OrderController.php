@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Desk;
 use App\Models\Order;
 use App\Models\Wilaya;
 use App\Models\Commune;
@@ -108,7 +109,8 @@ class OrderController extends Controller
         $conversations = FacebookConversation::orderBy('ended_at', 'desc')->take(config('settings.limits.order_conversations_count'))->get();
         $products = Product::where('deleted_at', null)->get();
         $wilayas = Wilaya::where('desk', "!=", null)->get();
-        return view('pages.orders.create')->with('products', $products)->with('wilayas', $wilayas)->with('conversations', $conversations);
+        $desks = Desk::whereNull('deleted_at')->get();
+        return view('pages.orders.create')->with('products', $products)->with('wilayas', $wilayas)->with('conversations', $conversations)->with('desks', $desks);
     }
 
     /**
