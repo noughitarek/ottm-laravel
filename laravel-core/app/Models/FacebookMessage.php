@@ -21,7 +21,7 @@ class FacebookMessage extends Model
         if ($response) {
             $createdAt = Carbon::parse($this->created_at); 
             $responseCreatedAt = Carbon::parse($response->created_at);
-            return $createdAt->diffInMinutes($responseCreatedAt);
+            return $createdAt->diffInMinutes($responseCreatedAt)>60?0:$createdAt->diffInMinutes($responseCreatedAt);
         }
         return 0;
     }

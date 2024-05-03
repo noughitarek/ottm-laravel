@@ -28,7 +28,8 @@ return [
         "tokens_validity_check" => false,
         "remarketing_send" => false,
         "remarketing_interval_send" => false,
-        "responder_send" => false
+        "responder_send" => false,
+        "update_response_time" => false,
     ],
 
     "limits" => [

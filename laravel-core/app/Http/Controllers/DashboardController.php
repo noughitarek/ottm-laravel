@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Remarketing;
+use App\Models\FacebookPage;
 use Illuminate\Http\Request;
 use App\Models\FacebookMessage;
 use Illuminate\Support\Facades\DB;
 use App\Models\RemarketingMessages;
+use App\Models\DashboardResponseTime;
 use App\Models\RemarketingIntervalMessages;
 
 class DashboardController extends Controller
@@ -15,6 +17,8 @@ class DashboardController extends Controller
     
     public function index()
     {
+        $pages = FacebookPage::where('type', 'business')->whereNull('expired_at')->get();
+        return view('pages.dashboard.index')->with('ResponseTime', DashboardResponseTime::class)->with('pages', $pages);
         $messagesPerDayHours = FacebookMessage::selectRaw('DATE(created_at) as date, HOUR(created_at) AS message_hour, GROUP_CONCAT(id) as ids_list')
         ->where('created_at', '>=', Carbon::now()->subDays(2))
         ->where('sented_from', 'user')
@@ -30,7 +34,10 @@ class DashboardController extends Controller
         $remarketingIntervalMessages = RemarketingIntervalMessages::selectRaw('DATE(created_at) as date, COUNT(*) as count')
         ->groupBy('date')
         ->get();
-
+        $data['averageResponseRatef7t15'] = 0;
+        $data['averageResponseRatef15t23'] = 0;
+        $totalf7t15 = 0;
+        $totalf15t23 = 0;
         foreach ($messagesPerDayHours as $messages) {
             $ids_array = explode(',', $messages->ids_list);
             $total_response_time = 0;
@@ -50,8 +57,20 @@ class DashboardController extends Controller
             } else {
                 $average_response_time = 0;
             }
-            $data['responseTime'][$messages->message_hour][date("j F", strtotime($messages->date))] = $average_response_time;
+            $data['responseTime'][$messages->message_hour][date("j F", strtotime($messages->date))] = number_format($average_response_time, 2);
+            if($messages->message_hour>=7 && $messages->message_hour<15)
+            {
+                $totalf7t15 += 1;
+                $data['averageResponseRatef7t15'] += $average_response_time;
+            }
+            elseif($messages->message_hour>=15 && $messages->message_hour<=23 && $messages->message_hour != 19)
+            {
+                $totalf15t23 += 1; 
+                $data['averageResponseRatef15t23'] += $average_response_time;
+            }
         }
+        $data['averageResponseRatef7t15'] = number_format($data['averageResponseRatef7t15']/$totalf7t15, 2);
+        $data['averageResponseRatef15t23'] = number_format($data['averageResponseRatef15t23']/$totalf15t23, 2);
         
 
         foreach($remarketingMessages as $remarketingMessage)
@@ -77,8 +96,6 @@ class DashboardController extends Controller
                 $data['remarketingIntervalMessages'][date("j F", strtotime($remarketingMessage['date']))]['total_interval'] = $remarketingMessage['count'];
             }
         }
-        print_r($data);
-        exit;
         return view('pages.dashboard.index')->with('data', $data);
         $remarketingMessages = RemarketingMessages::selectRaw('DATE(created_at) as date, COUNT(*) as count')
         ->groupBy('date')

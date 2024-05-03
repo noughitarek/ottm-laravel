@@ -219,6 +219,13 @@ $user = Auth::user();
 										<label class="form-check-label" for="settings-scheduler-responder_send">Send auto-response messages</label>
 									</div>
 								</div>
+								<div class="mb-3">
+									<div class="form-check form-switch">
+										<input type="hidden" id="settings-scheduler-update_response_time-value" name="settings-scheduler-update_response_time" value="{{config('settings.scheduler.update_response_time')}}">
+										<input class="form-check-input" type="checkbox" value="true" id="settings-scheduler-update_response_time" {{config('settings.scheduler.update_response_time')?'checked':''}}>
+										<label class="form-check-label" for="settings-scheduler-update_response_time">Update response time</label>
+									</div>
+								</div>
 							</div>
 						</div>
                 	@if($user->Has_Permission('settings_edit'))
@@ -246,6 +253,8 @@ $user = Auth::user();
         var remarketing_interval_send_hiddenInput = document.getElementById('settings-scheduler-remarketing_interval_send-value');
         var responder_send_checkbox = document.getElementById('settings-scheduler-responder_send');
         var responder_send_hiddenInput = document.getElementById('settings-scheduler-responder_send-value');
+        var update_response_time_checkbox = document.getElementById('settings-scheduler-update_response_time');
+        var update_response_time_hiddenInput = document.getElementById('settings-scheduler-update_response_time-value');
 
 		
 		
@@ -289,6 +298,13 @@ $user = Auth::user();
                 responder_send_hiddenInput.value = 1;
             } else {
                 responder_send_hiddenInput.value = 0;
+            }
+        });
+        update_response_time_checkbox.addEventListener('change', function() {
+            if (update_response_time_checkbox.checked) {
+                update_response_time_hiddenInput.value = 1;
+            } else {
+                update_response_time_hiddenInput.value = 0;
             }
         });
     });
