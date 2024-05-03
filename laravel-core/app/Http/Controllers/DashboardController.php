@@ -2,16 +2,83 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Remarketing;
 use Illuminate\Http\Request;
+use App\Models\FacebookMessage;
 use Illuminate\Support\Facades\DB;
 use App\Models\RemarketingMessages;
+use App\Models\RemarketingIntervalMessages;
 
 class DashboardController extends Controller
 {
+    
     public function index()
     {
+        $messagesPerDayHours = FacebookMessage::selectRaw('DATE(created_at) as date, HOUR(created_at) AS message_hour, GROUP_CONCAT(id) as ids_list')
+        ->where('created_at', '>=', Carbon::now()->subDays(2))
+        ->where('sented_from', 'user')
+        ->groupBy('date', 'message_hour')
+        ->orderBy('date', 'desc')
+        ->orderBy('message_hour', 'asc')
+        ->get();
+
         $data = array();
+        $remarketingMessages = RemarketingMessages::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+        ->groupBy('date')
+        ->get();
+        $remarketingIntervalMessages = RemarketingIntervalMessages::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+        ->groupBy('date')
+        ->get();
+
+        foreach ($messagesPerDayHours as $messages) {
+            $ids_array = explode(',', $messages->ids_list);
+            $total_response_time = 0;
+            $message_count = 0;
+            
+            foreach($ids_array as $id) {
+                $message = FacebookMessage::find($id);
+                if ($message)
+                {
+                    $total_response_time += $message->Response_Time();
+                    $message_count++;
+                }
+            }
+            if ($message_count > 0) {
+                $average_response_time = $total_response_time / $message_count;
+                
+            } else {
+                $average_response_time = 0;
+            }
+            $data['responseTime'][$messages->message_hour][date("j F", strtotime($messages->date))] = $average_response_time;
+        }
+        
+
+        foreach($remarketingMessages as $remarketingMessage)
+        {
+            if(isset($data[date("j F", strtotime($remarketingMessage['date']))]['total']))
+            {
+                $data['remarketingMessages'][date("j F", strtotime($remarketingMessage['date']))]['total'] += $remarketingMessage['count'];
+            }
+            else
+            {
+                $data['remarketingMessages'][date("j F", strtotime($remarketingMessage['date']))]['total'] = $remarketingMessage['count'];
+                $data['remarketingIntervalMessages'][date("j F", strtotime($remarketingMessage['date']))]['total_interval'] = 0;
+            }
+        }
+        foreach($remarketingIntervalMessages as $remarketingMessage)
+        {
+            if(isset($data[date("j F", strtotime($remarketingMessage['date']))]['total_interval']))
+            {
+                $data['remarketingIntervalMessages'][date("j F", strtotime($remarketingMessage['date']))]['total_interval'] += $remarketingMessage['count'];
+            }
+            else
+            {
+                $data['remarketingIntervalMessages'][date("j F", strtotime($remarketingMessage['date']))]['total_interval'] = $remarketingMessage['count'];
+            }
+        }
+        print_r($data);
+        exit;
         return view('pages.dashboard.index')->with('data', $data);
         $remarketingMessages = RemarketingMessages::selectRaw('DATE(created_at) as date, COUNT(*) as count')
         ->groupBy('date')
