@@ -20,6 +20,16 @@ class FacebookPage extends Model
     use HasFactory;
     protected $fillable = ['facebook_page_id', 'name', 'access_token', 'type', 'expired_at'];
 
+    public function Orders()
+    {
+        $conversations = FacebookConversation::where('page', $this->facebook_page_id)->get();
+        $total = 0;
+        foreach($conversations as $conversation)
+        {
+            $total += $conversation->Orders();
+        }
+        return $total;
+    }
     public function Validity_Check()
     {
         try

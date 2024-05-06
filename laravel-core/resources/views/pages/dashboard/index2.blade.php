@@ -154,11 +154,11 @@ $user = Auth::user();
 <script>
 var options = {
     series: [{
-    name: '2 May',
-    data: [@foreach($data['responseTime'] as $date=>$elem) '<?=$elem["2 May"]??""?>', @endforeach]
-  }, {
     name: '3 May',
     data: [@foreach($data['responseTime'] as $date=>$elem) '<?=$elem["3 May"]??""?>', @endforeach]
+  }, {
+    name: '4 May',
+    data: [@foreach($data['responseTime'] as $date=>$elem) '<?=$elem["4 May"]??""?>', @endforeach]
   }],
     chart: {
     type: 'bar',

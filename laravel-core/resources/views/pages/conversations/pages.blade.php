@@ -35,9 +35,7 @@ $user = Auth::user();
                 {{$facebook_page->Conversations_Count()}} conversation
                 </td>
                 <td>
-                    <span class="text-primary">0</span> |
-                    <span class="text-success">0</span> |
-                    <span class="text-danger">0</span> 
+                  {{$facebook_page->Orders()}}
                 </td>
                 <td>
                 </td>

@@ -40,9 +40,7 @@ $user = Auth::user();
                     <i class="align-middle me-2 fas fa-fw fa-envelop-open"></i> {{$conversation->Messages()->count()}}<br>
                 </td>
                 <td>
-                    <span class="text-primary">0</span> |
-                    <span class="text-success">0</span> |
-                    <span class="text-danger">0</span> 
+                  {{$conversation->Orders()}}
                 </td>
                 <td>
                   @if($user->Has_Permission('orders_create'))

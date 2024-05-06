@@ -22,7 +22,11 @@ class FacebookConversation extends Model
     {
         return FacebookMessage::where('conversation', $this->facebook_conversation_id)->orderBy('created_at', 'desc')->get();
     }
-
+    public function Orders()
+    {
+        return FacebookMessage::where('conversation', $this->facebook_conversation_id)->where('message', 'like', '%سجلت الطلبية تاعك خلي برك الهاتف مفتوح باه يعيطلك الليفرور و ما تنساش الطلبية على خاطر رانا نخلصو عليها جزاك الله%')->count();
+        return 0;
+    }
     public function User()
     {
         $user = FacebookUser::where('facebook_user_id', $this->user)->first();
