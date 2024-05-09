@@ -37,7 +37,7 @@ class FacebookPage extends Model
             $response = Http::get('https://graph.facebook.com/v19.0/me', [
                 'access_token' => $this->access_token,
             ]);
-            if(isset($response['error']) && isse($response['error']['code']) && $response['error']['code']==190)
+            if(isset($response['error']) && isset($response['error']['code']) && $response['error']['code']==190)
             {
                 $this->expired_at = now();
                 $this->save();
@@ -150,6 +150,7 @@ class FacebookPage extends Model
             }
             else
             {
+                echo $this->name.": ";
                 echo 'Error occurred while fetching data from Facebook API.';
                 $this->Get_Conversations_Page($data, $page, $all);
             }

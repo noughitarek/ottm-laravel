@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\FacebookPage;
 use Illuminate\Console\Command;
 
 class TokensValidityCheckCommand extends Command
@@ -27,7 +28,7 @@ class TokensValidityCheckCommand extends Command
     {
         if(!config('settings.scheduler.tokens_validity_check'))
             exit;
-        $pages = FacebookPage::where('expired_at', null)->all();
+        $pages = FacebookPage::where('expired_at', null)->get();
         foreach($pages as $page){
             $page->Validity_Check();
         }
