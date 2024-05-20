@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Remarketing extends Model
 {
     use HasFactory;
-    protected $fillable = ["name", "facebook_page_id", 'category', "send_after", "last_message_from", "make_order", "since", "photos", "video", "template", "message", "deleted_at", "expire_after", "is_active", "start_time", "end_time"];
+    protected $fillable = ["name", "facebook_page_id", 'category', "send_after", "resend_after", "last_message_from", "make_order", "since", "photos", "video", "template", "message", "deleted_at", "expire_after", "is_active", "start_time", "end_time"];
 
     public function Pages()
     {
@@ -53,9 +53,19 @@ class Remarketing extends Model
             if($this->last_message_from != "any" && $conversation->Messages()->first()->sented_from != $this->last_message_from)continue;
             $order = Order::where('conversation', $conversation->facebook_conversation_id)->first();
             if(!$this->make_order && $order)continue;
-            
-            $last_use = RemarketingMessages::where('remarketing', $this->id)->where('facebook_conversation_id', $conversation->facebook_conversation_id)->first();
-            if($last_use)continue;
+            if($this->resend_after == null)
+            {
+                $last_use = RemarketingMessages::where('remarketing', $this->id)->where('facebook_conversation_id', $conversation->facebook_conversation_id)->first();
+                if($last_use)continue;
+            }
+            else
+            {
+
+                $last_use = RemarketingMessages::where('remarketing', $this->id)
+                ->where('facebook_conversation_id', $conversation->facebook_conversation_id)
+                ->where('expire_at', '>=', now())
+                ->first();
+            }
             
             if($this->since == 'conversation_start'){
                 $created_at = $conversation->Messages()->last();
@@ -108,28 +118,72 @@ class Remarketing extends Model
 
         $started_at = Carbon::createFromTimestamp($now->timestamp - $this->send_after);
         $ended_at = Carbon::createFromTimestamp($now->timestamp  - $this->send_after + $this->expire_after);
-        $conversations = FacebookConversation::where('page', $this->facebook_page_id)
-        ->where($this->since, '>=', $started_at->toDateTimeString())
-        ->where($this->since, '<=', $ended_at->toDateTimeString())
-        ->where(function ($query) {
-            if ($this->last_message_from !== 'any') {
-                $query->where('last_from', $this->last_message_from);
-            }
-        })
-        ->where(function ($query) {
-            if ($this->make_order === 0) {
-                $query->where('make_order', $this->make_order);
-            }
-        })
-        ->where(function ($query) {
-            $query->whereNotExists(function ($subquery) {
-                $subquery->select(DB::raw(1))
-                    ->from('remarketing_messages')
-                    ->whereColumn('facebook_conversation_id', 'facebook_conversations.facebook_conversation_id')
-                    ->where('remarketing', $this->id);
-            });
-        })
-        ->orderBy('ended_at', 'desc');   
+        
+        /*if($this->resend_after == null)
+        {
+            $last_use = RemarketingMessages::where('remarketing', $this->id)->where('facebook_conversation_id', $conversation->facebook_conversation_id)->first();
+            if($last_use)continue;
+        }
+        else
+        {
+
+            $last_use = RemarketingMessages::where('remarketing', $this->id)
+            ->where('facebook_conversation_id', $conversation->facebook_conversation_id)
+            ->where('expire_at', '>=', now())
+            ->first();
+        }*/
+        if($this->resend_after == null)
+        {
+            $conversations = FacebookConversation::where('page', $this->facebook_page_id)
+            ->where($this->since, '>=', $started_at->toDateTimeString())
+            ->where($this->since, '<=', $ended_at->toDateTimeString())
+            ->where(function ($query) {
+                if ($this->last_message_from !== 'any') {
+                    $query->where('last_from', $this->last_message_from);
+                }
+            })
+            ->where(function ($query) {
+                if ($this->make_order === 0) {
+                    $query->where('make_order', $this->make_order);
+                }
+            })
+            ->where(function ($query) {
+                $query->whereNotExists(function ($subquery) {
+                    $subquery->select(DB::raw(1))
+                        ->from('remarketing_messages')
+                        ->whereColumn('facebook_conversation_id', 'facebook_conversations.facebook_conversation_id')
+                        ->where('remarketing', $this->id);
+                });
+            })
+            ->orderBy('ended_at', 'desc');  
+        }
+        else 
+        {
+            $started_at = Carbon::createFromTimestamp($this->created_at->timestamp + $this->send_after);
+            $conversations = FacebookConversation::where('page', $this->facebook_page_id)
+            ->where($this->since, '>=', $started_at->toDateTimeString())
+            #->where($this->since, '<=', $ended_at->toDateTimeString())
+            ->where(function ($query) {
+                if ($this->last_message_from !== 'any') {
+                    $query->where('last_from', $this->last_message_from);
+                }
+            })
+            ->where(function ($query) {
+                if ($this->make_order === 0) {
+                    $query->where('make_order', $this->make_order);
+                }
+            })
+            ->where(function ($query) {
+                $query->whereNotExists(function ($subquery) {
+                    $subquery->select(DB::raw(1))
+                        ->from('remarketing_messages')
+                        ->whereColumn('facebook_conversation_id', 'facebook_conversations.facebook_conversation_id')
+                        ->where('remarketing', $this->id)
+                        ->where('expire_at', '>', now());
+                });
+            })
+            ->orderBy('ended_at', 'desc');  
+        }
         return array(
             $conversations->take(config('settings.limits.max_simultaneous_message'))->get(),
             $conversations->count(),

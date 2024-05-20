@@ -134,6 +134,26 @@ $user = Auth::user();
               @enderror
             </div>
             <div class="mb-3 col-md-6">
+              <label class="form-label" for="resend_after">Resend after <span class="text-danger">*</span></label>
+              <input type="number" name="resend_after" value="{{old('resend_after')}}" id="resend_after" class="form-control">
+              @error('resend_after')
+                <div class="text-danger">{{ $message }}</div>
+              @enderror
+            </div>
+            <div class="mb-3 col-md-6">
+              <label class="form-label" for="resend_time_unit">Time unit <span class="text-danger">*</span></label>
+              <select name="resend_time_unit" id="resend_time_unit" class="form-control">
+                <option {{old('resend_time_unit') == 1?'selected':''}} value="1">Seconds</option>
+                <option {{old('resend_time_unit') == 60 ?'selected':''}} value="60">Minutes</option>
+                <option {{old('resend_time_unit') == 3600 ?'selected':''}} value="3600">Hours</option>
+                <option {{old('resend_time_unit') == 86400 ?'selected':''}} value="86400">Days</option>
+              </select>
+              @error('resend_time_unit')
+                <div class="text-danger">{{ $message }}</div>
+              @enderror
+            </div>
+            <!--
+            <div class="mb-3 col-md-6">
               <label class="form-label" for="start_time">Execute it between</label>
               <input type="text" name="start_time"  data-inputmask-regex="^(?:[01][0-9]|2[0-3]):[0-5][0-9]$" required value="{{old('start_time')}}" id="start_time" class="form-control">
               @error('start_time')
@@ -146,7 +166,7 @@ $user = Auth::user();
               @error('end_time')
                 <div class="text-danger">{{ $message }}</div>
               @enderror
-            </div>
+            </div>-->
           </div>
         </div>
       </div>
