@@ -13,7 +13,8 @@ $user = Auth::user();
         <h5 class="card-title mb-0">Wilayas</h5>
         @if($user->Has_Permission('wilayas_edit'))
         <div>
-        <button type="submit" class="btn btn-primary" > Save </button>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#settings"><i class="align-middle" data-feather="settings"></i></button>
+            <button type="submit" class="btn btn-primary" > Save </button>
         </div>
         @endif
       </div>
@@ -74,4 +75,41 @@ $user = Auth::user();
     </div>
   </div>
 </form>
+
+@if($user->Has_Permission('wilayas_edit'))
+<div class="modal fade" id="settings" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="{{route('settings_edit')}}" method="POST">
+        @csrf
+        <div class="modal-header">
+            <h5 class="modal-title">Wilayas Settings</h5>
+            <div>
+              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="modal-body m-3">
+          <div class="mb-3">
+            <div class="mb-1 row gx-1">
+              <label class="form-label col-auto">Default Desk</label>
+              <select class="form-control" name="settings-default-desk">
+                <option value disabled selected>Select tthe default desk</option>
+                @foreach($desks as $desk)
+                <option value="{{$desk->id}}" {{$desk->id==config('settings.default.desk')?'selected':''}}>{{$desk->name}}</option>
+                @endforeach
+              </select>
+          </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+@endif
+
 @endsection

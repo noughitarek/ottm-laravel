@@ -3,6 +3,7 @@
 return [
     'dashboard' => ['consult'],
     'desks' => ['consult', 'create', 'edit', 'delete'],
+    'deliverymens' => ['consult', 'create', 'edit', 'delete'],
     'wilayas' => ['consult', 'edit'],
     'commune' => ['consult', 'edit'],
 

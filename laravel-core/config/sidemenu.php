@@ -20,6 +20,16 @@ return array(
     ),
     array(
         "type" => "link",
+        "content" => "Delivery mens",
+        "permissions" => "deliverymens_consult",
+        "section" => "deliverymens",
+        "route" => "deliverymens",
+        "icon" => array("type" => "feather", "content" => "truck"),
+    ),
+
+    
+    array(
+        "type" => "link",
         "content" => "Wilayas",
         "permissions" => "wilayas_consult",
         "section" => "wilayas",
@@ -118,7 +128,7 @@ return array(
         "content" => "Dashboard",
         "permissions" => "accounting_dashboard_consult",
         "section" => "accounting_dashboard",
-        "route" => "accounting_dashboard",
+        "route" => "orders_archived",
         "icon" => array("type" => "font-awesomes", "content" => "th-large"),
     ),
     array(
@@ -159,7 +169,7 @@ return array(
         "content" => "Spending",
         "permissions" => "accounting_spending_consult",
         "section" => "accounting_spending",
-        "route" => "accounting_spending",
+        "route" => "orders_archived",
         "icon" => array("type" => "font-awesome", "content" => "volume-up"),
     ),
     array(
@@ -167,7 +177,7 @@ return array(
         "content" => "Stocks",
         "permissions" => "accounting_stock_consult",
         "section" => "accounting_stock",
-        "route" => "accounting_stock",
+        "route" => "orders_archived",
         "icon" => array("type" => "font-awesome", "content" => "boxes"),
     ),
     array("type" => "text", "content"=> "Tools", "permissions" => ["remarketing_consult", "tracking_consult"]),

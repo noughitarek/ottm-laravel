@@ -20,4 +20,8 @@ class Wilaya extends Model
             return new Desk(['name' => 'Unassigned']);
         }
     }
+    public function Communes()
+    {
+        return Commune::where('wilaya', $this->id)->get();
+    }
 }

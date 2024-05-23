@@ -21,6 +21,7 @@ use App\Http\Controllers\ResponderController;
 use App\Http\Controllers\BotsEngineController;
 use App\Http\Controllers\GroupJoinerController;
 use App\Http\Controllers\RemarketingController;
+use App\Http\Controllers\DeliveryMensController;
 use App\Http\Controllers\FacebookPageController;
 use App\Http\Controllers\ConversationsController;
 use App\Http\Controllers\FacebookAccountController;
@@ -40,6 +41,13 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::put('{desk}/edit', "update")->middleware('permission:desks_edit')->name('desks_edit');
         Route::delete('{desk}/delete', "destroy")->middleware('permission:desks_delete')->name('desks_delete');
     });
+    Route::middleware('permission:deliverymens_consult')->prefix("delivery-mens")->controller(DeliveryMensController::class)->group(function(){
+        Route::get('', "index")->name('deliverymens');
+        Route::get('{wilaya}', "wilaya")->name('deliverymens_edit');
+        Route::post('{wilaya}', "edit_wilaya");
+
+    });
+
     Route::middleware('permission:wilayas_consult')->prefix("wilayas")->controller(WilayaController::class)->group(function(){
         Route::get('', "index")->name('wilayas');
         Route::put('edit', "update")->middleware('permission:wilayas_edit')->name('wilayas_edit');

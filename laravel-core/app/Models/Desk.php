@@ -48,6 +48,10 @@ class Desk extends Model
         }
         curl_close($ch);
     }
+    public function CommunePhone(Commune $commune)
+    {
+        return DeliveryMen::where('desk', $this->id)->where('commune', $commune->id)->first()->phone_number??null;
+    }
 
     
 }
