@@ -68,6 +68,9 @@ Route::middleware(['auth', 'access_token'])->group(function () {
     Route::middleware('permission:orders_restricted_consult')->prefix("orders")->controller(OrderController::class)->group(function(){
         Route::get('create', "create")->name('orders_create')->middleware('permission:orders_create');
         Route::post('create', "store")->middleware('permission:orders_create');
+
+        Route::get('{order}/addtoecotrack', "addtoecotrack")->name('orders_addtoecotrack');
+
         Route::get('create/p/{product}', "create_from_product")->name('orders_create_product')->middleware('permission:orders_create');
         Route::get('create/c/{conversation}', "create_from_conversation")->name('orders_create_conversation')->middleware('permission:orders_create');
         Route::get('{total}/totext', function ($total){

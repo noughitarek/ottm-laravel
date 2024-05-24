@@ -13,7 +13,7 @@ class Order extends Model
 {
     use HasFactory;
     protected $fillable = ["name", "phone", "phone2", "address", "commune", "quantity", "total_price", "delivery_price", "clean_price",
-            "tracking", "intern_tracking", "IP", "fragile", "stopdesk", "product", "conversation", "desk", "description",
+            "tracking", "intern_tracking", "IP", "fragile", "stopdesk", "product", "conversation", "desk", "description", "from_stock",
             "validated_at", "shipped_at", "wilaya_at", "recovered_at", "delivery_at", "delivered_at", "ready_at", "back_at", "back_ready_at", "archived_at", "created_by"];
 
     
@@ -46,13 +46,62 @@ class Order extends Model
     
     public function Add_To_Ecotrack()
     {
-        $products = "";
-        $quantites = "";
         $reference = "";
         foreach($this->Product() as $i=>$product)
         {
-            $products .= $product->Product()->slug.",";
-            $quantites .= $product->quantity.",";
+            $reference .= ($i!=0?" + ":"").config('settings.quantities')[$product->quantity].'/'.$product->Product()->name;
+        }
+        $data = array(
+            'reference' => $reference,
+            'nom_client' => $this->name,
+            'telephone' => preg_replace("/[^0-9]/", "", $this->phone),
+            'telephone_2' => preg_replace("/[^0-9]/", "", $this->phone2),
+            'adresse' => $this->address,
+            'fragile' => $this->fragile,
+            'code_wilaya' => $this->Commune()->Wilaya()->id,
+            'commune' =>  $this->Commune()->name,
+            'stop_desk' => $this->stopdesk,
+            'montant' => $this->total_price,
+            'remarque' => $this->description,
+            'type' => 1,
+            'api_token' => $this->Desk()->ecotrack_token
+        );
+        $apiUrl = $this->Desk()->ecotrack_link."api/v1/create/order";
+        $resultData = self::Send_API($apiUrl, $data, "POST");
+        try
+        {
+            if ($resultData && isset($resultData['tracking']))
+            {
+                $this->tracking = $resultData['tracking'];
+                $this->save();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch(\Exception $exception)
+        {
+            return false;
+        }
+    }
+    public function Add_To_Ecotrack_Stock()
+    {
+        $reference = "";
+        foreach($this->Product() as $i=>$product)
+        {
+            if($i!=0)
+            {
+                $products .= ','.$product->Product()->slug;
+                $quantites .= ','.$product->quantity;
+
+            }
+            else
+            {
+                $products = $product->Product()->slug;
+                $quantites = $product->quantity;
+            }
             $reference .= ($i!=0?" + ":"").config('settings.quantities')[$product->quantity].'/'.$product->Product()->name;
         }
         $data = array(
@@ -75,6 +124,10 @@ class Order extends Model
         );
         $apiUrl = $this->Desk()->ecotrack_link."api/v1/create/order";
         $resultData = self::Send_API($apiUrl, $data, "POST");
+        print_r($data);
+        echo "<br><br>";
+        print_r($resultData);
+        exit;
         try
         {
             if ($resultData && isset($resultData['tracking']))

@@ -21,8 +21,9 @@ $user = Auth::user();
         <thead>
           <tr>
             <th class="d-xl-table-cell">Product</th>
-            <th class="d-xl-table-cell">Orders</th>
-            <th class="d-xl-table-cell">Stock</th>
+            @foreach($desks as $desk)
+            <th class="d-xl-table-cell">{{$desk->name}}</th>
+            @endforeach
             <th>Action</th>
           </tr>
         </thead>
@@ -34,14 +35,9 @@ $user = Auth::user();
                     <i class="align-middle me-2 fas fa-fw fa-box"></i> {{$product->name}}<br>
                     <i class="align-middle me-2 fas fa-fw fa-barcode"></i> {{$product->slug}}<br>
                 </td>
-                <td>
-                    <span class="text-primary">0</span> |
-                    <span class="text-success">0</span> |
-                    <span class="text-danger">0</span> 
-                </td>
-                <td>
-                  {{$product->Stock()}}
-                </td>
+                @foreach($desks as $desk)
+                <td class="d-xl-table-cell">{{$desk->Stock($product)}}</td>
+                @endforeach
                 <td>
                 
                   @if($user->Has_Permission('orders_create'))
@@ -65,7 +61,6 @@ $user = Auth::user();
         </tbody>
       </table>
     </div>
-    {{ $products->links('components.pagination') }}
   </div>
 </div>
 @if($user->Has_Permission('products_create'))

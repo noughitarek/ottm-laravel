@@ -74,7 +74,10 @@ $user = Auth::user();
               </p>
             </td>
             <td>
-              <a href=""class="btn btn-success">Validate</a>
+              @if($order->tracking == null)
+              <a href="{{route('orders_addtoecotrack', $order->id)}}" class="btn btn-success">Add to ecotrack</a>
+              @endif
+              <!--<a href=""class="btn btn-success">Validate</a>-->
             </td>
           </tr>
           @endforeach

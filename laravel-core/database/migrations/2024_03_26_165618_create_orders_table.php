@@ -45,6 +45,7 @@ return new class extends Migration
             $table->timestamp('back_ready_at')->nullable();
             $table->timestamp('archived_at')->nullable();
             $table->unsignedBigInteger('created_by');
+            $table->boolean('from_stock')->default(false);
             $table->foreign('created_by')->references('id')->on('users');
             $table->timestamps();
         });

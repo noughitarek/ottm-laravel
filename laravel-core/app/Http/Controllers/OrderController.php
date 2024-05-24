@@ -143,7 +143,7 @@ class OrderController extends Controller
             'phone' => $request->input('phone'),
             'phone2' => $request->input('phone2'),
             'commune' => $request->input('commune'),
-            'desk' => Wilaya::find($request->input('wilaya'))->desk,
+            'desk' => $request->input("desk")??Wilaya::find($request->input('wilaya'))->desk,
             'address' => $request->input('address'),
             'fragile' => $request->has('fragile'),
             'stopdesk' => $request->has('stopdesk'),
@@ -155,6 +155,7 @@ class OrderController extends Controller
             'created_by' => Auth::user()->id,
             'IP' => $_SERVER['REMOTE_ADDR'],
             'conversation' => $request->input('conversation'),
+            'from_stock' => $request->has('from_stock'),
         ]);
         foreach($request->products as $product){
             if(!isset($product['id']) || $product['id']==null)continue;
@@ -166,7 +167,14 @@ class OrderController extends Controller
         }
         if($request->has('add_to_ecotrack'))
         {
-            $order->Add_To_Ecotrack();
+            if($order->from_stock == 1)
+            {
+                $order->Add_To_Ecotrack_Stock();
+            }
+            else
+            {
+                $order->Add_To_Ecotrack();
+            }
             if($request->has('validate'))
             {
                 $order->Validate_Ecotrack();       
@@ -178,9 +186,17 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Order $order)
+    public function addtoecotrack(Order $order)
     {
-        //
+        if($order->from_stock == 1)
+        {
+            $order->Add_To_Ecotrack_Stock();
+        }
+        else
+        {
+            $order->Add_To_Ecotrack();
+        }
+        return back()->with("success", "order has been added to ecotrack successfully");
     }
 
     /**

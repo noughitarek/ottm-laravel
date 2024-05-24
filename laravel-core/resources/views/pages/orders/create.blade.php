@@ -233,6 +233,10 @@ $user = Auth::user();
             <input type="checkbox" name="validate" id="validate" class="form-check-input" {{old('validate')?'checked':''}}>
             <span class="form-check-label">Validate shipping</span>
           </label>
+          <label class="form-label" class="form-check m-0">
+            <input type="checkbox" name="from_stock" id="from_stock" class="form-check-input" {{old('from_stock')?'checked':''}}>
+            <span class="form-check-label">From stock</span>
+          </label>
         </div>
       </div>
       <div class="card-body">
