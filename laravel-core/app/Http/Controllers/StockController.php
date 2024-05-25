@@ -29,7 +29,7 @@ class StockController extends Controller
         Stock::create([
             'product' => $request->input('product'),
             'desk' => $request->input('desk'),
-            'total_amount' => $request->input('total_amount'),
+            'total_amount' => $request->input('total_amount')??0,
             'quantity' => $request->input('quantity'),
         ]);
         return back()->with('success','Stock has been created successfully');
@@ -43,7 +43,7 @@ class StockController extends Controller
         $stock->update([
             'product' => $request->input('product'),
             'desk' => $request->input('desk'),
-            'total_amount' => $request->input('total_amount'),
+            'total_amount' => $request->input('total_amount')??0,
             'quantity' => $request->input('quantity'),
         ]);
         return back()->with('success','Stock has been updated successfully');

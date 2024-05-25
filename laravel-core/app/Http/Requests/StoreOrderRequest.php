@@ -34,7 +34,7 @@ class StoreOrderRequest extends FormRequest
             'total_price' => 'required|integer',
             'delivery_price' => 'required|integer',
             'clean_price' => 'required|integer',
-            'conversation' => 'required|exists:facebook_conversations,facebook_conversation_id',
+            'conversation' => 'nullable|exists:facebook_conversations,facebook_conversation_id',
             'intern_tracking' => 'required|string|max:255',
         ];
     }
