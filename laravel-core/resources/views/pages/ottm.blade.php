@@ -24,6 +24,12 @@ $user = Auth::user();
 	<div class="card-body mb-2">
 	  <div class="row mb-2 d-flex align-items-center">
 	    <div class="col-md-12">
+			<ul>
+				<li>@{{phone}}: delivery men phone number (if exists)</li>
+			</ul>
+		</div>
+
+	    <div class="col-md-12">
 		  <div class="mb-3">
 		    <label for="validating">Validating (vers_hub)</label>
 			<textarea class="form-control" name="settings-messages_template-validating" id="settings-messages_template-validating">{{config('settings.messages_template.validating')}}</textarea>
