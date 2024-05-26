@@ -132,7 +132,25 @@ class OrderController extends Controller
         $wilayas = Wilaya::where('desk', "!=", null)->get();
         return view('pages.orders.create')->with('products', $products)->with('wilayas', $wilayas)->with('conversation', $conversation);
     }
-    
+    public function getProductDeskStock(Product $product, Desk $desk)
+    {
+        $stock[0]['desk'] = $desk;
+        $stock[0]['stock'] = $desk->stock($product);
+        return response()->json($stock);
+
+    }
+    public function getProductStock(Product $product)
+    {
+        $desks = Desk::whereNull('deleted_at')->get();
+        $stock = [];
+        foreach ($desks as $desk) {
+            $restock['desk'] = $desk;
+            $restock['stock'] = $desk->stock($product);
+            $stock[] = $restock;
+        }
+
+        return response()->json($stock);
+    }
     /**
      * Store a newly created resource in storage.
      */

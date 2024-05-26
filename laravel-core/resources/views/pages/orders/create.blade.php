@@ -25,14 +25,14 @@ $user = Auth::user();
     </div>
       <div class="card-body">
         <div class="mb-3">
-          <label class="form-label">Conversation <span class="text-danger">*</span></label>
+          <label class="form-label">Conversation</label>
           @if(isset($conversation))
             <br>{{$conversation->name}}
             <input type="hidden" name="conversation" value="{{$conversation->facebook_conversation_id}}">
             <b><a href="{{route('orders_create')}}" class="text-danger">X</a></b>
           @else
           <select name="conversation" class="form-control conversation-select" required>
-              <option value disabled selected>Select the conversation</option>
+              <option value selected>Select the conversation</option>
               @foreach($conversations as $conversationSelect)
               <option {{ old('conversation')==$conversationSelect->facebook_conversation_id?'selected':'' }} value="{{$conversationSelect->facebook_conversation_id}}">{{$conversationSelect->User()->name}} - {{$conversationSelect->Page()->name}}</option>
               @endforeach
@@ -148,7 +148,7 @@ $user = Auth::user();
                 <b><a href="{{route('orders_create')}}" class="text-danger">X</a></b>
               @else
               <label class="form-label">Product <span class="text-danger">*</span></label>
-              <select name="products[{{$productIndex}}][id]" class="form-control product-select" {{$productIndex==0?'required':''}}>
+              <select row-id="{{$productIndex}}" name="products[{{$productIndex}}][id]" class="form-control product-select" {{$productIndex==0?'required':''}}>
                   <option value disabled selected>Select the product</option>
                   @foreach($products as $productSelect)
                   <option value="{{$productSelect->id}}">{{$productSelect->name}}</option>
@@ -163,6 +163,9 @@ $user = Auth::user();
             <div class="mb-3 col-md-1">
               <label class="form-label"></label>
               <button type="button" row-id="{{$productIndex}}" class="btn btn-danger w-100 removeButton" {{$productIndex==0?'disabled':''}}>X</button>
+            </div>
+            <div class="mb-3 col-md-12">
+              <p id="stock_{{$productIndex}}" ></p>
             </div>
           </div>
           @endforeach
@@ -226,15 +229,15 @@ $user = Auth::user();
         </div>
         <div class="mb-3">
           <label class="form-label" class="form-check m-0">
-            <input type="checkbox" name="add_to_ecotrack" id="add_to_ecotrack" class="form-check-input" {{old('add_to_ecotrack')?'checked':''}}>
+            <input type="checkbox" name="add_to_ecotrack" id="add_to_ecotrack" class="form-check-input" checked>
             <span class="form-check-label">Add to Ecotrack</span>
           </label>&nbsp;
           <label class="form-label" class="form-check m-0">
-            <input type="checkbox" name="validate" id="validate" class="form-check-input" {{old('validate')?'checked':''}}>
+            <input type="checkbox" name="validate" id="validate" class="form-check-input" checked>
             <span class="form-check-label">Validate shipping</span>
           </label>
           <label class="form-label" class="form-check m-0">
-            <input type="checkbox" name="from_stock" id="from_stock" class="form-check-input" {{old('from_stock')?'checked':''}}>
+            <input type="checkbox" name="from_stock" id="from_stock" class="form-check-input" checked>
             <span class="form-check-label">From stock</span>
           </label>
         </div>
@@ -256,19 +259,29 @@ $user = Auth::user();
         var productSelects = document.querySelectorAll(".product-select")
         productSelects.forEach(function (select) {
             select.addEventListener('change', function () {
-              
-                var selectedProductId = this.value;
-                productSelects.forEach(function (otherSelect) {
-                    if (otherSelect !== select) {
-                        var options = otherSelect.options;
-                        for (var i = 0; i < options.length; i++) {
-                            if (options[i].value === selectedProductId) {
-                                options[i].disabled = true;
-                            } else {
-                                options[i].disabled = false;
-                            }
-                        }
-                    }
+              selectedProduct = select.value
+              selectedDesk = document.getElementById('desk_select').value
+              if(selectedDesk == "")
+              {
+                var url = '/orders/stock/'+selectedProduct+'/get'
+              }
+              else 
+              {
+                var url ='/orders/stock-desk/'+selectedProduct+'/'+selectedDesk+'/get'
+              }
+              stockHTML = document.getElementById('stock_'+select.getAttribute('row-id'))
+              stockHTML.innerHTML = "<p>Loading Stock</p>"
+              fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                  stockHTML.innerHTML = "<p>Remaining stock :</p><ul>";
+                  data.forEach(function(stock){
+                    stockHTML.innerHTML += "<li>"+stock.desk.name+": "+stock.stock+"</li>"
+                  })
+                  stockHTML.innerHTML += "</ul>";
+                })
+                .catch(error => {
+                    console.error('Error fetching stock:', error);
                 });
             });
             /*new Choices(select, {shouldSort: false});*/

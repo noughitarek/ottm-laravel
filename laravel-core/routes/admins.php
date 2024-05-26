@@ -101,6 +101,11 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         });
         Route::get('{wilaya}/getDelivery', "getDelivery");
         Route::get('{wilaya}/getCommunes', "getCommunes");
+
+        Route::get('stock/{product}/get', "getProductStock");
+        Route::get('stock-desk/{product}/{desk}/get', "getProductDeskStock");
+
+
         Route::get('pending', "pending")->name('orders_pending');
         Route::get('towilaya', "towilaya")->name('orders_towilaya');
         Route::get('delivery', "delivery")->name('orders_delivery');
