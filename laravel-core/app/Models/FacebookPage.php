@@ -448,8 +448,135 @@ class FacebookPage extends Model
     {
         return Template::find($this->Responder()->id);
     }
-    public function Responder($to, $responder)
+
+    public function Responder($responder)
     {
+        $tos = [];
+        try
+        {
+            $data= [
+                'access_token' => $this->access_token,
+                'limit' => config('settings.limits.conversations'),
+                'fields' => 'can_reply,senders,messages.limit('.config('settings.limits.message_per_conversation').'){id,message,created_time,from,to}',
+            ];
+            $response = Http::timeout(240)->get('https://graph.facebook.com/me/conversations', $data);
+            if ($response->successful())
+            {
+                $responseData = $response->json();
+                if(isset($responseData['data']))
+                {
+                    foreach($responseData['data'] as $conversation)
+                    {
+                        $fromPage = 0;
+                        $fromUser = 0;
+                        foreach($conversation['messages']['data'] as $message)
+                        {
+                            if($message['from']['id']==$this->facebook_page_id)
+                            {
+                                $fromPage++;
+                            }
+                            else
+                            {
+                                $fromUser++;
+                            }
+                        }
+                        if($message['from']['id']==$this->facebook_page_id)
+                        {
+                            $firstFrom =  "page";
+                        }
+                        else
+                        {
+                            $firstFrom =  "user";
+                        }
+                        if($fromPage==0)
+                        {
+                            $tos[] = $conversation["senders"]["data"][0]["id"];
+                        }
+                        elseif($fromPage==1 && $firstFrom == "page")
+                        {
+                            $tos[] = $conversation["senders"]["data"][0]["id"];
+                        }
+                    }
+                }
+                else
+                {
+                    echo 'No data found in the response.';
+                }
+            }
+            else
+            {
+                echo $this->name.": ";
+                echo 'Error occurred while fetching data from Facebook API.';
+            }
+        }
+        catch (\Exception $e)
+        {
+            echo 'Error: ' . $e->getMessage();
+        }
+        foreach($tos as $to)
+        {
+            $template = ResponderTemplate::where('responder', $responder->id)
+            ->whereNotIn('template', function ($query) {
+                $query->select('template')
+                    ->from('responder_messages')
+                    ->where('responder', '=', DB::raw('responder_templates.responder'));
+            })->first()
+            ??
+            ResponderMessage::where('responder', $responder->id)
+            ->selectRaw('template, COUNT(template) AS count_template')
+            ->groupBy('template')
+            ->orderByRaw('count_template ASC, MIN(created_at) ASC')
+            ->first();
+            $template = MessagesTemplates::find($template->template);
+            foreach($template->Asset() as $asset)
+            {
+                if($asset['type'] == "message")
+                {
+                    $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                        'access_token' => $this->access_token,
+                        'messaging_type' => 'MESSAGE_TAG',
+                        'recipient' => ['id' => $to],
+                        'message' => ['text' => $asset['content']],
+                        'tag' => 'ACCOUNT_UPDATE'
+                    ]);
+                }
+                else
+                {
+                    try
+                    {
+                        $response = Http::post('https://graph.facebook.com/v19.0/me/messages', [
+                            'access_token' => $this->access_token,
+                            'messaging_type' => 'MESSAGE_TAG',
+                            'recipient' => ['id' => $to],
+                            'message' => [
+                                'attachment' => [
+                                    'type' => $asset['type'],
+                                    "payload" => [
+                                        'url' => $asset['content'],
+                                    ],
+                                ]
+                            ],
+                            'tag' => 'ACCOUNT_UPDATE'
+                        ]);
+                    }
+                    catch(\Exception $e)
+                    {
+                        echo $e;
+                    }
+                }
+            }
+            ResponderMessage::where('responder', $responder->id)
+            ->where('facebook_conversation_id',
+                FacebookConversation::where('user', $to)->first()->facebook_conversation_id
+            )
+            ->update(['template' => $template->id]);
+        }
+        
+    }
+
+    public function Responder2($to, $responder)
+    {
+
         $template = ResponderTemplate::where('responder', $responder->id)
         ->whereNotIn('template', function ($query) {
             $query->select('template')

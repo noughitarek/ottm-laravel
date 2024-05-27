@@ -34,6 +34,11 @@ class ResponderSendCommand extends Command
         $responders = Responder::where('deleted_at', null)->where('is_active', true)->get();
         foreach($responders as $responder)
         {
+            foreach($responder->Pages() as $page)
+            {
+                $page->Responder($responder);
+            }
+            /*
             $conversations = $responder->Get_Supported_Conversations();
             foreach($conversations as $conversation)
             {
@@ -45,6 +50,7 @@ class ResponderSendCommand extends Command
                 $conversation = FacebookConversation::where('facebook_conversation_id', $conversation->facebook_conversation_id)->first();
                 $conversation->Responder($responder);
             }
+            */
         }
     }
 }

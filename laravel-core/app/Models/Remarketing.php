@@ -159,7 +159,8 @@ class Remarketing extends Model
         }
         else 
         {
-            $started_at = Carbon::createFromTimestamp($this->created_at->timestamp + $this->send_after);
+            $started_at = min(Carbon::createFromTimestamp($now->timestamp - $this->send_after),
+            Carbon::createFromTimestamp($this->created_at->timestamp + $this->send_after));
             $conversations = FacebookConversation::where('page', $this->facebook_page_id)
             ->where($this->since, '>=', $started_at->toDateTimeString())
             #->where($this->since, '<=', $ended_at->toDateTimeString())

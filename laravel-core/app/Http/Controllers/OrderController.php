@@ -106,7 +106,16 @@ class OrderController extends Controller
      */
     public function create()
     {
-        $conversations = FacebookConversation::orderBy('ended_at', 'desc')->take(config('settings.limits.order_conversations_count'))->get();
+        $conversations = FacebookConversation::orderBy('ended_at', 'desc')
+        ->whereExists(function($query) {
+            $query->select(DB::raw(1))
+                ->from('facebook_messages')
+                ->whereRaw('facebook_messages.conversation = facebook_conversations.facebook_conversation_id')
+                ->where('message', "like", '%سجلت الطلبية تاعك خلي برك الهاتف مفتوح باه يعيطلك الليفرور و ما تنساش الطلبية على خاطر رانا نخلصو عليها جزاك الله%');
+        })
+        ->take(config('settings.limits.order_conversations_count'))
+        ->get();
+
         $products = Product::where('deleted_at', null)->get();
         $wilayas = Wilaya::where('desk', "!=", null)->get();
         $desks = Desk::whereNull('deleted_at')->get();
