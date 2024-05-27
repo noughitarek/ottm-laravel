@@ -342,6 +342,10 @@ class Order extends Model
         {
             $phone = "";
         }
+        else
+        {
+            $phone = $phone->phone_number;
+        }
         $message = str_replace("{{phone}}", $phone, config('settings.messages_template.validating'));
         return $this->Conversation()->Send_Message($message);
     }
@@ -354,6 +358,10 @@ class Order extends Model
         if(!$phone)
         {
             $phone = "";
+        }
+        else
+        {
+            $phone = $phone->phone_number;
         }
         $message = str_replace("{{phone}}", $phone, config('settings.messages_template.shipping'));
         return $this->Conversation()->Send_Message($message);
@@ -368,6 +376,10 @@ class Order extends Model
         {
             $phone = "";
         }
+        else
+        {
+            $phone = $phone->phone_number;
+        }
         $message = str_replace("{{phone}}", $phone, config('settings.messages_template.wilaya'));
         return $this->Conversation()->Send_Message($message);
     }
@@ -380,6 +392,10 @@ class Order extends Model
         if(!$phone)
         {
             $phone = "";
+        }
+        else
+        {
+            $phone = $phone->phone_number;
         }
         $message = str_replace("{{phone}}", $phone, config('settings.messages_template.delivery'));
         return $this->Conversation()->Send_Message($message);
@@ -394,6 +410,10 @@ class Order extends Model
         {
             $phone = "";
         }
+        else
+        {
+            $phone = $phone->phone_number;
+        }
         $message = str_replace("{{phone}}", $phone, config('settings.messages_template.delivered'));
         return $this->Conversation()->Send_Message($message);
     }
@@ -406,6 +426,10 @@ class Order extends Model
         if(!$phone)
         {
             $phone = "";
+        }
+        else
+        {
+            $phone = $phone->phone_number;
         }
         $message = str_replace("{{phone}}", $phone, config('settings.messages_template.ready'));
         return $this->Conversation()->Send_Message($message);
@@ -420,6 +444,10 @@ class Order extends Model
         {
             $phone = "";
         }
+        else
+        {
+            $phone = $phone->phone_number;
+        }
         $message = str_replace("{{phone}}", $phone, config('settings.messages_template.recovering'));
         return $this->Conversation()->Send_Message($message);
     }
@@ -433,6 +461,10 @@ class Order extends Model
         {
             $phone = "";
         }
+        else
+        {
+            $phone = $phone->phone_number;
+        }
         $message = str_replace("{{phone}}", $phone, config('settings.messages_template.back'));
         return $this->Conversation()->Send_Message($message);
     }
@@ -445,6 +477,10 @@ class Order extends Model
         if(!$phone)
         {
             $phone = "";
+        }
+        else
+        {
+            $phone = $phone->phone_number;
         }
         $message = str_replace("{{phone}}", $phone, config('settings.messages_template.back_Ready'));
         return $this->Conversation()->Send_Message($message);
