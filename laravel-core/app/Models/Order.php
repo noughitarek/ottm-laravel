@@ -408,7 +408,7 @@ class Order extends Model
         $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
         if(!$phone)
         {
-            $phone = "";
+            $phone = "s";
         }
         else
         {
