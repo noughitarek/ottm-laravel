@@ -17,8 +17,8 @@ class DashboardController extends Controller
     
     public function index()
     {
-        /*$pages = FacebookPage::where('type', 'business')->whereNull('expired_at')->get();
-        return view('pages.dashboard.index')->with('ResponseTime', DashboardResponseTime::class)->with('pages', $pages);*/
+        $pages = FacebookPage::where('type', 'business')->whereNull('expired_at')->get();
+        return view('pages.dashboard.index')->with('ResponseTime', DashboardResponseTime::class)->with('pages', $pages);
         $messagesPerDayHours = FacebookMessage::selectRaw('DATE(created_at) as date, HOUR(created_at) AS message_hour, GROUP_CONCAT(id) as ids_list')
         ->where('created_at', '>=', Carbon::now()->subDays(2))
         ->where('sented_from', 'user')

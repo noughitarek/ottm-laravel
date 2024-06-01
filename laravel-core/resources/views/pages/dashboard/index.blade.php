@@ -13,20 +13,20 @@ $user = Auth::user();
               <select name="page" class="form-select form-select-sm bg-light border-0">
                 <option value>All</option>
                 @foreach($pages as $page)
-                <option value="{{$page->id}}">{{$page->name}}</option>
+                <option value="{{$page->id}}" {{(($_GET['page']??0)==$page->id)?'selected':''}}>{{$page->name}}</option>
                 @endforeach
               </select>
             </div>
-            <div class="col-auto">
-							<input name="datetime" type="text" value="2024-05-02 to 2024-05-03" class="form-select form-select-sm bg-light border-0 flatpickr-range" placeholder="Select date.." />
+            <div class="col-4">
+							<input name="datetime" type="text" value="{{$_GET['datetime']??$ResponseTime::defaultDateTime()}}" class="form-select form-select-sm bg-light border-0 flatpickr-range" placeholder="Select date.." />
             </div>
             <div class="col-auto">
               <select name="type" class="form-select form-select-sm bg-light border-0">
-                <option>Minutely</option>
-                <option selected>Hourly</option>
-                <option>Daily</option>
-                <option>Weekly</option>
-                <option>Monthly</option>
+                <option {{(($_GET['type']??'Hourly') == 'Minutely')?"selected":""}}>Minutely</option>
+                <option {{(($_GET['type']??'Hourly') == 'Hourly')?"selected":""}}>Hourly</option>
+                <option {{(($_GET['type']??'Hourly') == 'Daily')?"selected":""}}>Daily</option>
+                <option {{(($_GET['type']??'Hourly') == 'Weekly')?"selected":""}}>Weekly</option>
+                <option {{(($_GET['type']??'Hourly') == 'Monthly')?"selected":""}}>Monthly</option>
               </select>
             </div>
             <div class="col-auto">
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function() {
 var options = {
     series: [{
     name: '2 May',
-    data: [@foreach($ResponseTime::Get_Date($_GET['type']??'Hourly') as $elem) '<?=number_format($elem['average'], 2)??""?>', @endforeach]
+    data: [@foreach($ResponseTime::Get_Date() as $elem) '<?=number_format($elem['average'], 2)??""?>', @endforeach]
   }],
     chart: {
     type: 'bar',
@@ -78,7 +78,7 @@ var options = {
     colors: ['transparent']
   },
   xaxis: {
-    categories:  [@foreach($ResponseTime::Get_Date($_GET['type']??'Hourly') as $elem) '{{$elem['time']}}', @endforeach]
+    categories:  [@foreach($ResponseTime::Get_Date() as $elem) '{{$elem['time']}}', @endforeach]
   },
   yaxis: {
     title: {

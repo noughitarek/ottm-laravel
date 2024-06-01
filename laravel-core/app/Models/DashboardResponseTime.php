@@ -10,8 +10,9 @@ class DashboardResponseTime extends Model
 {
     use HasFactory;
     protected $fillable = ["minute", "page", "value"];
-    public static function Get_Date($type)
+    public static function Get_Date()
     {
+        $type = $_GET['type']??'Hourly';
         if($type == 'Hourly')
         {
             return self::Hourly();
@@ -25,24 +26,84 @@ class DashboardResponseTime extends Model
             return self::Daily();
         }
     }
+    public static function defaultDateTime()
+    {
+        return Carbon::now()->subDay().' to '.Carbon::now();
+    }
     public static function Hourly()
     {
-        return self::selectRaw('HOUR(minute) AS time, avg(value) as average')
-        ->where('minute', '>=', Carbon::now()->subDay())
-        ->groupBy('time')
-        ->orderBy('time', 'asc')
-        ->get();
+        $startdate = Carbon::now()->subDay();
+        $enddate = Carbon::now();
+
+        if(isset($_GET['datetime']))
+        {
+            $startdate = explode(' to ', $_GET['datetime'])[0]??Carbon::now()->subDay();
+            $enddate = explode(' to ', $_GET['datetime'])[1]??Carbon::now();
+        }
+        $page = $_GET['page']??0;
+
+        if($page != 0)
+        {
+            return self::selectRaw('HOUR(minute) AS time, avg(value) as average')
+            ->where('minute', '>=', Carbon::parse($startdate))
+            ->where('minute', '<=', Carbon::parse($enddate))
+            ->where('page', $page)
+            ->groupBy('time')
+            ->orderBy('time', 'asc')
+            ->get();
+        }
+        else 
+        {
+            return self::selectRaw('HOUR(minute) AS time, avg(value) as average')
+            ->where('minute', '>=', Carbon::parse($startdate))
+            ->where('minute', '<=', Carbon::parse($enddate))
+            ->groupBy('time')
+            ->orderBy('time', 'asc')
+            ->get();
+        }
     }
     public static function Minutely()
-    {
-        return self::selectRaw('Minute(minute) AS time, avg(value) as average')
-        ->where('minute', '>=', Carbon::now()->subDay())
-        ->groupBy('time')
-        ->orderBy('time', 'asc')
-        ->get();
+    {   
+        $startdate = Carbon::now()->subDay();
+        $enddate = Carbon::now();
+        if(isset($_GET['datetime']))
+        {
+            $startdate = explode(' to ', $_GET['datetime'])[0]??Carbon::now()->subDay();
+            $enddate = explode(' to ', $_GET['datetime'])[1]??Carbon::now();
+        }
+        $page = isset($_GET['page']) & $_GET['page']!=null?$_GET['page']:0;
+
+        if($page != 0)
+        {
+            return self::selectRaw('Minute(minute) AS time, avg(value) as average')
+            ->where('minute', '>=', Carbon::parse($startdate))
+            ->where('minute', '<=', Carbon::parse($enddate))
+            ->where('page', $page)
+            ->groupBy('time')
+            ->orderBy('time', 'asc')
+            ->get();
+        }
+        else 
+        {
+            return self::selectRaw('Minute(minute) AS time, avg(value) as average')
+            ->where('minute', '>=', Carbon::parse($startdate))
+            ->where('minute', '<=', Carbon::parse($enddate))
+            ->groupBy('time')
+            ->orderBy('time', 'asc')
+            ->get();
+        }
     }
     public static function Daily()
     {
+        $startdate = Carbon::now()->subMonth();
+        $enddate = Carbon::now();
+        if(isset($_GET['datetime']))
+        {
+            $startdate = explode(' to ', $_GET['datetime'])[0]??Carbon::now()->subMonth();
+            $enddate = explode(' to ', $_GET['datetime'])[1]??Carbon::now();
+        }
+        $page = $_GET['page']??0;
+
         return self::selectRaw('Day(minute) AS time, avg(value) as average')
         ->where('minute', '>=', Carbon::now()->subMonth())
         ->groupBy('time')
