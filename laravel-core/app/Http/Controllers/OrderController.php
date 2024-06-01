@@ -8,6 +8,9 @@ use App\Models\Wilaya;
 use App\Models\Commune;
 use App\Models\Product;
 use App\Models\FacebookUser;
+use App\Models\OrdersImport;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\OrderProducts;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -18,6 +21,99 @@ use App\Http\Requests\UpdateOrderRequest;
 
 class OrderController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
+    public function import()
+    {
+        $ordersimports = OrdersImport::whereNull('uploaded_at')->orderBy('id', 'desc')->get();
+        return view('pages.orders.import')->with('ordersimports', $ordersimports);
+    }
+
+    public function importpost(Request $request)
+    {
+        $orders = $request->file('orders');
+        $filename = time() . '_' . $orders->getClientOriginalName();
+        $orders->move(public_path('storage/orders'), $filename);
+        $filePath = 'storage/orders/'.$filename;
+
+        foreach(Excel::toArray([], $filePath)[0] as $i=>$pd)
+        {
+            if($i==0)
+            {
+                continue;
+            }
+            $order = [
+                'name' => $pd[0]??"NaN",
+                'phone' => explode('/', $pd[3])[0],
+                'phone2' => explode('/', $pd[3])[1]??null,
+                'commune' => Commune::where('name',$pd[5])->first()->id,
+                'desk' => Desk::where('name', $pd[9])->whereNull('deleted_at')->first()->id??Wilaya::find($pd[11])->desk,
+                'address' => $pd[1]??"NaN",
+                'stopdesk' => $pd[12],
+                'fragile' => true,
+                'is_test' => $pd[15],
+                'description' => '',
+                'total_price' => $pd[7],
+                'delivery_price' => Commune::where('name',$pd[5])->first()->Wilaya()->delivery_price,
+                'clean_price' => $pd[7]-Commune::where('name',$pd[5])->first()->Wilaya()->delivery_price,
+                'created_by' => Auth::user()->id,
+                'IP' => $_SERVER['REMOTE_ADDR'],
+                'intern_tracking' => $pd[2],
+                'from_stock' => 1,
+                'products' => $pd[6],
+                'uploaded_at' => null,
+            ];
+            OrdersImport::create($order);
+        }
+        return back()->with('success', "Orders will be imported as soon as possible");
+        exit;
+        $order = Order::create([
+            'name' => $request->input('name'),
+            'phone' => $request->input('phone'),
+            'phone2' => $request->input('phone2'),
+            'commune' => $request->input('commune'),
+            'desk' => $request->input("desk")??Wilaya::find($request->input('wilaya'))->desk,
+            'address' => $request->input('address'),
+            'fragile' => $request->has('fragile'),
+            'stopdesk' => $request->has('stopdesk'),
+            'description' => $request->input('description'),
+            'total_price' => $request->input('total_price'),
+            'delivery_price' => $request->input('delivery_price'),
+            'clean_price' => $request->input('clean_price'),
+            'intern_tracking' => $request->input('intern_tracking'),
+            'created_by' => Auth::user()->id,
+            'IP' => $_SERVER['REMOTE_ADDR'],
+            'conversation' => $request->input('conversation'),
+            'from_stock' => $request->has('from_stock'),
+        ]);
+        foreach($request->products as $product){
+            if(!isset($product['id']) || $product['id']==null)continue;
+            OrderProducts::create([
+                'order' => $order->id,
+                'product' => $product['id'],
+                'quantity' => $product['quantity']??1,
+            ]);
+        }
+        if($request->has('add_to_ecotrack'))
+        {
+            if($order->from_stock == 1)
+            {
+                $order->Add_To_Ecotrack_Stock();
+            }
+            else
+            {
+                $order->Add_To_Ecotrack();
+            }
+            if($request->has('validate'))
+            {
+                $order->Validate_Ecotrack();       
+            }
+        }
+
+
+    }
+
     /**
      * Display a listing of the resource.
      */

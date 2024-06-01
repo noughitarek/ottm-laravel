@@ -105,6 +105,9 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::get('stock/{product}/get', "getProductStock");
         Route::get('stock-desk/{product}/{desk}/get', "getProductDeskStock");
 
+        
+        Route::get('import', "import")->name('orders_import');
+        Route::post('import', "importpost");
 
         Route::get('pending', "pending")->name('orders_pending');
         Route::get('towilaya', "towilaya")->name('orders_towilaya');

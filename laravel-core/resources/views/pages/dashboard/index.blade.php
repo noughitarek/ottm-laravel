@@ -37,6 +37,38 @@ $user = Auth::user();
       <div class="card-body pt-2 pb-3">
         <div class="chart chart-sm">
           <div id="responseTime"></div>
+          <div class="row">
+            <div class="col-6">
+              <div class="card">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col mt-0">
+                      <h5 class="card-title">7, 8, 9, 10, 11, 12, 13, 14</h5>
+                    </div>
+                  </div>
+                  <h1 class="mt-1 mb-3">{{$ResponseTime::range([7, 8, 9, 10, 11, 12, 13, 14])}}</h1>
+                  <div class="mb-0">
+                    <span class="text-muted">Min</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="card">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col mt-0">
+                      <h5 class="card-title">15, 16, 17, 18, 20, 21, 22, 23</h5>
+                    </div>  
+                  </div>
+                  <h1 class="mt-1 mb-3">{{$ResponseTime::range([15, 16, 17, 18, 20, 21, 22, 23])}}</h1>
+                  <div class="mb-0">
+                    <span class="text-muted">Min</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

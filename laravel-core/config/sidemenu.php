@@ -78,6 +78,12 @@ return array(
             ),
             array(
                 "type" => "link",
+                "content" => "Import",
+                "permissions" => "orders_import",
+                "route" => "orders_import",
+            ),
+            array(
+                "type" => "link",
                 "content" => "Pending",
                 "permissions" => ["orders_consult", "orders_restricted_consult"],
                 "route" => "orders_pending",

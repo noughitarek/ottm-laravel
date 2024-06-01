@@ -10,6 +10,32 @@ class DashboardResponseTime extends Model
 {
     use HasFactory;
     protected $fillable = ["minute", "page", "value"];
+
+    public static function Range($hours)
+    {
+        $i = 0;
+        $total = 0;
+        foreach(self::Hourly() as $hour)
+        {
+            if(in_array($hour->time, $hours))
+            {
+                $total += $hour->average;
+                $i++;
+            }
+        }
+
+        if($i!=0)
+        {
+            $avg = $total/$i;
+            $min = floor($avg);
+            $sec = round(($avg - $min) * 60);
+            return $min." Min ".$sec." Sec";
+        }
+        else
+        {
+            return "n/a";
+        }
+    }
     public static function Get_Date()
     {
         $type = $_GET['type']??'Hourly';
@@ -42,7 +68,7 @@ class DashboardResponseTime extends Model
         }
         $page = $_GET['page']??0;
 
-        if($page != 0)
+        if($page != null)
         {
             return self::selectRaw('HOUR(minute) AS time, avg(value) as average')
             ->where('minute', '>=', Carbon::parse($startdate))
