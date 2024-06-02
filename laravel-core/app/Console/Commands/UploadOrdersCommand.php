@@ -2,9 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Order;
+use App\Models\Product;
 use App\Models\OrdersImport;
+use App\Models\OrderProducts;
 use Illuminate\Console\Command;
 use App\Models\FacebookConversation;
+use Illuminate\Support\Facades\Auth;
 
 class UploadOrdersCommand extends Command
 {
@@ -28,34 +32,83 @@ class UploadOrdersCommand extends Command
     public function handle()
     {
         $unUploadedOrders = OrdersImport::whereNull('uploaded_at')->orderBy('id', 'desc')->get();
-        foreach($unUploadedOrders as $order)
+        foreach($unUploadedOrders as $orderImport)
         {
-            $conversation = FacebookConversation::whereIn('facebook_conversation_id', function($query) use ($order) {
+            $conversation = FacebookConversation::whereIn('facebook_conversation_id', function($query) use ($orderImport) {
                 $query->select('conversation')
                 ->from('facebook_messages')
-                ->where('message', 'like', '%'.$order->intern_tracking.'%')
+                ->where('message', 'like', '%'.$orderImport->intern_tracking.'%')
                 ->groupBy('conversation')
                 ->get();
             })->first();
-            if($conversation)
-                print_r($conversation->facebook_conversation_id);
-            else
+            if(!$conversation)
             {
-                $conversation = FacebookConversation::whereIn('facebook_conversation_id', function($query) use ($order) {
+                $conversation = FacebookConversation::whereIn('facebook_conversation_id', function($query) use ($orderImport) {
                     $query->select('conversation')
                     ->from('facebook_messages')
-                    ->where('message', 'like', '%'.$order->phone.'%')
+                    ->where('message', 'like', '%'.$orderImport->phone.'%')
                     ->groupBy('conversation')
                     ->get();
                 })->first();
-                if($conversation)
-                {
-                    echo $conversation->phone.":";
-                    print_r($conversation->facebook_conversation_id);
-                }
             }
+            $orderData = $orderImport->toArray();
+            $orderData['phone'] = preg_replace('/[^0-9]/', '', $orderImport->phone);
+            $orderData['phone2'] = preg_replace('/[^0-9]/', '', $orderImport->phone2);
+            if($conversation)
+            {
+                $orderData['conversation'] = $conversation->facebook_conversation_id;
+            }
+            $order = Order::create($orderData);
+            $orderImport->uploaded_at = now();
+            $orderImport->save();
 
-            echo "\n";
+            $charactersToRemove = array("-", "/", "\\");
+            foreach(explode('+', $orderData["products"]) as $product)
+            {
+                $product = trim(str_replace($charactersToRemove, "", $product));
+                $productQuantity = 1;
+                $productRow = null;
+                foreach(config('settings.quantities') as $quantity=>$label)
+                {
+                    if($label != null)
+                    {
+                        if(strpos($product, $label) === 0)
+                        {
+                            $productQuantity = $quantity;
+                            $productsName = trim(explode($label, $product)[1]);
+                            $productRow = Product::where('name', 'like', '%'.$productsName.'%')->where('deleted_at', null)->first();
+                            if(!$productRow)
+                            {
+                                $productRow = Product::create([
+                                    'name' => $productsName,
+                                    'slug' => $productsName,
+                                    'created_by' => $orderImport->created_by
+                                ]);
+                            }
+                            break;
+                        }
+                    }
+
+                }
+                if(!$productRow)
+                {
+                    $productsName = $product;
+                    $productRow = Product::where('name', 'like', '%'.$productsName.'%')->where('deleted_at', null)->first();
+                    if(!$productRow)
+                    {
+                        $productRow = Product::create([
+                            'name' => $productsName,
+                            'slug' => $productsName,
+                            'created_by' => $orderImport->created_by
+                        ]);
+                    }
+                }
+                OrderProducts::create([
+                    'order' =>  $order->id,
+                    'product' => $productRow->id,
+                    'quantity' => $productQuantity,
+                ]);
+            }
         }
     }
 }

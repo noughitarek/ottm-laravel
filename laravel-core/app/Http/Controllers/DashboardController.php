@@ -18,7 +18,7 @@ class DashboardController extends Controller
     public function index()
     {
         $pages = FacebookPage::where('type', 'business')->whereNull('expired_at')->get();
-        return view('pages.dashboard.index')->with('ResponseTime', DashboardResponseTime::class)->with('pages', $pages);
+        #return view('pages.dashboard.index')->with('ResponseTime', DashboardResponseTime::class)->with('pages', $pages);
         $messagesPerDayHours = FacebookMessage::selectRaw('DATE(created_at) as date, HOUR(created_at) AS message_hour, GROUP_CONCAT(id) as ids_list')
         ->where('created_at', '>=', Carbon::now()->subDays(2))
         ->where('sented_from', 'user')
@@ -96,7 +96,7 @@ class DashboardController extends Controller
                 $data['remarketingIntervalMessages'][date("j F", strtotime($remarketingMessage['date']))]['total_interval'] = $remarketingMessage['count'];
             }
         }
-        return view('pages.dashboard.index2')->with('data', $data);
+        return view('pages.dashboard.index')->with('data', $data)->with('ResponseTime', DashboardResponseTime::class)->with('pages', $pages);
         $remarketingMessages = RemarketingMessages::selectRaw('DATE(created_at) as date, COUNT(*) as count')
         ->groupBy('date')
         ->get();
