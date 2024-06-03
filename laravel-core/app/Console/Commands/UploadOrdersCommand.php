@@ -31,7 +31,7 @@ class UploadOrdersCommand extends Command
      */
     public function handle()
     {
-        $unUploadedOrders = OrdersImport::whereNull('uploaded_at')->orderBy('id', 'desc')->get();
+        $unUploadedOrders = OrdersImport::whereNotNull('validated_at')->whereNull('uploaded_at')->orderBy('id', 'desc')->get();
         foreach($unUploadedOrders as $orderImport)
         {
             $conversation = FacebookConversation::whereIn('facebook_conversation_id', function($query) use ($orderImport) {
@@ -108,6 +108,34 @@ class UploadOrdersCommand extends Command
                     'product' => $productRow->id,
                     'quantity' => $productQuantity,
                 ]);
+            }
+
+            if($orderImport->upload)
+            {
+                if($orderImport->from_stock)
+                {
+                    for ($i = 0; $i < 3; $i++) {
+                        if ($order->Add_To_Ecotrack_Stock()) {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    for ($i = 0; $i < 3; $i++) {
+                        if ($order->Add_To_Ecotrack()) {
+                            break;
+                        }
+                    }
+                }
+                if($orderImport->validate)
+                {
+                    for ($i = 0; $i < 3; $i++) {
+                        if ($order->Validate_Ecotrack()) {
+                            break;
+                        }
+                    }
+                }
             }
         }
     }

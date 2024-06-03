@@ -108,6 +108,7 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         
         Route::get('import', "import")->name('orders_import');
         Route::post('import', "importpost");
+        Route::put('import', "importsave");
 
         Route::get('pending', "pending")->name('orders_pending');
         Route::get('towilaya', "towilaya")->name('orders_towilaya');

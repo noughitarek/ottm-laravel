@@ -145,7 +145,6 @@ class Order extends Model
     
     public function Validate_Ecotrack()
     {
-        return false;
         $data = array(
             "tracking" => $this->tracking,
             'api_token' => $this->Desk()->ecotrack_token

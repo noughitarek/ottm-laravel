@@ -34,6 +34,9 @@ return new class extends Migration
             $table->string('intern_tracking')->nullable();
             $table->boolean('from_stock')->default(1);
             $table->text('products')->nullable();
+            $table->boolean('upload')->default(1);
+            $table->boolean('validate')->default(1);
+            $table->timestamp('validated_at')->nullable();
             $table->timestamp('uploaded_at')->nullable();
             $table->timestamps();
         });

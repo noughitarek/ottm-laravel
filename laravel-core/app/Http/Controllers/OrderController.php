@@ -26,8 +26,26 @@ class OrderController extends Controller
      */
     public function import()
     {
-        $ordersimports = OrdersImport::whereNull('uploaded_at')->orderBy('id', 'desc')->get();
+        $ordersimports = OrdersImport::whereNotNull('validated_at')->whereNull('uploaded_at')->orderBy('id', 'desc')->get();
         return view('pages.orders.import')->with('ordersimports', $ordersimports);
+    }
+
+    public function importsave(Request $request)
+    {
+        foreach($request->input('order') as $orderID=>$orderData)
+        {
+            $order = OrdersImport::find($orderID);
+
+            if ($order)
+            {
+                $order->validated_at = now();
+                $order->upload = isset($orderData['upload']);
+                $order->validate = isset($orderData['validate']);
+                $order->from_stock = isset($orderData['from_stock']);
+            }
+            $order->save();
+        }
+        return $this->import();
     }
 
     public function importpost(Request $request)
@@ -66,52 +84,8 @@ class OrderController extends Controller
             ];
             OrdersImport::create($order);
         }
-        return back()->with('success', "Orders will be imported as soon as possible");
-        exit;
-        $order = Order::create([
-            'name' => $request->input('name'),
-            'phone' => $request->input('phone'),
-            'phone2' => $request->input('phone2'),
-            'commune' => $request->input('commune'),
-            'desk' => $request->input("desk")??Wilaya::find($request->input('wilaya'))->desk,
-            'address' => $request->input('address'),
-            'fragile' => $request->has('fragile'),
-            'stopdesk' => $request->has('stopdesk'),
-            'description' => $request->input('description'),
-            'total_price' => $request->input('total_price'),
-            'delivery_price' => $request->input('delivery_price'),
-            'clean_price' => $request->input('clean_price'),
-            'intern_tracking' => $request->input('intern_tracking'),
-            'created_by' => Auth::user()->id,
-            'IP' => $_SERVER['REMOTE_ADDR'],
-            'conversation' => $request->input('conversation'),
-            'from_stock' => $request->has('from_stock'),
-        ]);
-        foreach($request->products as $product){
-            if(!isset($product['id']) || $product['id']==null)continue;
-            OrderProducts::create([
-                'order' => $order->id,
-                'product' => $product['id'],
-                'quantity' => $product['quantity']??1,
-            ]);
-        }
-        if($request->has('add_to_ecotrack'))
-        {
-            if($order->from_stock == 1)
-            {
-                $order->Add_To_Ecotrack_Stock();
-            }
-            else
-            {
-                $order->Add_To_Ecotrack();
-            }
-            if($request->has('validate'))
-            {
-                $order->Validate_Ecotrack();       
-            }
-        }
-
-
+        $ordersimports = OrdersImport::whereNull('validated_at')->whereNull('uploaded_at')->orderBy('id', 'desc')->get();
+        return view('pages.orders.imported')->with('ordersimports', $ordersimports);
     }
 
     /**
