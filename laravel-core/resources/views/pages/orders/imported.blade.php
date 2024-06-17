@@ -57,8 +57,26 @@ $user = Auth::user();
               <td class="d-xl-table-cell single-line">
                 <p>
                   <i class="align-middle me-2 fas fa-fw fa-user-cog"></i> {{$order->Created_by()->name}}<br>
-                  @foreach($order->Products() as $product)
-                  <i class="align-middle me-2 fas fa-fw fa-box"></i>{{$product['qte']}} x {{$product['name']}}<br>  
+                  @foreach($order->Products() as $productIndex=>$product)
+                  <i class="align-middle me-2 fas fa-fw fa-box"></i>{{$product['qte']}} x {{$product['name']}}<br> 
+
+                  <i class="align-middle me-2 fas fa-fw fa-box"></i>
+                  <label>Choose the correct quantity</label>
+                  <select name="order[{{$order->id}}][quantities][{{$productIndex}}]" class="form-control">
+                    <option value="1" selected>1</option>
+                    @foreach(config('settings.quantities') as $index=>$quantity)
+                    @if($quantity!="")
+                    <option value="{{$index}}" {{$index==$product['qte']?'selected':''}}>{{$index}}</option>
+                    @endif
+                    @endforeach
+                  </select>
+                  <label>Choose the correct product</label>
+                  <select name="order[{{$order->id}}][products][{{$productIndex}}]" class="form-control" required>
+                    <option value selected disabled>--{{$product['name']}}--</option>
+                    @foreach($products as $productt)
+                    <option value="{{$productt->id}}" {{$product['name']==$productt->name?'selected':''}}>{{$productt->name}}</option>
+                    @endforeach
+                  </select> 
                   @endforeach
                 </p>
               </td>

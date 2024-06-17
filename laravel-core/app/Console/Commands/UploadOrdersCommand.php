@@ -63,6 +63,7 @@ class UploadOrdersCommand extends Command
             $orderImport->save();
 
             $charactersToRemove = array("-", "/", "\\");
+            $shouldBreak = false;
             foreach(explode('+', $orderData["products"]) as $product)
             {
                 $product = trim(str_replace($charactersToRemove, "", $product));
@@ -77,15 +78,6 @@ class UploadOrdersCommand extends Command
                             $productQuantity = $quantity;
                             $productsName = trim(explode($label, $product)[1]);
                             $productRow = Product::where('name', 'like', '%'.$productsName.'%')->where('deleted_at', null)->first();
-                            if(!$productRow)
-                            {
-                                $productRow = Product::create([
-                                    'name' => $productsName,
-                                    'slug' => $productsName,
-                                    'created_by' => $orderImport->created_by
-                                ]);
-                            }
-                            break;
                         }
                     }
 
@@ -94,20 +86,21 @@ class UploadOrdersCommand extends Command
                 {
                     $productsName = $product;
                     $productRow = Product::where('name', 'like', '%'.$productsName.'%')->where('deleted_at', null)->first();
-                    if(!$productRow)
-                    {
-                        $productRow = Product::create([
-                            'name' => $productsName,
-                            'slug' => $productsName,
-                            'created_by' => $orderImport->created_by
-                        ]);
-                    }
+                }
+                if(!$productRow)
+                {
+                    $shouldBreak = true;
+                    break;
                 }
                 OrderProducts::create([
                     'order' =>  $order->id,
                     'product' => $productRow->id,
                     'quantity' => $productQuantity,
                 ]);
+            }
+            if($shouldBreak)
+            {
+                continue;
             }
 
             if($orderImport->upload)

@@ -38,6 +38,28 @@ class OrderController extends Controller
 
             if ($order)
             {
+                $name = '';
+                foreach($orderData['products'] as $index=>$product)
+                {
+                    if($orderData['quantities'][$index] != 1)
+                    {
+                        $qte = config('settings.quantities')[$orderData['quantities'][$index]]."/";
+                    }
+                    else
+                    {
+                        $qte = "";
+                    }
+                    if($name == '')
+                    {
+                        $name = $qte.Product::find($product)->name;
+                    }
+                    else
+                    {
+                        $name .= ' + '.$qte.Product::find($product)->name;
+                    }
+                }
+                $order->products = $name;
+                    
                 $order->validated_at = now();
                 $order->upload = isset($orderData['upload']);
                 $order->validate = isset($orderData['validate']);
@@ -56,37 +78,37 @@ class OrderController extends Controller
         $orders->move(public_path('storage/orders'), $filename);
         $filePath = 'storage/orders/'.$filename;
 
-        foreach(Excel::toArray([], $filePath)[0] as $i=>$pd)
+        foreach(Excel::toArray([], $filePath)[0] as $i=>$ord)
         {
             if($i==0)
             {
                 continue;
             }
             $order = [
-                'name' => $pd[0]??"NaN",
-                'phone' => explode('/', $pd[3])[0],
-                'phone2' => explode('/', $pd[3])[1]??null,
-                'commune' => Commune::where('name',$pd[5])->first()->id,
-                'desk' => Desk::where('name', $pd[9])->whereNull('deleted_at')->first()->id??Wilaya::find($pd[11])->desk,
-                'address' => $pd[1]??"NaN",
-                'stopdesk' => $pd[12],
+                'name' => $ord[0]??"NaN",
+                'phone' => explode('/', $ord[3])[0],
+                'phone2' => explode('/', $ord[3])[1]??null,
+                'commune' => Commune::where('name',$ord[5])->first()->id,
+                'desk' => Desk::where('name', $ord[9])->whereNull('deleted_at')->first()->id??Wilaya::find($ord[11])->desk,
+                'address' => $ord[1]??"NaN",
+                'stopdesk' => $ord[12],
                 'fragile' => true,
-                'is_test' => $pd[15],
+                'is_test' => $ord[15],
                 'description' => '',
-                'total_price' => $pd[7],
-                'delivery_price' => Commune::where('name',$pd[5])->first()->Wilaya()->delivery_price,
-                'clean_price' => $pd[7]-Commune::where('name',$pd[5])->first()->Wilaya()->delivery_price,
+                'total_price' => $ord[7],
+                'delivery_price' => Commune::where('name',$ord[5])->first()->Wilaya()->delivery_price,
+                'clean_price' => $ord[7]-Commune::where('name',$ord[5])->first()->Wilaya()->delivery_price,
                 'created_by' => Auth::user()->id,
                 'IP' => $_SERVER['REMOTE_ADDR'],
-                'intern_tracking' => $pd[2],
+                'intern_tracking' => $ord[2],
                 'from_stock' => 1,
-                'products' => $pd[6],
-                'uploaded_at' => null,
+                'products' => $ord[6],
             ];
             OrdersImport::create($order);
         }
         $ordersimports = OrdersImport::whereNull('validated_at')->whereNull('uploaded_at')->orderBy('id', 'desc')->get();
-        return view('pages.orders.imported')->with('ordersimports', $ordersimports);
+        $products = Product::whereNull('deleted_at')->get();
+        return view('pages.orders.imported')->with('ordersimports', $ordersimports)->with('products', $products);
     }
 
     /**
