@@ -34,13 +34,17 @@ class UploadOrdersCommand extends Command
         $unUploadedOrders = OrdersImport::whereNotNull('validated_at')->whereNull('uploaded_at')->orderBy('id', 'desc')->get();
         foreach($unUploadedOrders as $orderImport)
         {
-            $conversation = FacebookConversation::whereIn('facebook_conversation_id', function($query) use ($orderImport) {
-                $query->select('conversation')
-                ->from('facebook_messages')
-                ->where('message', 'like', '%'.$orderImport->intern_tracking.'%')
-                ->groupBy('conversation')
-                ->get();
-            })->first();
+            $conversation = null;
+            if($orderImport->intern_tracking != null)
+            {
+                $conversation = FacebookConversation::whereIn('facebook_conversation_id', function($query) use ($orderImport) {
+                    $query->select('conversation')
+                    ->from('facebook_messages')
+                    ->where('message', 'like', '%'.$orderImport->intern_tracking.'%')
+                    ->groupBy('conversation')
+                    ->get();
+                })->first();
+            }
             if(!$conversation)
             {
                 $conversation = FacebookConversation::whereIn('facebook_conversation_id', function($query) use ($orderImport) {
@@ -57,6 +61,10 @@ class UploadOrdersCommand extends Command
             if($conversation)
             {
                 $orderData['conversation'] = $conversation->facebook_conversation_id;
+            }
+            if($orderImport->intern_tracking == null)
+            {
+                $orderData['intern_tracking'] = "NaN";
             }
             $order = Order::create($orderData);
             $orderImport->uploaded_at = now();
