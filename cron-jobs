@@ -1,0 +1,9 @@
+/usr/local/bin/ea-php82 /home/ptnurehw/ottm.gizmodz.shop/artisan schedule:run >> /home/ptnurehw/ottm.gizmodz.shop/crons/output.log
+
+/usr/local/bin/ea-php82 /home/ptnurehw/ottm.gizmodz.shop/artisan  app:responder-send-command >> /home/ptnurehw/ottm.gizmodz.shop/crons/responder-send-command.log
+/usr/local/bin/ea-php82 /home/ptnurehw/ottm.gizmodz.shop/artisan  app:upload-orders-command >> /home/ptnurehw/ottm.gizmodz.shop/crons/upload-orders-command.log
+/usr/local/bin/ea-php82 /home/ptnurehw/ottm.gizmodz.shop/artisan  app:update-orders-states >> /home/ptnurehw/ottm.gizmodz.shop/crons/update-orders-states.log
+/usr/local/bin/ea-php82 /home/ptnurehw/ottm.gizmodz.shop/artisan  app:get-conversations >> /home/ptnurehw/ottm.gizmodz.shop/crons/get-conversations.log
+/usr/local/bin/ea-php82 /home/ptnurehw/ottm.gizmodz.shop/artisan  app:remarketing-send >> /home/ptnurehw/ottm.gizmodz.shop/crons/remarketing-send.log
+/usr/local/bin/ea-php82 /home/ptnurehw/ottm.gizmodz.shop/artisan  app:remarketing-interval-send >> /home/ptnurehw/ottm.gizmodz.shop/crons/remarketing-interval-send.log
+/usr/local/bin/ea-php82 /home/ptnurehw/ottm.gizmodz.shop/artisan  app:update-response-time-dashboard >> /home/ptnurehw/ottm.gizmodz.shop/crons/update-response-time-dashboard.log
