@@ -32,6 +32,7 @@ class OrdersStatesRefreshCommand extends Command
         $orders = Order::orderBy('updated_at', 'asc')->get();
         $ordersToUpdate = [];
 
+        $total = [];
         foreach($orders as $order){
             if(($order->State() != "Archived" && 
                 $order->State() != "Back ready" &&
@@ -40,9 +41,11 @@ class OrdersStatesRefreshCommand extends Command
                 ($order->State() == "Pending" && $order->tracking != null)
             )
             {
+                isset($total[$order->State()]) ? $total[$order->State()]++:$total[$order->State()]=1;
                 $ordersToUpdate[] = $order;
             }
         }
+        print_r($total);
         $orders = array_chunk($ordersToUpdate, 30);
         foreach($orders as $page){
             $this->Update_state($page);
@@ -104,6 +107,7 @@ class OrdersStatesRefreshCommand extends Command
                 {
                     $order->After_Back_Ready();
                 }
+                $status =  "";
                 $order->save();
             }
         }else{
