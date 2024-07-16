@@ -221,6 +221,7 @@ class Order extends Model
         );
 
         $helperUrl = "https://sigma-helper.000webhostapp.com/".'?' . http_build_query(array_merge($data, $data0));
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $helperUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -333,156 +334,245 @@ class Order extends Model
     }
     public function After_Validating()
     {
-        if(config('settings.messages_template.validating') == ''){
-            return false;
-        }
-        $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
-        if(!$phone)
+        if($this->validated_at == null)
         {
-            $phone = "";
+            $this->validated_at = now();
+            $this->save();
+
+            if(config('settings.messages_template.validating') == ''){
+                return false;
+            }
+            $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
+            if(!$phone)
+            {
+                $phone = "";
+            }
+            else
+            {
+                $phone = $phone->phone_number;
+            }
+            $message = str_replace("{{phone}}", $phone, config('settings.messages_template.validating'));
+            if($this->conversation != null)
+            {
+                return $this->Conversation()->Send_Message($message);
+            }
         }
-        else
-        {
-            $phone = $phone->phone_number;
-        }
-        $message = str_replace("{{phone}}", $phone, config('settings.messages_template.validating'));
-        return $this->Conversation()->Send_Message($message);
     }
     public function After_Shipping()
     {
-        if(config('settings.messages_template.shipping') == ''){
-            return false;
-        }
-        $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
-        if(!$phone)
+        $this->After_Validating();
+
+        if($this->shipped_at == null)
         {
-            $phone = "";
+            $this->shipped_at = now();
+            $this->save();
+
+            if(config('settings.messages_template.shipping') == ''){
+                return false;
+            }
+            $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
+            if(!$phone)
+            {
+                $phone = "";
+            }
+            else
+            {
+                $phone = $phone->phone_number;
+            }
+            $message = str_replace("{{phone}}", $phone, config('settings.messages_template.shipping'));
+            if($this->conversation != null)
+            {
+                return $this->Conversation()->Send_Message($message);
+            }
         }
-        else
-        {
-            $phone = $phone->phone_number;
-        }
-        $message = str_replace("{{phone}}", $phone, config('settings.messages_template.shipping'));
-        return $this->Conversation()->Send_Message($message);
     }
     public function After_Wilaya()
     {
-        if(config('settings.messages_template.wilaya') == ''){
-            return false;
-        }
-        $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
-        if(!$phone)
+        $this->After_Shipping();
+        if($this->wilaya_at == null)
         {
-            $phone = "";
+            $this->wilaya_at = now();
+            $this->save();
+
+            if(config('settings.messages_template.wilaya') == ''){
+                return false;
+            }
+            $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
+            if(!$phone)
+            {
+                $phone = "";
+            }
+            else
+            {
+                $phone = $phone->phone_number;
+            }
+            $message = str_replace("{{phone}}", $phone, config('settings.messages_template.wilaya'));
+            if($this->conversation != null)
+            {
+                return $this->Conversation()->Send_Message($message);
+            }
         }
-        else
-        {
-            $phone = $phone->phone_number;
-        }
-        $message = str_replace("{{phone}}", $phone, config('settings.messages_template.wilaya'));
-        return $this->Conversation()->Send_Message($message);
     }
     public function After_Delivery()
     {
-        if(config('settings.messages_template.delivery') == ''){
-            return false;
-        }
-        $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
-        if(!$phone)
+        $this->After_Wilaya();
+        if($this->delivery_at == null)
         {
-            $phone = "";
+            $this->delivery_at = now();
+            $this->save();
+
+            if(config('settings.messages_template.delivery') == ''){
+                return false;
+            }
+            $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
+            if(!$phone)
+            {
+                $phone = "";
+            }
+            else
+            {
+                $phone = $phone->phone_number;
+            }
+            $message = str_replace("{{phone}}", $phone, config('settings.messages_template.delivery'));
+            if($this->conversation != null)
+            {
+                return $this->Conversation()->Send_Message($message);
+            }
         }
-        else
-        {
-            $phone = $phone->phone_number;
-        }
-        $message = str_replace("{{phone}}", $phone, config('settings.messages_template.delivery'));
-        return $this->Conversation()->Send_Message($message);
     }
     public function After_Delivered()
     {
-        if(config('settings.messages_template.delivered') == ''){
-            return false;
-        }
-        $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
-        if(!$phone)
+        $this->After_Delivery();
+        if($this->delivered_at == null)
         {
-            $phone = "s";
+            $this->delivered_at = now();
+            $this->save();
+            if(config('settings.messages_template.delivered') == ''){
+                return false;
+            }
+            $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
+            if(!$phone)
+            {
+                $phone = "s";
+            }
+            else
+            {
+                $phone = $phone->phone_number;
+            }
+            $message = str_replace("{{phone}}", $phone, config('settings.messages_template.delivered'));
+            if($this->conversation != null)
+            {
+                return $this->Conversation()->Send_Message($message);
+            }
         }
-        else
-        {
-            $phone = $phone->phone_number;
-        }
-        $message = str_replace("{{phone}}", $phone, config('settings.messages_template.delivered'));
-        return $this->Conversation()->Send_Message($message);
     }
     public function After_Ready()
     {
-        if(config('settings.messages_template.ready') == ''){
-            return false;
-        }
-        $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
-        if(!$phone)
+        $this->After_Delivered();
+        if($this->ready_at == null)
         {
-            $phone = "";
+            $this->ready_at = now();
+            $this->save();
+
+            if(config('settings.messages_template.ready') == ''){
+                return false;
+            }
+            $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
+            if(!$phone)
+            {
+                $phone = "";
+            }
+            else
+            {
+                $phone = $phone->phone_number;
+            }
+            $message = str_replace("{{phone}}", $phone, config('settings.messages_template.ready'));
+            if($this->conversation != null)
+            {
+                return $this->Conversation()->Send_Message($message);
+            }
         }
-        else
-        {
-            $phone = $phone->phone_number;
-        }
-        $message = str_replace("{{phone}}", $phone, config('settings.messages_template.ready'));
-        return $this->Conversation()->Send_Message($message);
     }
     public function After_Recovering()
     {
-        if(config('settings.messages_template.recovering') == ''){
-            return false;
-        }
-        $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
-        if(!$phone)
+        $this->After_Ready();
+        if($this->recovered_at == null)
         {
-            $phone = "";
+            $this->recovered_at = now();
+            $this->save();
+
+            if(config('settings.messages_template.recovering') == ''){
+                return false;
+            }
+            $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
+            if(!$phone)
+            {
+                $phone = "";
+            }
+            else
+            {
+                $phone = $phone->phone_number;
+            }
+            $message = str_replace("{{phone}}", $phone, config('settings.messages_template.recovering'));
+            if($this->conversation != null)
+            {
+                return $this->Conversation()->Send_Message($message);
+            }
         }
-        else
-        {
-            $phone = $phone->phone_number;
-        }
-        $message = str_replace("{{phone}}", $phone, config('settings.messages_template.recovering'));
-        return $this->Conversation()->Send_Message($message);
     }
     public function After_Back()
     {
-        if(config('settings.messages_template.back') == ''){
-            return false;
-        }
-        $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
-        if(!$phone)
+        $this->After_Delivery();
+        if($this->back_at == null)
         {
-            $phone = "";
+            $this->back_at = now();
+            $this->save();
+
+            if(config('settings.messages_template.back') == ''){
+                return false;
+            }
+            $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first();
+            if(!$phone)
+            {
+                $phone = "";
+            }
+            else
+            {
+                $phone = $phone->phone_number;
+            }
+            $message = str_replace("{{phone}}", $phone, config('settings.messages_template.back'));
+            if($this->conversation != null)
+            {
+                return $this->Conversation()->Send_Message($message);
+            }
         }
-        else
-        {
-            $phone = $phone->phone_number;
-        }
-        $message = str_replace("{{phone}}", $phone, config('settings.messages_template.back'));
-        return $this->Conversation()->Send_Message($message);
     }
     public function After_Back_Ready()
     {
-        if(config('settings.messages_template.back_Ready') == ''){
-            return false;
-        }
-        $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first()->phone_number;
-        if(!$phone)
+        $this->After_Back();
+        if($this->back_ready_at == null)
         {
-            $phone = "";
+            $this->back_ready_at = now();
+            $this->save();
+
+            if(config('settings.messages_template.back_Ready') == ''){
+                return false;
+            }
+            $phone = DeliveryMen::where('commune', $this->commune)->where('desk', $this->desk)->first()->phone_number;
+            if(!$phone)
+            {
+                $phone = "";
+            }
+            else
+            {
+                $phone = $phone->phone_number;
+            }
+            $message = str_replace("{{phone}}", $phone, config('settings.messages_template.back_Ready'));
+            if($this->conversation != null)
+            {
+                return $this->Conversation()->Send_Message($message);
+            }
         }
-        else
-        {
-            $phone = $phone->phone_number;
-        }
-        $message = str_replace("{{phone}}", $phone, config('settings.messages_template.back_Ready'));
-        return $this->Conversation()->Send_Message($message);
     }
     
 }
