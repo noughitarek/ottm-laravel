@@ -26,6 +26,7 @@ class DeskController extends Controller
             'name' => $request->input('name'),
             'ecotrack_link' => $request->input('ecotrack_link'),
             'ecotrack_token' => $request->input('ecotrack_token'),
+            'default_stock' => $request->has('default_stock'),
         ]);
         return back()->with("success", "Desk has been created successfully");
     }
@@ -39,6 +40,7 @@ class DeskController extends Controller
             'name' => $request->input('name'),
             'ecotrack_link' => $request->input('ecotrack_link'),
             'ecotrack_token' => $request->input('ecotrack_token'),
+            'default_stock' => $request->has('default_stock'),
         ]);
         return back()->with("success", "Desk has been updated successfully");
     }

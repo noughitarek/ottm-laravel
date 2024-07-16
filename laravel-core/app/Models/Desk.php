@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Desk extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'ecotrack_link', 'ecotrack_token', 'deleted_at'];
+    protected $fillable = ['name', 'ecotrack_link', 'ecotrack_token', 'deleted_at', 'default_stock'];
 
     public function Wilayas()
     {

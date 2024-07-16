@@ -84,12 +84,13 @@ class OrderController extends Controller
             {
                 continue;
             }
+            $desk =Desk::where('name', $ord[9])->whereNull('deleted_at')->first()??Wilaya::find($ord[11])->Desk();
             $order = [
                 'name' => $ord[0]??"NaN",
                 'phone' => explode('/', $ord[3])[0],
                 'phone2' => explode('/', $ord[3])[1]??null,
                 'commune' => Commune::where('name',$ord[5])->first()->id,
-                'desk' => Desk::where('name', $ord[9])->whereNull('deleted_at')->first()->id??Wilaya::find($ord[11])->desk,
+                'desk' => $desk->id,
                 'address' => $ord[1]??"NaN",
                 'stopdesk' => $ord[12],
                 'fragile' => true,
@@ -101,7 +102,7 @@ class OrderController extends Controller
                 'created_by' => Auth::user()->id,
                 'IP' => $_SERVER['REMOTE_ADDR'],
                 'intern_tracking' => $ord[2],
-                'from_stock' => 1,
+                'from_stock' => $desk->default_stock,
                 'products' => $ord[6],
             ];
             OrdersImport::create($order);

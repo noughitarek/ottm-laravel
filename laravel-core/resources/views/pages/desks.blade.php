@@ -85,6 +85,10 @@ $user = Auth::user();
             <label class="form-label">Ecotrack token: </label>
             <input type="text" name="ecotrack_token" class="form-control" placeholder="Ex: 5et45ssdg135rd1gv23df">
           </div>
+          <div class="mb-3 form-check">
+              <input type="checkbox" name="default_stock" class="form-check-input" id="default_stock">
+              <label class="form-check-label" for="default_stock">Default from stock</label>
+          </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -119,6 +123,10 @@ $user = Auth::user();
           <div class="mb-3">
             <label class="form-label">Ecotrack token: </label>
             <input type="text" name="ecotrack_token" value="{{$desk->ecotrack_token}}" class="form-control" placeholder="Ex: 5et45ssdg135rd1gv23df">
+          </div>
+          <div class="mb-3 form-check">
+              <input type="checkbox" name="default_stock" class="form-check-input" id="default_stock" {{$desk->default_stock?"checked":""}}>
+              <label class="form-check-label" for="default_stock">Default from stock</label>
           </div>
         </div>
         <div class="modal-footer">
