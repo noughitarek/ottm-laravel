@@ -85,6 +85,7 @@ class OrderController extends Controller
                 continue;
             }
             $desk =Desk::where('name', $ord[9])->whereNull('deleted_at')->first()??Wilaya::find($ord[11])->Desk();
+
             $order = [
                 'name' => $ord[0]??"NaN",
                 'phone' => explode('/', $ord[3])[0],

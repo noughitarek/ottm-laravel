@@ -36,7 +36,7 @@ $user = Auth::user();
             <tr>
               <td class="d-xl-table-cell single-line">
                 <input type="hidden" name="order[{{$order->id}}]" value="0">
-                <input class="form-check-input" type="checkbox" name="order[{{$order->id}}][from_stock]" {{$order->default_stock?"checked":""}}>
+                <input class="form-check-input" type="checkbox" name="order[{{$order->id}}][from_stock]" {{$order->from_stock?"checked":""}}>
                 <input class="form-check-input" type="checkbox" name="order[{{$order->id}}][upload]" checked>
                 <input class="form-check-input" type="checkbox" name="order[{{$order->id}}][validate]" checked>
               </td>
