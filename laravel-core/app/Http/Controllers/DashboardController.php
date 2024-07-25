@@ -28,10 +28,10 @@ class DashboardController extends Controller
         ->get();
 
         $data = array();
-        $remarketingMessages = RemarketingMessages::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+        $remarketingMessages = RemarketingMessages::where('created_at', ">", Carbon::now()->subDays(15))->selectRaw('DATE(created_at) as date, COUNT(*) as count')
         ->groupBy('date')
         ->get();
-        $remarketingIntervalMessages = RemarketingIntervalMessages::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+        $remarketingIntervalMessages = RemarketingIntervalMessages::where('created_at', ">", Carbon::now()->subDays(15))->selectRaw('DATE(created_at) as date, COUNT(*) as count')
         ->groupBy('date')
         ->get();
         $data['averageResponseRatef7t15'] = 0;
