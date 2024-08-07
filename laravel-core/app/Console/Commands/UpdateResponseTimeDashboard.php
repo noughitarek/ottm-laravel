@@ -33,7 +33,7 @@ class UpdateResponseTimeDashboard extends Command
             exit;
         
         $messagesPerDayMinutes = FacebookMessage::selectRaw('DATE(created_at) as date, MINUTE(created_at) AS message_minute, HOUR(created_at) AS message_hour, GROUP_CONCAT(id) as ids_list')
-        ->where('created_at', '>=', Carbon::now()->subMonths(2))
+        ->where('created_at', '>=', Carbon::now()->subDays(2))
         ->where('sented_from', 'user')
         ->groupBy('date', 'message_hour', 'message_minute')
         ->orderBy('date', 'desc')

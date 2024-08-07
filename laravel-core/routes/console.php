@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Schedule;
 
 
 
+Schedule::command('app:get-conversations')->everyMinute()->runInBackground();
 Schedule::command('app:responder-send-command')->everyMinute()->runInBackground();
 Schedule::command('app:upload-orders-command')->hourly()->runInBackground();
 Schedule::command('app:update-orders-states')->everyTenMinutes()->runInBackground();
-Schedule::command('app:get-conversations')->everyMinute()->runInBackground();
 Schedule::command('app:remarketing-send')->everyTenMinutes()->runInBackground();
 Schedule::command('app:remarketing-interval-send')->everyMinute()->runInBackground();
 Schedule::command('app:update-response-time-dashboard')->hourly()->runInBackground();

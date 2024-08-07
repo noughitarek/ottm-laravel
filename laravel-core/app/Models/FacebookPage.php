@@ -62,7 +62,7 @@ class FacebookPage extends Model
         }
         try
         {
-            $response = Http::timeout(240)->get('https://graph.facebook.com/me/conversations', $data);
+            $response = Http::timeout(60)->get('https://graph.facebook.com/me/conversations', $data);
             if ($response->successful())
             {
                 $responseData = $response->json();

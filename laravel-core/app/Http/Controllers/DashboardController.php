@@ -18,7 +18,7 @@ class DashboardController extends Controller
     public function index()
     {
         $pages = FacebookPage::where('type', 'business')->whereNull('expired_at')->get();
-        #return view('pages.dashboard.index')->with('ResponseTime', DashboardResponseTime::class)->with('pages', $pages);
+
         $messagesPerDayHours = FacebookMessage::selectRaw('DATE(created_at) as date, HOUR(created_at) AS message_hour, GROUP_CONCAT(id) as ids_list')
         ->where('created_at', '>=', Carbon::now()->subDays(2))
         ->where('sented_from', 'user')
@@ -38,6 +38,7 @@ class DashboardController extends Controller
         $data['averageResponseRatef15t23'] = 0;
         $totalf7t15 = 0;
         $totalf15t23 = 0;
+
         foreach ($messagesPerDayHours as $messages) {
             $ids_array = explode(',', $messages->ids_list);
             $total_response_time = 0;
@@ -69,9 +70,14 @@ class DashboardController extends Controller
                 $data['averageResponseRatef15t23'] += $average_response_time;
             }
         }
-        $data['averageResponseRatef7t15'] = number_format($data['averageResponseRatef7t15']/$totalf7t15, 2);
-        $data['averageResponseRatef15t23'] = number_format($data['averageResponseRatef15t23']/$totalf15t23, 2);
-        
+        if($totalf7t15>0){
+            $data['averageResponseRatef7t15'] = number_format($data['averageResponseRatef7t15']/$totalf7t15, 2);
+
+        }
+        if($totalf15t23>0){
+            $data['averageResponseRatef15t23'] = number_format($data['averageResponseRatef15t23']/$totalf15t23, 2);
+
+        }
 
         foreach($remarketingMessages as $remarketingMessage)
         {

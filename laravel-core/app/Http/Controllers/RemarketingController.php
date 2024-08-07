@@ -42,19 +42,19 @@ class RemarketingController extends Controller
     {
         $remarketings = Remarketing::where('deleted_at', null)->where('category', $category->id)->get();
         foreach($remarketings as $remarketing){
+            break;
 
             if($remarketing->is_active){
-                echo '<form method="POST" action="'.route('remarketing_deactivate', $remarketing->id).'">
+                '<form method="POST" action="'.route('remarketing_deactivate', $remarketing->id).'">
                 '.$remarketing->name.'
                 ' . csrf_field() . '
                 ' . method_field('PUT') . '
                     <button type="submit" class="btn btn-primary">Deactivate</button>
                 </form>';
 
-                echo "<br>";
+                "<br>";
             }
         }
-        exit;
         return view('pages.remarketing.remarketing')->with('remarketings', $remarketings);
     }
 
