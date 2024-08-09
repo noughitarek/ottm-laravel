@@ -114,6 +114,22 @@ class RemarketingController extends Controller
         return back()->with('success', "Remarketing message has been created");
     }
 
+    public function category_deactivate(RemarketingCategory $category)
+    {
+        foreach($category->Remarketings() as $remarketing)
+        {
+            $this->deactivate_store($remarketing);
+        }
+    }
+    public function category_activate(RemarketingCategory $category)
+    {
+        foreach($category->Remarketings() as $remarketing)
+        {
+            $this->activate_store($remarketing);
+        }
+    }
+
+
     /**
      * activate the specified resource.
      */

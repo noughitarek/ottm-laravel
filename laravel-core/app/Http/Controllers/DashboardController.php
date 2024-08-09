@@ -78,7 +78,8 @@ class DashboardController extends Controller
             $data['averageResponseRatef15t23'] = number_format($data['averageResponseRatef15t23']/$totalf15t23, 2);
 
         }
-
+        $data['remarketingMessages'] = [];
+        $data['remarketingIntervalMessages'] = [];
         foreach($remarketingMessages as $remarketingMessage)
         {
             if(isset($data[date("j F", strtotime($remarketingMessage['date']))]['total']))

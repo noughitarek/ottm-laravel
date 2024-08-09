@@ -56,6 +56,14 @@ $user = Auth::user();
                   </button>
                   @endif
                 @endif
+
+                @if($user->Has_Permission('remarketing_edit'))
+                <a href="{{route('remarketing_subcategory_activate', $category->id)}}" class="btn btn-success" >
+                  Activate
+                </a>
+                <a href="{{route('remarketing_subcategory_deactivate', $category->id)}}" class="btn btn-success" >
+                  Deactivate
+                </a>
                 </td>
             </tr>
             @endforeach

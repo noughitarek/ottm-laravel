@@ -149,6 +149,11 @@ Route::middleware(['auth', 'access_token'])->group(function () {
         Route::get('categories/{category}/elements', "sub_category")->name('remarketing_sub_category');
         Route::get('create', "create")->middleware('permission:remarketing_create')->name('remarketing_create');
         Route::post('create', "store")->middleware('permission:remarketing_create');
+
+        Route::get('categories/{category}/deactivate', "category_deactivate")->middleware('permission:remarketing_edit')->name('remarketing_subcategory_deactivate');
+        Route::get('categories/{category}/activate', "category_activate")->middleware('permission:remarketing_edit')->name('remarketing_subcategory_activate');
+
+
         Route::get('{remarketing}/activate', "activate")->middleware('permission:remarketing_edit')->name('remarketing_activate');
         Route::put('{remarketing}/activate', "activate_store")->middleware('permission:remarketing_edit');
         Route::put('{remarketing}/deactivate', "deactivate_store")->middleware('permission:remarketing_edit')->name('remarketing_deactivate');

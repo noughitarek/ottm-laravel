@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('remarketing_intervals', function (Blueprint $table) {
             if (Schema::hasColumn('remarketing_intervals', 'template')) {
-                #$table->dropForeign('remarketing_intervals_template_foreign');
+                $table->dropForeign('remarketing_intervals_template_foreign');
                 $table->dropColumn('template');
             }
         });
