@@ -64,6 +64,7 @@ $user = Auth::user();
                 <a href="{{route('remarketing_subcategory_deactivate', $category->id)}}" class="btn btn-success" >
                   Deactivate
                 </a>
+                @endif
                 </td>
             </tr>
             @endforeach
