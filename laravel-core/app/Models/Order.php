@@ -178,7 +178,7 @@ class Order extends Model
             'typeRequest' => $type=="POST"?'post':'get'
         );
 
-        $helperUrl = "http://www.sigma-helper.rf.gd/".'?' . http_build_query(array_merge($data, $data0));
+        $helperUrl = "https://ottmhelper.tiiny.io/".'?' . http_build_query(array_merge($data, $data0));
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $helperUrl);
@@ -220,7 +220,7 @@ class Order extends Model
             'typeRequest' => $type=="POST"?'post':'get'
         );
 
-        $helperUrl = "http://www.sigma-helper.rf.gd/".'?' . http_build_query(array_merge($data, $data0));
+        $helperUrl = "https://ottmhelper.tiiny.io/".'?' . http_build_query(array_merge($data, $data0));
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $helperUrl);

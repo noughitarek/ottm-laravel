@@ -26,7 +26,7 @@ class Desk extends Model
             'typeRequest' => 'get'
         );
 
-        $helperUrl = "http://www.sigma-helper.rf.gd/".'?' . http_build_query($data);
+        $helperUrl = "https://ottmhelper.tiiny.io/".'?' . http_build_query($data);
         
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $helperUrl);
