@@ -35,6 +35,7 @@ class UploadOrdersCommand extends Command
         foreach($unUploadedOrders as $orderImport)
         {
             $conversation = null;
+            /* 
             if($orderImport->intern_tracking != null)
             {
                 $conversation = FacebookConversation::whereIn('facebook_conversation_id', function($query) use ($orderImport) {
@@ -55,6 +56,7 @@ class UploadOrdersCommand extends Command
                     ->get();
                 })->first();
             }
+                */
             $orderData = $orderImport->toArray();
             $orderData['phone'] = preg_replace('/[^0-9]/', '', $orderImport->phone);
             $orderData['phone2'] = preg_replace('/[^0-9]/', '', $orderImport->phone2);
