@@ -39,6 +39,7 @@ class AffectConversationsCommand extends Command
                 $conversation = FacebookConversation::whereIn('facebook_conversation_id', function($query) use ($order) {
                     $query->select('conversation')
                     ->from('facebook_messages')
+                    ->where('sented_from', 'page')
                     ->where('message', 'like', '%'.$order->intern_tracking.'%')
                     ->groupBy('conversation')
                     ->get();
@@ -62,7 +63,7 @@ class AffectConversationsCommand extends Command
             }
             $order->conversation = $conversation;
             $order->save();
+            exit;
         }
-        exit;
     }
 }
