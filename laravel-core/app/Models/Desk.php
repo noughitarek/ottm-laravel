@@ -56,6 +56,7 @@ class Desk extends Model
 
     public function Stock(Product $product)
     {
+        return 0;
         $initial_stock = Stock::wherenull('deleted_at')->where('product', $product->id)->where('desk', $this->id)->sum('quantity');
 
         $delivery = 0;

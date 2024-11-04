@@ -14,7 +14,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::where('deleted_at', null)->get();
+        $products = Product::wherenull('deleted_at')->get();
         $desks = Desk::wherenull('deleted_at')->get();
         return view('pages.products')->with('products', $products)->with('desks', $desks);
     }
