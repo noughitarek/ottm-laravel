@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Desk;
 use App\Models\Order;
 use App\Models\Wilaya;
@@ -10,12 +11,12 @@ use App\Models\Product;
 use App\Models\FacebookUser;
 use App\Models\OrdersImport;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Models\OrderProducts;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\FacebookConversation;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 
@@ -86,11 +87,15 @@ class OrderController extends Controller
             }
             $desk =Desk::where('name', $ord[9])->whereNull('deleted_at')->first()??Wilaya::find($ord[11])->Desk();
 
+            $commune = Commune::where('name',$ord[5])->first();
+            if(!$commune){
+                throw new Exception("Commune '{$ord[5]}' not found");
+            }
             $order = [
                 'name' => $ord[0]??"NaN",
                 'phone' => explode('/', $ord[3])[0],
                 'phone2' => explode('/', $ord[3])[1]??null,
-                'commune' => Commune::where('name',$ord[5])->first()->id,
+                'commune' => $commune->id,
                 'desk' => $desk->id,
                 'address' => $ord[1]??"NaN",
                 'stopdesk' => $ord[12],
@@ -98,8 +103,8 @@ class OrderController extends Controller
                 'is_test' => $ord[15],
                 'description' => '',
                 'total_price' => $ord[7],
-                'delivery_price' => Commune::where('name',$ord[5])->first()->Wilaya()->delivery_price,
-                'clean_price' => $ord[7]-Commune::where('name',$ord[5])->first()->Wilaya()->delivery_price,
+                'delivery_price' => $commune->Wilaya()->delivery_price,
+                'clean_price' => $ord[7]-$commune->Wilaya()->delivery_price,
                 'created_by' => Auth::user()->id,
                 'IP' => $_SERVER['REMOTE_ADDR'],
                 'intern_tracking' => $ord[2],
