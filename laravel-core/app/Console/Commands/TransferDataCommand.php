@@ -27,8 +27,8 @@ class TransferDataCommand extends Command
      */
     public function handle()
     {
-        $ignore = ['facebook_messages', 'remarketing_messages', 'remarketing_interval_messages', 'facebook_users', 'facebook_conversations', 'cache', 'cache_locks', 'dashboard_response_times', 'password_reset_tokens'];
-        $chunkSize = 1000;
+        $ignore = ['remarketing_messages', 'remarketing_interval_messages', 'cache', 'cache_locks', 'dashboard_response_times', 'password_reset_tokens'];
+        $chunkSize = 100;
 
         // Connect to the source and target databases
         $old_mysql = DB::connection('old_mysql');
