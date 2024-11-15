@@ -31,7 +31,14 @@ class GetAllConversationsCommand extends Command
      */
     public function handle()
     {
-        $pages = FacebookPage::where('expired_at', null)->where('type', 'business')->get();
+        $this->start();
+        $this->start();
+        $this->start();
+        $this->start();
+    }
+    public function start()
+    {
+        $pages = FacebookPage::where('id', 2)->where('expired_at', null)->where('type', 'business')->get();
         foreach($pages as $page)
         {
             $nextpage = Setting::where('path' , 'next_page_'.$page->facebook_page_id)->first();
