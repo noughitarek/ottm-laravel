@@ -50,6 +50,7 @@ class GetAllConversationsCommand extends Command
                     'fields' => 'can_reply,senders,messages.limit('.config('settings.limits.message_per_conversation').'){id,message,created_time,from,to}',
                     'after' => $nextpage->content
                 ];
+                echo $nextpage;
             }
             else
             {
