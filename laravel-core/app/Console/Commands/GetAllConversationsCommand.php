@@ -34,7 +34,6 @@ class GetAllConversationsCommand extends Command
         $this->start();
         $this->start();
         $this->start();
-        $this->start();
     }
     public function start()
     {
@@ -47,17 +46,16 @@ class GetAllConversationsCommand extends Command
                 $data= [
                     'access_token' => $page->access_token,
                     'limit' => config('settings.limits.conversations'),
-                    'fields' => 'can_reply,senders,messages.limit('.config('settings.limits.message_per_conversation').'){id,message,created_time,from,to}',
+                    'fields' => 'can_reply,senders,messages.limit('.config('settings.limits.message_per_conversation').'){id,created_time,from,to}',
                     'after' => $nextpage->content
                 ];
-                echo $nextpage;
             }
             else
             {
                 $data= [
                     'access_token' => $page->access_token,
                     'limit' => config('settings.limits.conversations'),
-                    'fields' => 'can_reply,senders,messages.limit('.config('settings.limits.message_per_conversation').'){id,message,created_time,from,to}'
+                    'fields' => 'can_reply,senders,messages.limit('.config('settings.limits.message_per_conversation').'){id,created_time,from,to}'
                 ];
             }
             try
@@ -96,7 +94,7 @@ class GetAllConversationsCommand extends Command
                                 if(!$fb_message){
                                     $fb_message = FacebookMessage::create([
                                         'facebook_message_id' => (string)$message['id'],
-                                        'message' => $message['message'],
+                                        'message' => '',
                                         'sented_from' => $message['from']['id']==$page->facebook_page_id?'page':'user',
                                         'conversation' => (string)$conversation['id'],
                                         'created_at' => $message['created_time']
